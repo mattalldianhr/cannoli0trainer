@@ -1,0 +1,62 @@
+# Spec: Program Builder / Workout Designer
+
+## Job to Be Done
+Enable the coach to build training programs with the "flexibility of Google Sheets combined with the management capabilities of TeamBuildr." This is the #1 priority — saving 10-15 hours/week on programming by supporting all 6 load prescription methods and 4 periodization approaches the coach uses.
+
+## Requirements
+- Program builder page at `/programs/new` and `/programs/[id]/edit`
+- Program listing page at `/programs`
+- Support creating programs from scratch or from templates
+- Multi-week program structure: weeks → days → exercises → sets
+- Each exercise prescription supports ALL methods:
+  - Percentage of 1RM (e.g., "75%")
+  - RPE (e.g., "RPE 8")
+  - RIR (e.g., "2 RIR")
+  - Velocity targets (e.g., "0.8 m/s")
+  - Autoregulated ranges (e.g., "Work up to RPE 8, then -10%")
+  - Fixed weight / progressive overload (e.g., "185 lbs")
+- Copy/duplicate weeks, days, and individual exercises
+- Reorder exercises via drag or move buttons
+- Save program as template for reuse
+- Assign program to one or multiple athletes
+- Program overview showing weekly structure at a glance
+- Notes field per exercise, per day, and per program
+
+## Acceptance Criteria
+- [ ] `/programs` lists all programs and templates
+- [ ] "New Program" creates a blank program with name and description
+- [ ] Can add weeks and days to a program
+- [ ] Can add exercises to a day from exercise library
+- [ ] Each exercise supports selecting prescription type from dropdown
+- [ ] Prescription type selection shows appropriate input fields
+- [ ] Can duplicate a week (copies all days and exercises)
+- [ ] Can duplicate a day (copies all exercises)
+- [ ] Can reorder exercises within a day
+- [ ] "Save as Template" creates a reusable copy
+- [ ] "Assign to Athlete" links program to selected athlete(s)
+- [ ] Program overview shows compact week/day/exercise grid
+- [ ] All changes auto-save or save on explicit action
+- [ ] DEALBREAKER TEST: Can create a block periodization program with RPE-based squat, percentage-based bench, and velocity-target deadlift in the same workout
+
+## Test Cases
+| Input | Expected Output |
+|-------|-----------------|
+| Create 4-week block program | 4 weeks visible, each expandable to days |
+| Add "Back Squat" with RPE 7-8 | Exercise shows "RPE 7-8" in prescription |
+| Add "Bench Press" at 80% 1RM | Exercise shows "80%" in prescription |
+| Add "Deadlift" at 0.75 m/s velocity | Exercise shows "0.75 m/s" velocity target |
+| Duplicate Week 1 to Week 2 | Week 2 created with identical structure |
+| Save as template | Appears in template list, original unchanged |
+| Assign to 3 athletes | ProgramAssignment created for each |
+| Mixed prescription in single day | All 6 types render correctly side by side |
+
+## Technical Notes
+- This is the most complex feature — break into sub-tasks in implementation plan
+- Program builder should be a client component (heavy interactivity)
+- Consider local state during editing, save to DB on explicit action
+- Exercise library search with existing Exercise model
+- Use Radix UI Select/Dropdown for prescription type
+- Prescription fields conditionally render based on selected type
+- Follow existing pattern of typed interfaces in `lib/` directory
+- Create `lib/programs/types.ts` for program builder types
+- Consider optimistic UI updates for responsiveness

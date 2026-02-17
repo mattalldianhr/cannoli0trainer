@@ -1,0 +1,320 @@
+{
+  "generatedAt": "2026-02-17T17:02:22.293Z",
+  "trainerProfile": {
+    "roles": "Powerlifting Coach, 1-on-1 Personal Trainer, Remote / Online Coach, Group / Class Coach, Meet Director / Event Organizer",
+    "athleteCount": "31 - 50",
+    "inPersonVsRemote": "Mostly remote, some in-person",
+    "facility": "I work out of multiple locations",
+    "soloOrTeam": "Solo — it's just me"
+  },
+  "sections": [
+    {
+      "title": "Executive Summary",
+      "content": "This PRD captures the requirements of an independent powerlifting and S&C coach currently training 31 - 50 athletes (Mostly remote, some in-person). The trainer operates as a solo coach out of i work out of multiple locations. Coaching roles include: Powerlifting Coach, 1-on-1 Personal Trainer, Remote / Online Coach, Group / Class Coach, Meet Director / Event Organizer. The interview identified key workflow pain points, methodology requirements (including VBT and RPE-based programming), competition prep needs, desired platform capabilities, and business growth goals."
+    },
+    {
+      "title": "Coach Profile & Practice Model",
+      "content": "**Which of these describe what you do? Select all that apply.**\nPowerlifting Coach, 1-on-1 Personal Trainer, Remote / Online Coach, Group / Class Coach, Meet Director / Event Organizer\n\n**How many athletes are you actively coaching right now?**\n31 - 50\n\n**What's the split between in-person and remote athletes?**\nMostly remote, some in-person\n\n**What's your facility situation?**\nI work out of multiple locations\n\n**Are you coaching solo or do you have other coaches working with you?**\nSolo — it's just me"
+    },
+    {
+      "title": "Current Workflow & Tools",
+      "content": "**How do you currently write and deliver training programs?**\nCoaching platform (TrainHeroic, TrueCoach, etc.)\n\n**Which coaching platform(s) do you use?**\nTeambuildr\n\n**How satisfied are you with your current programming setup?**\n6/10 (Cobbled together, barely works → Smooth and dialed in)\n\n**How do your athletes log their training?**\nIn an app or platform (they enter sets/reps/weight)\n\n**How do you communicate with athletes between sessions?**\nWhatsApp\n\n**How much time do you spend writing and adjusting programs each week?**\n10 - 15 hours"
+    },
+    {
+      "title": "Athlete Profile & Interaction Model",
+      "content": "**What kinds of athletes do you work with? Select all that apply.**\nCompetitive powerlifters, First-meet athletes, Recreational lifters, General fitness clients, Masters lifters (40+)\n\n**What's the typical experience level of your athletes?**\nWide range — beginners through advanced\n\n**How tech-savvy are your athletes in general?**\n8/10 (They'd struggle with anything beyond texting → They'd love a polished app)\n\n**How self-directed are your remote athletes?**\nMostly good, but I have to check in on some"
+    },
+    {
+      "title": "Programming & Methodology Requirements",
+      "content": "**How do you approach program design?**\nDepends on the athlete and context\n\n**How do you prescribe training loads?**\nRPE (Rate of Perceived Exertion), Percentage of 1RM, RIR (Reps in Reserve), Autoregulated ranges, Fixed weight / progressive overload, Velocity targets (VBT)\n\n**What periodization approaches do you use?**\nBlock periodization, Daily Undulating (DUP), Linear progression, RPE-based progressive overload\n\n**Do you use Velocity-Based Training (VBT) in your coaching?**\nSometimes — for specific athletes or phases\n\n**Which VBT device(s) do you use?**\nOther\n\n**If a platform could do anything with your VBT data, what would you want?**\nVelocity Profiles, Preparedness assessments, fatigue tracking, load-velocity curves, real time suggested load"
+    },
+    {
+      "title": "Competition & Meet Prep Requirements",
+      "content": "**How many of your athletes compete in powerlifting meets?**\nAbout half\n\n**What do you currently track during a meet prep cycle?**\nPeaking block programming, Opener selection and attempt planning, Bodyweight / weight class management, Training maxes and estimated 1RMs, Warmup timing and logistics, RPE trends going into the meet\n\n**What's the hardest part of managing meet day from a coaching standpoint?**\nWarm up room management, warm up timing, multiple athlete flights\n\n**If you had a magic tool for meet day, what would it do?**\nReal time warm up timing tool based off of liftingcast data"
+    },
+    {
+      "title": "Current Pain Points & Gaps",
+      "content": "**What eats the most of your non-coaching time?**\nWriting / copying / adjusting programs, Entering or organizing training data, Switching between too many apps and tools, Calculating loads, percentages, velocity targets, Chasing athletes for training logs or check-ins\n\n**Describe your single biggest frustration with how you manage your coaching business right now.**\nTeambuildr's metric and data tracking, Teambuildr's UX for programming, too much time spent on programming tasks that could be automated which reduces my time for interfacing with clients, lead gen\n\n**What data do you wish you had but currently don't?**\nLong-term strength trends per athlete, Velocity profiles and load-velocity curves, Cumulative volume and load tracking, Training compliance / adherence rates, RPE accuracy over time, Bodyweight and weight class tracking, Just... everything in one place instead of scattered across apps, Injury history and modification patterns\n\n**Have you tried any coaching platforms or tools before and abandoned them? What went wrong?**\nI've been using Teambuildr for 5 years and prior to that google sheets. Teambuildr is bugging, lacks useful and easily accessible training metrics and data, programming and planning is clunky."
+    },
+    {
+      "title": "Must-Have Platform Capabilities",
+      "content": "**Which capabilities are absolute must-haves?**\nProgram builder / workout designer, Athlete self-logging, VBT device integration, RPE / RIR prescription support, Mobile app for athletes, Progress analytics and charts, Remote program delivery, Exercise library with videos, Reusable program templates, Client management / profiles, Competition prep tools"
+    },
+    {
+      "title": "Nice-to-Have Capabilities",
+      "content": "**Which of these would be great bonuses but aren't dealbreakers?**\nWhite-label / branded athlete app, Built-in payment and billing, Session scheduling / booking, Daily readiness / wellness surveys, Sell programs / templates, Nutrition or macro tracking, Community features, Video form check / review, Automated deload / fatigue management, Bodyweight and body composition tracking"
+    },
+    {
+      "title": "Mobile & Athlete UX Requirements",
+      "content": "**Mobile importance:** 10/10 (Desktop is fine → Mobile-first is everything)\n\n**Dealbreakers:** If the platform doesn't provide a flexible approach for my programming style it is a dealbreaker"
+    },
+    {
+      "title": "Business Model & Growth Goals",
+      "content": "**How do you currently generate revenue? Select all that apply.**\nPer-session training fees, Monthly coaching retainer, Group session fees\n\n**What are your growth goals over the next 12 months?**\nGrow in-person clientele, Take on more remote athletes, Build the Cannoli Gang brand, Streamline operations, Produce better athlete results\n\n**What would you realistically spend per month on coaching software?**\n$150 - $300/mo\n\n**Which pricing model works best for you?**\nFlat monthly rate"
+    },
+    {
+      "title": "Priorities & Timeline",
+      "content": "**Rank these in order of importance to you.**\n1. Save me time on programming and admin\n2. Give me better data on my athletes\n3. Give my athletes a better experience\n4. Help me grow my business and revenue\n5. Integrate with VBT devices seamlessly\n6. Be affordable for a solo coach\n7. Make competition prep easier\n8. Be simple — I don't want complexity\n\n**How urgently are you looking for a platform?**\nWithin 1-3 months\n\n**Anything else we should know?**\nAll of the current platforms are excellent at one facet of coaching but none of them deliver a fully streamlined, efficient service. It would be great to have the flexibility of google sheets in terms of data and how it's presented combined with the management capabilities of teambuildr."
+    }
+  ],
+  "rawAnswers": {
+    "__started": {
+      "questionId": "__started",
+      "value": true
+    },
+    "coaching-identity": {
+      "questionId": "coaching-identity",
+      "value": [
+        "powerlifting-coach",
+        "1on1-trainer",
+        "remote-coach",
+        "group-coach",
+        "meet-director"
+      ]
+    },
+    "athlete-count": {
+      "questionId": "athlete-count",
+      "value": "31-50"
+    },
+    "in-person-vs-remote": {
+      "questionId": "in-person-vs-remote",
+      "value": "mostly-remote"
+    },
+    "facility-situation": {
+      "questionId": "facility-situation",
+      "value": "multiple-locations"
+    },
+    "coaching-solo-or-team": {
+      "questionId": "coaching-solo-or-team",
+      "value": "solo"
+    },
+    "how-write-programs": {
+      "questionId": "how-write-programs",
+      "value": [
+        "coaching-platform"
+      ]
+    },
+    "which-coaching-platform": {
+      "questionId": "which-coaching-platform",
+      "value": "Teambuildr"
+    },
+    "platform-satisfaction": {
+      "questionId": "platform-satisfaction",
+      "value": 6
+    },
+    "how-athletes-log": {
+      "questionId": "how-athletes-log",
+      "value": "app"
+    },
+    "how-communicate": {
+      "questionId": "how-communicate",
+      "value": [
+        "whatsapp"
+      ]
+    },
+    "hours-programming": {
+      "questionId": "hours-programming",
+      "value": "10-15"
+    },
+    "athlete-types": {
+      "questionId": "athlete-types",
+      "value": [
+        "competitive-pl",
+        "first-meet",
+        "recreational-lifters",
+        "general-fitness",
+        "masters"
+      ]
+    },
+    "athlete-experience-range": {
+      "questionId": "athlete-experience-range",
+      "value": "wide-range"
+    },
+    "athlete-tech-comfort": {
+      "questionId": "athlete-tech-comfort",
+      "value": 8
+    },
+    "athlete-self-accountability": {
+      "questionId": "athlete-self-accountability",
+      "value": "mostly"
+    },
+    "program-design-approach": {
+      "questionId": "program-design-approach",
+      "value": "depends"
+    },
+    "load-prescription": {
+      "questionId": "load-prescription",
+      "value": [
+        "rpe",
+        "percentage-1rm",
+        "rir",
+        "autoregulated-ranges",
+        "fixed-weight",
+        "velocity-targets"
+      ]
+    },
+    "periodization-style": {
+      "questionId": "periodization-style",
+      "value": [
+        "block",
+        "dup",
+        "linear",
+        "rpe-based"
+      ]
+    },
+    "vbt-usage": {
+      "questionId": "vbt-usage",
+      "value": "sometimes"
+    },
+    "vbt-devices": {
+      "questionId": "vbt-devices",
+      "value": [
+        "other"
+      ]
+    },
+    "vbt-dream": {
+      "questionId": "vbt-dream",
+      "value": "Velocity Profiles, Preparedness assessments, fatigue tracking, load-velocity curves, real time suggested load"
+    },
+    "coaches-competitors": {
+      "questionId": "coaches-competitors",
+      "value": "about-half"
+    },
+    "meet-prep-tracking": {
+      "questionId": "meet-prep-tracking",
+      "value": [
+        "peaking-block",
+        "openers",
+        "bodyweight",
+        "training-maxes",
+        "warmup-plan",
+        "rpe-trends"
+      ]
+    },
+    "game-day-pain": {
+      "questionId": "game-day-pain",
+      "value": "Warm up room management, warm up timing, multiple athlete flights"
+    },
+    "meet-day-wish": {
+      "questionId": "meet-day-wish",
+      "value": "Real time warm up timing tool based off of liftingcast data"
+    },
+    "biggest-time-sinks": {
+      "questionId": "biggest-time-sinks",
+      "value": [
+        "writing-programs",
+        "data-entry",
+        "switching-tools",
+        "manual-load-calc",
+        "chasing-athletes"
+      ]
+    },
+    "biggest-frustration": {
+      "questionId": "biggest-frustration",
+      "value": "Teambuildr's metric and data tracking, Teambuildr's UX for programming, too much time spent on programming tasks that could be automated which reduces my time for interfacing with clients, lead gen"
+    },
+    "data-gaps": {
+      "questionId": "data-gaps",
+      "value": [
+        "long-term-strength",
+        "velocity-profiles",
+        "volume-load-tracking",
+        "compliance-rates",
+        "rpe-accuracy",
+        "bodyweight-history",
+        "all-in-one-dashboard",
+        "injury-history"
+      ]
+    },
+    "tried-and-abandoned": {
+      "questionId": "tried-and-abandoned",
+      "value": "I've been using Teambuildr for 5 years and prior to that google sheets. Teambuildr is bugging, lacks useful and easily accessible training metrics and data, programming and planning is clunky."
+    },
+    "must-haves": {
+      "questionId": "must-haves",
+      "value": [
+        "program-builder",
+        "athlete-logging",
+        "vbt-integration",
+        "rpe-rir-support",
+        "mobile-app",
+        "progress-analytics",
+        "remote-delivery",
+        "exercise-library",
+        "template-system",
+        "client-management",
+        "comp-prep-tools"
+      ]
+    },
+    "nice-to-haves": {
+      "questionId": "nice-to-haves",
+      "value": [
+        "branded-app",
+        "payment-billing",
+        "scheduling",
+        "readiness-wellness",
+        "template-marketplace",
+        "nutrition-tracking",
+        "community-features",
+        "video-form-review",
+        "automated-deloads",
+        "bodyweight-tracking"
+      ]
+    },
+    "dealbreakers": {
+      "questionId": "dealbreakers",
+      "value": "If the platform doesn't provide a flexible approach for my programming style it is a dealbreaker"
+    },
+    "mobile-importance": {
+      "questionId": "mobile-importance",
+      "value": 10
+    },
+    "revenue-model": {
+      "questionId": "revenue-model",
+      "value": [
+        "per-session",
+        "monthly-retainer",
+        "group-classes"
+      ]
+    },
+    "growth-goals": {
+      "questionId": "growth-goals",
+      "value": [
+        "more-in-person",
+        "more-remote",
+        "build-brand",
+        "streamline-ops",
+        "better-athlete-results"
+      ]
+    },
+    "monthly-budget": {
+      "questionId": "monthly-budget",
+      "value": "150-300"
+    },
+    "pricing-model-pref": {
+      "questionId": "pricing-model-pref",
+      "value": "flat-rate"
+    },
+    "top-priorities": {
+      "questionId": "top-priorities",
+      "value": [
+        "save-time",
+        "better-data",
+        "athlete-experience",
+        "grow-business",
+        "vbt-integration",
+        "affordable",
+        "comp-prep",
+        "simple"
+      ]
+    },
+    "timeline": {
+      "questionId": "timeline",
+      "value": "1-3-months"
+    },
+    "final-thoughts": {
+      "questionId": "final-thoughts",
+      "value": "All of the current platforms are excellent at one facet of coaching but none of them deliver a fully streamlined, efficient service. It would be great to have the flexibility of google sheets in terms of data and how it's presented combined with the management capabilities of teambuildr."
+    }
+  }
+}

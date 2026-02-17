@@ -10,6 +10,8 @@ const navItems = [
   { href: "/", label: "Home" },
   { href: "/research", label: "Research" },
   { href: "/interview", label: "Interview" },
+  { href: "/submissions", label: "Submissions" },
+  { href: "/prd", label: "PRD" },
 ];
 
 export function Header() {

@@ -1,11 +1,12 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { PRDOutput } from '@/lib/interview/types';
 import { exportAsJSON, exportAsMarkdown } from '@/lib/interview/export';
-import { Download, FileText, FileJson, CheckCircle2 } from 'lucide-react';
+import { Download, FileText, FileJson, CheckCircle2, Loader2, CloudOff } from 'lucide-react';
 
 interface ExportStepProps {
   prd: PRDOutput;
@@ -13,6 +14,27 @@ interface ExportStepProps {
 }
 
 export function ExportStep({ prd, onReset }: ExportStepProps) {
+  const submitted = useRef(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    if (submitted.current) return;
+    submitted.current = true;
+
+    setSubmitStatus('submitting');
+    fetch('/api/submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(prd),
+    })
+      .then((res) => {
+        setSubmitStatus(res.ok ? 'success' : 'error');
+      })
+      .catch(() => {
+        setSubmitStatus('error');
+      });
+  }, [prd]);
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-center space-y-3">
@@ -23,6 +45,21 @@ export function ExportStep({ prd, onReset }: ExportStepProps) {
         <p className="text-muted-foreground">
           Your requirements document has been generated. Download it below.
         </p>
+        {submitStatus === 'submitting' && (
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            Saving response…
+          </p>
+        )}
+        {submitStatus === 'success' && (
+          <p className="text-xs text-green-600">Response saved</p>
+        )}
+        {submitStatus === 'error' && (
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+            <CloudOff className="h-3 w-3" />
+            Could not save — your download still works
+          </p>
+        )}
       </div>
 
       <Card>
