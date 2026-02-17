@@ -2,6 +2,12 @@ export const researchMetadata: Record<
   string,
   { title: string; description: string; category: string }
 > = {
+  "cannoli-gang-trainer-profile": {
+    title: "Cannoli Gang - Trainer Profile & Business Analysis",
+    description:
+      "Comprehensive profile of Joe Cristando (Cannoli Strength): 7 years coaching, 52 USAPL state records, VBT expertise, Brooklyn-based independent powerlifting coach. Covers business model, tech stack, operational gaps, and inferred platform needs.",
+    category: "Trainer Profile",
+  },
   "competitor-deep-dive": {
     title: "Competitor Deep-Dive Analysis",
     description:

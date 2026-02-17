@@ -20,7 +20,7 @@ function getAnswerDisplay(question: Question, answer: Answer): string {
   if (question.type === 'scale') {
     const labels = question.scaleLabels;
     if (labels) {
-      return `${val}/10 (${labels.min} to ${labels.max})`;
+      return `${val}/10 (${labels.min} → ${labels.max})`;
     }
     return `${val}/10`;
   }
@@ -70,122 +70,112 @@ export function generatePRD(
   const get = (id: string) => getAnswerForQuestion(id, questions, answers);
 
   const trainerProfile: Record<string, string> = {
-    role: get('role'),
-    organization: get('org-type'),
+    roles: get('coaching-identity'),
     athleteCount: get('athlete-count'),
+    inPersonVsRemote: get('in-person-vs-remote'),
+    facility: get('facility-situation'),
+    soloOrTeam: get('coaching-solo-or-team'),
   };
 
-  if (answers['role-other']) {
-    trainerProfile.roleDetail = get('role-other');
-  }
-  if (answers['org-type-other']) {
-    trainerProfile.orgDetail = get('org-type-other');
+  if (answers['coaching-identity-other']) {
+    trainerProfile.rolesOther = get('coaching-identity-other');
   }
 
   const prdSections: PRDSection[] = [];
 
   // Executive Summary
-  const roleName = trainerProfile.roleDetail || trainerProfile.role;
-  const orgName = trainerProfile.orgDetail || trainerProfile.organization;
   prdSections.push({
     title: 'Executive Summary',
-    content: `This PRD captures the requirements of a ${roleName} working in a ${orgName} environment, training ${trainerProfile.athleteCount} athletes. The interview identified key pain points, required features, budget constraints, and workflow preferences to inform platform design and prioritization.`,
+    content: `This PRD captures the requirements of an independent powerlifting and S&C coach currently training ${trainerProfile.athleteCount} athletes (${trainerProfile.inPersonVsRemote}). The trainer operates as ${trainerProfile.soloOrTeam === 'Solo — it\'s just me' ? 'a solo coach' : trainerProfile.soloOrTeam.toLowerCase()} out of ${trainerProfile.facility.toLowerCase()}. Coaching roles include: ${trainerProfile.roles}. The interview identified key workflow pain points, methodology requirements (including VBT and RPE-based programming), competition prep needs, desired platform capabilities, and business growth goals.`,
   });
 
-  // Trainer Profile & Context
-  const welcomeQs = questions.filter((q) => q.sectionId === 'welcome');
+  // Coach Profile & Practice
+  const youQs = questions.filter((q) => q.sectionId === 'you');
   prdSections.push({
-    title: 'Trainer Profile & Context',
-    content: buildSectionContent(welcomeQs, answers),
+    title: 'Coach Profile & Practice Model',
+    content: buildSectionContent(youQs, answers),
   });
 
-  // Current Pain Points & Requirements Drivers
-  const painQs = questions.filter((q) => q.sectionId === 'pain-points');
-  const currentSetupQs = questions.filter((q) => q.sectionId === 'current-setup');
+  // Current Workflow
+  const dayQs = questions.filter((q) => q.sectionId === 'day-in-life');
   prdSections.push({
-    title: 'Current Pain Points & Requirements Drivers',
-    content: [
-      buildSectionContent(currentSetupQs, answers),
-      buildSectionContent(painQs, answers),
-    ]
-      .filter(Boolean)
-      .join('\n\n---\n\n'),
+    title: 'Current Workflow & Tools',
+    content: buildSectionContent(dayQs, answers),
   });
 
-  // Must-Have Features
+  // Athlete Profile
+  const athleteQs = questions.filter((q) => q.sectionId === 'athletes');
   prdSections.push({
-    title: 'Must-Have Features',
-    content: buildSectionContent(
-      questions.filter((q) => q.id === 'must-have-features'),
-      answers
-    ),
-  });
-
-  // Nice-to-Have Features
-  prdSections.push({
-    title: 'Nice-to-Have Features',
-    content: buildSectionContent(
-      questions.filter((q) => q.id === 'nice-to-have-features'),
-      answers
-    ),
-  });
-
-  // Technical Requirements
-  const techQs = questions.filter((q) => q.sectionId === 'technical');
-  prdSections.push({
-    title: 'Technical Requirements',
-    content: buildSectionContent(techQs, answers),
-  });
-
-  // Budget Constraints
-  const budgetQs = questions.filter((q) => q.sectionId === 'budget');
-  prdSections.push({
-    title: 'Budget Constraints',
-    content: buildSectionContent(budgetQs, answers),
-  });
-
-  // User Interaction Model
-  const athleteQs = questions.filter((q) => q.sectionId === 'athlete-model');
-  prdSections.push({
-    title: 'User Interaction Model',
+    title: 'Athlete Profile & Interaction Model',
     content: buildSectionContent(athleteQs, answers),
   });
 
-  // Data & Analytics Requirements
-  const dataQs = questions.filter((q) => q.sectionId === 'data-analytics');
+  // Programming & Methodology
+  const progQs = questions.filter((q) => q.sectionId === 'programming');
   prdSections.push({
-    title: 'Data & Analytics Requirements',
-    content: buildSectionContent(dataQs, answers),
+    title: 'Programming & Methodology Requirements',
+    content: buildSectionContent(progQs, answers),
   });
 
-  // Communication Requirements
-  const commQs = questions.filter((q) => q.sectionId === 'communication');
-  prdSections.push({
-    title: 'Communication Requirements',
-    content: buildSectionContent(commQs, answers),
-  });
-
-  // Key Workflows
-  const workflowQs = questions.filter((q) => q.sectionId === 'workflows');
-  prdSections.push({
-    title: 'Key Workflows',
-    content: buildSectionContent(workflowQs, answers),
-  });
-
-  // Implementation Timeline & Priorities
-  const priorityQs = questions.filter((q) => q.sectionId === 'priorities');
-  prdSections.push({
-    title: 'Implementation Timeline & Priorities',
-    content: buildSectionContent(priorityQs, answers),
-  });
-
-  // Dealbreakers
-  if (answers['dealbreakers']) {
+  // Competition Prep
+  const compQs = questions.filter((q) => q.sectionId === 'comp-prep');
+  const compContent = buildSectionContent(compQs, answers);
+  if (compContent) {
     prdSections.push({
-      title: 'Dealbreakers',
-      content: String(answers['dealbreakers'].value),
+      title: 'Competition & Meet Prep Requirements',
+      content: compContent,
     });
   }
+
+  // Pain Points & Gaps
+  const painQs = questions.filter((q) => q.sectionId === 'pain');
+  prdSections.push({
+    title: 'Current Pain Points & Gaps',
+    content: buildSectionContent(painQs, answers),
+  });
+
+  // Platform Requirements
+  prdSections.push({
+    title: 'Must-Have Platform Capabilities',
+    content: buildSectionContent(
+      questions.filter((q) => q.id === 'must-haves'),
+      answers
+    ),
+  });
+
+  const niceContent = buildSectionContent(
+    questions.filter((q) => q.id === 'nice-to-haves'),
+    answers
+  );
+  if (niceContent) {
+    prdSections.push({
+      title: 'Nice-to-Have Capabilities',
+      content: niceContent,
+    });
+  }
+
+  // Mobile & UX
+  const mobileImportance = answers['mobile-importance'];
+  if (mobileImportance) {
+    prdSections.push({
+      title: 'Mobile & Athlete UX Requirements',
+      content: `**Mobile importance:** ${get('mobile-importance')}\n\n${answers['dealbreakers'] ? `**Dealbreakers:** ${String(answers['dealbreakers'].value)}` : ''}`,
+    });
+  }
+
+  // Business & Growth
+  const bizQs = questions.filter((q) => q.sectionId === 'business');
+  prdSections.push({
+    title: 'Business Model & Growth Goals',
+    content: buildSectionContent(bizQs, answers),
+  });
+
+  // Priorities
+  const priorityQs = questions.filter((q) => q.sectionId === 'priorities');
+  prdSections.push({
+    title: 'Priorities & Timeline',
+    content: buildSectionContent(priorityQs, answers),
+  });
 
   return {
     generatedAt: new Date().toISOString(),

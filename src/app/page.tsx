@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent,
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +16,12 @@ import {
   ArrowRight,
   FileText,
   Dumbbell,
+  User,
 } from "lucide-react";
 
 const previewDocs = [
+  "cannoli-gang-trainer-profile",
   "competitor-deep-dive",
-  "teambuildr-comprehensive-platform-analysis",
   "teambuildr-strength-platform-comprehensive-analysis",
 ];
 
@@ -39,8 +39,8 @@ export default function HomePage() {
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Deep research on the strength &amp; conditioning software landscape,
-            plus an interactive interview tool to capture your platform requirements
-            and generate a Product Requirements Document.
+            a profile of the coaching practice we&apos;re building for, and an
+            interactive interview to capture platform requirements and generate a PRD.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button size="lg" asChild>
@@ -56,6 +56,39 @@ export default function HomePage() {
               </Link>
             </Button>
           </div>
+        </Container>
+      </section>
+
+      {/* Trainer Profile Callout */}
+      <section className="py-12 border-b border-border">
+        <Container>
+          <Card className="max-w-3xl mx-auto bg-accent/30">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Building for: Cannoli Strength</CardTitle>
+                  <CardDescription>
+                    Joe Cristando &mdash; Independent powerlifting &amp; S&C coach, Brooklyn NY
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardFooter className="flex flex-wrap gap-2">
+              <Badge variant="secondary">7 years coaching</Badge>
+              <Badge variant="secondary">52 USAPL state records</Badge>
+              <Badge variant="secondary">VBT practitioner</Badge>
+              <Badge variant="secondary">In-person + remote</Badge>
+              <Button variant="ghost" size="sm" asChild className="ml-auto">
+                <Link href="/research/cannoli-gang-trainer-profile" className="gap-1">
+                  Read full profile
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
         </Container>
       </section>
 
@@ -122,19 +155,18 @@ export default function HomePage() {
         <Container>
           <div className="max-w-2xl mx-auto text-center space-y-4">
             <ClipboardList className="h-10 w-10 text-primary mx-auto" />
-            <h2 className="text-2xl font-bold">Trainer Interview Tool</h2>
+            <h2 className="text-2xl font-bold">Coaching Practice Interview</h2>
             <p className="text-muted-foreground">
-              Complete a guided interview about your coaching workflow, feature
-              needs, and priorities. Your answers are transformed into a
-              structured Product Requirements Document you can download as JSON
-              or Markdown.
+              Walk through your coaching workflow, programming methodology,
+              competition prep process, and business goals. Your answers are
+              transformed into a structured PRD you can download as JSON or Markdown.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <Badge variant="secondary" className="text-xs">
-                ~15-20 minutes
+                ~12-18 minutes
               </Badge>
               <Badge variant="secondary" className="text-xs">
-                ~40 questions, 11 sections
+                9 sections, ~45 questions
               </Badge>
               <Badge variant="secondary" className="text-xs">
                 Auto-saved progress
