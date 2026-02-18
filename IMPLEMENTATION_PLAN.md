@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 144
+- Completed: 145
 - In progress: 0
-- Remaining: 35
+- Remaining: 34
 
 ## Tasks
 
@@ -747,7 +747,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `defaultWeightUnit`, `timezone`, `defaultRestTimerSeconds` fields. Migration runs.
 
-- [ ] **Task 29.2**: Create Settings page at `/settings`
+- [x] **Task 29.2**: Create Settings page at `/settings`
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Profile and preferences sections. Server action save. Success toast. Gear icon in nav.
 

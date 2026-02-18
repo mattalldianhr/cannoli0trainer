@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Dumbbell, Menu, X } from "lucide-react";
+import { Dumbbell, Menu, Settings, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +44,18 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/settings"
+              className={cn(
+                "ml-1 p-2 rounded-md transition-colors",
+                pathname === "/settings"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
+              aria-label="Settings"
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
           </nav>
 
           {/* Mobile menu button */}
@@ -74,6 +86,19 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/settings"
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                pathname === "/settings"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
+            >
+              <Settings className="h-4 w-4" />
+              Settings
+            </Link>
           </nav>
         )}
       </div>
