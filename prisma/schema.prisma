@@ -130,13 +130,16 @@ model Submission {
 // --- Coaching Platform Models ---
 
 model Coach {
-  id                      String   @id @default(uuid())
+  id                      String     @id @default(uuid())
   name                    String
-  email                   String   @unique
+  email                   String     @unique
   brandName               String?
-  notificationPreferences Json     @default("{\"emailOnWorkoutComplete\":true,\"emailOnCheckIn\":true}")
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+  notificationPreferences Json       @default("{\"emailOnWorkoutComplete\":true,\"emailOnCheckIn\":true}")
+  defaultWeightUnit       WeightUnit @default(lbs)
+  timezone                String     @default("America/New_York")
+  defaultRestTimerSeconds Int        @default(120)
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
 
   athletes  Athlete[]
   programs  Program[]

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 142
+- Completed: 144
 - In progress: 0
-- Remaining: 37
+- Remaining: 35
 
 ## Tasks
 
@@ -736,13 +736,14 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/03-athlete-management.md
   - Acceptance: `isActive Boolean @default(true)`. Default filter to active only. "Archived" tab. Reactivation supported. Hard delete only when zero data.
 
-- [ ] **Task 28.8**: Add make/miss fields to MeetEntry model
+- [x] **Task 28.8**: Add make/miss fields to MeetEntry model
   - Spec: specs/09-competition-prep.md
   - Acceptance: 9 boolean fields for attempt results. UI indicators. Migration runs.
+  - Note: Already implemented in Task 26.1 via `attemptResults` JSON field (migration `20260218204936_add_meet_entry_attempt_results`). Each of the 9 attempts (3 lifts x 3 attempts) stores `{weight, good}` — equivalent to 9 boolean fields. UI indicators (green check/red X) implemented in MeetDetail.tsx.
 
 ### Priority 29: Settings & Preferences
 
-- [ ] **Task 29.1**: Add settings fields to Coach model
+- [x] **Task 29.1**: Add settings fields to Coach model
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `defaultWeightUnit`, `timezone`, `defaultRestTimerSeconds` fields. Migration runs.
 
