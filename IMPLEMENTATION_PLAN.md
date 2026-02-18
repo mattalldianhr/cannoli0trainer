@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 12
+- Completed: 13
 - In progress: 0
 
 ## Tasks
@@ -58,7 +58,7 @@
   - Acceptance: `npx prisma db seed` creates 800+ exercises with name, category, force, level, mechanic, equipment, primaryMuscles, secondaryMuscles, instructions, images
   - Data source: https://github.com/yuhonas/free-exercise-db (Unlicense/Public Domain)
 
-- [ ] **Task 2.2**: Tag powerlifting-relevant exercises and create exercise name mapping
+- [x] **Task 2.2**: Tag powerlifting-relevant exercises and create exercise name mapping
   - Spec: specs/05-exercise-library.md
   - Acceptance: Exercises tagged with powerlifting categories (competition_lift, competition_variation, accessory, gpp). TeamBuildr's 136 exercise names mapped to free-exercise-db entries where possible, unmatched exercises created as new entries.
   - Data source: TeamBuildr export (136 unique exercises) + free-exercise-db
@@ -381,6 +381,9 @@
 ## Discoveries
 
 _Updated by Ralph during planning review (2026-02-17)_
+
+### Exercise Tagging and TeamBuildr Name Mapping (2026-02-18)
+Of 136 TeamBuildr exercise names: 6 are non-exercises (notes/surveys), 11 match free-exercise-db exactly (or case-insensitive), 53 map to existing free-exercise-db exercises via name normalization (e.g., "Back Squat" → "Barbell Squat", "Comp bench" → "Barbell Bench Press - Medium Grip"), and 66 are powerlifting-specific exercises created as new entries (Spoto Press, Larsen Press, paused/tempo variations, etc.). 165 total exercises now have powerlifting tags across 4 categories: competition_lift (7), competition_variation (51), accessory (74), gpp (33). Mapping module at `prisma/seed-data/exercise-tags.ts` exports: `freeExerciseDbTags`, `teambuildrToFreeExerciseDb`, `teambuildrNewExercises`, `teambuildrNonExercises`, and `resolveTeambuildrExerciseName()`. Total exercise count: 939 (873 free-exercise-db + 66 new).
 
 ### Exercise Model Extended for free-exercise-db (2026-02-18)
 Exercise model `coachId` made optional (nullable) so library exercises from free-exercise-db don't require a coach. Added fields: `force`, `level`, `mechanic`, `equipment`, `primaryMuscles` (Json), `secondaryMuscles` (Json), `instructions` (Json), `images` (Json). Added indexes on `name` and `category` for search/filter. 873 exercises seeded — categories: strength (581), stretching (123), plyometrics (61), powerlifting (38), olympic weightlifting (35), strongman (21), cardio (14).
