@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 17
+- Completed: 18
 - In progress: 0
 
 ## Tasks
@@ -83,7 +83,7 @@
   - Acceptance: Script compares source TeamBuildr JSON counts (dates, exercises, sets, reps, tonnage, PRs per athlete) against imported database records, reports discrepancies with pass/fail status
   - Note: Moved from old Priority 13 (Task 13.5).
 
-- [ ] **Task 2.7**: Install `@finegym/fitness-calc` and `powerlifting-formulas` npm packages
+- [x] **Task 2.7**: Install `@finegym/fitness-calc` and `powerlifting-formulas` npm packages
   - Spec: summaries/open-source-exercise-databases-apis-powerlifting-resources.md
   - Acceptance: Both packages installed, TypeScript types resolve. Test: `calculateOneRepMax(100, 5)` returns valid e1RM. `wilks(82.5, 510, 'male')` returns valid score.
   - Note: MIT-licensed calculation libraries for 1RM (Epley, Brzycki, etc.) and powerlifting coefficients (Wilks, DOTS).
