@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 15
+- Completed: 16
 - In progress: 0
 
 ## Tasks
@@ -73,7 +73,7 @@
   - Acceptance: `npx prisma db seed` creates coach (Joe Cristando), 5 athletes with real profiles (Matt, Chris, Michael, Hannah, Maddy), group assignments, correct IDs and date ranges from TeamBuildr export
   - Data source: test-data/teambuildr-full-export-5-athletes.json
 
-- [ ] **Task 2.5**: Import workout history (sessions, exercises, sets, maxes) from TeamBuildr export
+- [x] **Task 2.5**: Import workout history (sessions, exercises, sets, maxes) from TeamBuildr export
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: All 2,033 workout dates imported as WorkoutSessions. All 12,437 workout items imported as WorkoutExercises with SetLogs. All 1,806 PRs imported as MaxSnapshots. Tonnage, sets, reps match source data totals.
   - Data source: test-data/teambuildr-full-export-5-athletes.json
@@ -381,6 +381,9 @@
 ## Discoveries
 
 _Updated by Ralph during planning review (2026-02-17)_
+
+### Workout History Import (2026-02-18)
+Full workout history imported via `seedWorkoutHistory()` in `prisma/seed.ts`. Creates one "TeamBuildr Import" Program per athlete as a container, with Workout records for each session date. Final counts: 2,033 WorkoutSessions, 2,033 Workouts, 12,283 WorkoutExercises, 31,660 SetLogs, 5,316 MaxSnapshots (deduplicated). All weights in kg. Import is idempotent — skips if WorkoutSessions already exist. Fixed 11 exercise name mismatches: 9 exercises added to `teambuildrNewExercises` (Bulgarian Split Squat, Glute Bridge, Kettlebell Swing, Nordic Hamstring Curl, Overhead Triceps Extension, Pendlay Row, Push-Ups, Romanian Deadlift With Dumbbells, Walking Barbell Lunge) and 2 case-sensitivity fixes added to `teambuildrToFreeExerciseDb` (Band Assisted Pull-up → Pull-Up, Bicep Exercise of choice → Choice). Total exercises now 948 (873 free-exercise-db + 75 new). Runtime type coercion applied for `prescribedLoad` (number → string), `reps` (string → number) from TeamBuildr JSON — types are looser at runtime than TypeScript definitions suggest.
 
 ### TeamBuildr Data Transformer (2026-02-18)
 Transformer module at `src/lib/teambuildr/transformer.ts` with types at `src/lib/teambuildr/types.ts`. Validated against full 5-athlete export (37 MB). Key metrics: 2,033 dates → 2,033 sessions, 12,437 workout items → 12,283 exercises (97 non-exercises skipped, 57 empty items skipped), 31,660 sets with actual data, 16,681 raw max snapshots → 5,316 after deduplication. Prescription type distribution: RPE-based (8,206), fixed (3,974), percentage-based (103). 413 exercises in supersets. Data patterns: `value` = actual (what athlete logged), `placeholder` = prescribed (what coach programmed), `percentage` = %1RM. RPE extracted from `additionalInformation` free text with range support (e.g., "RPE 6-7" → 7). Michael Odermatt's last name had trailing whitespace in source data — transformer trims names.
