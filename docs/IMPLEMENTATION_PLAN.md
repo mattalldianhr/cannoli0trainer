@@ -1,10 +1,10 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 179
+- Total tasks: 180
 - Completed: 155
 - In progress: 0
-- Remaining: 24
+- Remaining: 25
 
 ## Tasks
 
@@ -393,6 +393,8 @@ _Updated by Ralph during planning review (2026-02-17)_
 ### Dev Login Bypass for Athlete Portal (2026-02-18)
 Added a Credentials provider (`dev-login`) to NextAuth that auto-signs in as the first athlete with an email (Matt Alldian). Controlled by `ENABLE_DEV_LOGIN=true` env var (server-side auth provider) and `NEXT_PUBLIC_ENABLE_DEV_LOGIN=true` (client-side button visibility). Both vars set on Railway. Shows a dashed yellow "Dev Login (Matt Alldian)" button on `/athlete/login`. Creates a real NextAuth JWT session so middleware, API routes, and `useSession()` all work identically to a normal magic link login. To disable, remove the env vars from Railway — no code changes needed.
 
+**Production blocker (2026-02-18)**: Dev login fails on Railway with `CredentialsSignin` error. Root cause: the `authorize()` function queries `prisma.athlete.findFirst({ where: { email: { not: null } } })` but no athlete in the production DB has an email set. The seed function `seedTestAthleteAuth()` only runs when `SEED_ATHLETE_EMAIL` is set, and that env var is not configured on Railway. Fix requires either: (a) setting `SEED_ATHLETE_EMAIL` on Railway and re-running the seed, or (b) manually inserting a User record and linking it to an athlete via `railway run`. See Task 18.15.
+
 ### Documentation Consolidation (2026-02-18)
 All pre-app documentation moved under `/docs` directory: research summaries (`docs/research/`), PRD, IMPLEMENTATION_PLAN, AGENTS. Website routes moved from `/prd/*` to `/docs/*` with a new "Docs" link in the header nav. Added comprehensive architecture overview at `docs/ARCHITECTURE.md` rendered at `/docs/architecture` — covers full stack, 15 database models, 30+ API endpoints, auth flow, data pipelines, VBT module, scheduling engine, offline support, and infrastructure.
 
@@ -592,6 +594,11 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 - [x] **Task 18.14**: Seed test athlete with email for auth testing
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: At least one athlete seeded with real email. Linked to User if exists.
+
+- [ ] **Task 18.15**: Set up athlete auth on Railway production database
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Set `SEED_ATHLETE_EMAIL` env var on Railway, re-run seed to link an athlete to a User record. Dev login (`ENABLE_DEV_LOGIN=true`) succeeds on production — clicking "Dev Login (Matt Alldian)" on `/athlete/login` creates a session and redirects to `/athlete`. Verify `/api/athlete/dashboard` returns 200 (not 401).
+  - Note: Blocker for dev login bypass. The `authorize()` function needs at least one athlete with a non-null email linked to a User record. Without this, `CredentialsSignin` error occurs.
 
 ### Priority 19: Athlete Management Enhancements
 
