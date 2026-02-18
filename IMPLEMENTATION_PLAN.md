@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 83
+- Completed: 84
 - In progress: 0
-- Remaining: 96 (7 original + 97 new from spec review)
+- Remaining: 95 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -491,7 +491,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: When no WorkoutSession exists for the requested date, the response includes `nextSession: { date, title, programName }` by querying the next upcoming NOT_STARTED session.
 
-- [ ] **Task 17.8**: Create coach calendar page at `/schedule` with weekly view
+- [x] **Task 17.8**: Create coach calendar page at `/schedule` with weekly view
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Page renders a 7-day week grid. Rows are athletes (filterable). Columns are Monday-Sunday. Each cell shows the WorkoutSession title for that athlete+date, or empty for rest days. Current week shown by default. Forward/backward navigation changes the displayed week.
 
