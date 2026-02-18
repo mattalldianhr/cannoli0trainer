@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 30
+- Completed: 31
 - In progress: 0
 
 ## Tasks
@@ -140,7 +140,7 @@
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: POST creates set log, GET returns sets for athlete+exercise
 
-- [ ] **Task 4.6**: Create API routes for BodyweightLog (`/api/bodyweight`)
+- [x] **Task 4.6**: Create API routes for BodyweightLog (`/api/bodyweight`)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: POST creates log, GET returns history for athlete
 
