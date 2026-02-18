@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 88
+- Completed: 89
 - In progress: 0
-- Remaining: 91 (7 original + 97 new from spec review)
+- Remaining: 90 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -511,7 +511,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: "Assign to Athlete" flow gains a training day configuration UI. Shows 7 day-of-week checkboxes with Mon/Tue/Thu/Fri pre-checked. Presets available: "4-Day", "3-Day", "5-Day", "Custom".
 
-- [ ] **Task 17.13**: Unit test scheduling service with edge cases
+- [x] **Task 17.13**: Unit test scheduling service with edge cases
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Tests cover standard, spillover, mid-week start, empty program, and weekend scenarios. All pass with `npx vitest run`.
 

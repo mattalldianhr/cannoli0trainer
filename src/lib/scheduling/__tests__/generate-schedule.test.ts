@@ -293,6 +293,215 @@ describe('generateSchedule', () => {
   })
 
   // ============================================================
+  // Task 17.13: Additional edge cases
+  // ============================================================
+
+  describe('start on last training day of week', () => {
+    it('should only use Friday from the first week then advance', () => {
+      const workouts = [
+        makeWorkout(1, 1),
+        makeWorkout(1, 2),
+        makeWorkout(1, 3),
+      ]
+      const startDate = date(2026, 2, 27) // Friday Feb 27
+      const trainingDays = [1, 2, 4, 5] // Mon/Tue/Thu/Fri
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(3)
+      // Only Friday available in first week
+      expect(formatDate(sessions[0].date)).toBe('2026-02-27') // Fri
+      // Days 2-3 spill to next calendar week
+      expect(formatDate(sessions[1].date)).toBe('2026-03-02') // Next Mon
+      expect(formatDate(sessions[2].date)).toBe('2026-03-03') // Next Tue
+    })
+  })
+
+  describe('start on Sunday (week boundary)', () => {
+    it('should treat Sunday as last day of current calendar week', () => {
+      const workouts = [
+        makeWorkout(1, 1),
+        makeWorkout(1, 2),
+      ]
+      // Sunday March 1, 2026 — getWeekStart should find Monday Feb 23
+      const startDate = date(2026, 3, 1) // Sunday
+      const trainingDays = [6, 0] // Sat/Sun
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(2)
+      // Sunday is in the same week, should be used
+      expect(formatDate(sessions[0].date)).toBe('2026-03-01') // Sun
+      // Day 2 goes to next week's Saturday
+      expect(formatDate(sessions[1].date)).toBe('2026-03-07') // Next Sat
+    })
+  })
+
+  describe('start on non-training day between training days', () => {
+    it('should skip to next available training day (Thursday)', () => {
+      const workouts = [
+        makeWorkout(1, 1),
+        makeWorkout(1, 2),
+      ]
+      const startDate = date(2026, 2, 25) // Wednesday Feb 25
+      const trainingDays = [1, 2, 4, 5] // Mon/Tue/Thu/Fri
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(2)
+      // Mon and Tue are before startDate, skip to Thu
+      expect(formatDate(sessions[0].date)).toBe('2026-02-26') // Thu
+      expect(formatDate(sessions[1].date)).toBe('2026-02-27') // Fri
+    })
+  })
+
+  describe('multi-week spillover (8-day program week with 3 training days)', () => {
+    it('should spill across multiple calendar weeks', () => {
+      // 8 workout days in a single program week, only 3 training days per week
+      const workouts: WorkoutInput[] = []
+      for (let d = 1; d <= 8; d++) {
+        workouts.push(makeWorkout(1, d))
+      }
+      const startDate = date(2026, 3, 2) // Monday March 2
+      const trainingDays = [1, 3, 5] // Mon/Wed/Fri (3 days)
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(8)
+      // Week 1: Mon/Wed/Fri (days 1-3)
+      expect(formatDate(sessions[0].date)).toBe('2026-03-02') // Mon
+      expect(formatDate(sessions[1].date)).toBe('2026-03-04') // Wed
+      expect(formatDate(sessions[2].date)).toBe('2026-03-06') // Fri
+      // Spill to week 2: Mon/Wed/Fri (days 4-6)
+      expect(formatDate(sessions[3].date)).toBe('2026-03-09') // Mon
+      expect(formatDate(sessions[4].date)).toBe('2026-03-11') // Wed
+      expect(formatDate(sessions[5].date)).toBe('2026-03-13') // Fri
+      // Spill to week 3: Mon/Wed (days 7-8)
+      expect(formatDate(sessions[6].date)).toBe('2026-03-16') // Mon
+      expect(formatDate(sessions[7].date)).toBe('2026-03-18') // Wed
+    })
+  })
+
+  describe('6-day training schedule', () => {
+    it('should schedule 6 workouts across Mon-Sat', () => {
+      const workouts = [
+        makeWorkout(1, 1, 'Heavy Squat'),
+        makeWorkout(1, 2, 'Heavy Bench'),
+        makeWorkout(1, 3, 'Heavy Deadlift'),
+        makeWorkout(1, 4, 'Volume Squat'),
+        makeWorkout(1, 5, 'Volume Bench'),
+        makeWorkout(1, 6, 'Accessories'),
+      ]
+      const startDate = date(2026, 2, 23) // Monday
+      const trainingDays = [1, 2, 3, 4, 5, 6] // Mon-Sat
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(6)
+      expect(formatDate(sessions[0].date)).toBe('2026-02-23') // Mon
+      expect(formatDate(sessions[1].date)).toBe('2026-02-24') // Tue
+      expect(formatDate(sessions[2].date)).toBe('2026-02-25') // Wed
+      expect(formatDate(sessions[3].date)).toBe('2026-02-26') // Thu
+      expect(formatDate(sessions[4].date)).toBe('2026-02-27') // Fri
+      expect(formatDate(sessions[5].date)).toBe('2026-02-28') // Sat
+    })
+  })
+
+  describe('single workout program', () => {
+    it('should create exactly one session', () => {
+      const workouts = [makeWorkout(1, 1, 'Max Out Day')]
+      const startDate = date(2026, 3, 5) // Thursday
+      const trainingDays = [1, 4] // Mon/Thu
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(1)
+      expect(formatDate(sessions[0].date)).toBe('2026-03-05') // Thu
+      expect(sessions[0].title).toBe('Max Out Day')
+    })
+  })
+
+  describe('large program (6-week, 5-day)', () => {
+    it('should generate 30 sessions across 6 calendar weeks', () => {
+      const workouts: WorkoutInput[] = []
+      for (let w = 1; w <= 6; w++) {
+        for (let d = 1; d <= 5; d++) {
+          workouts.push(makeWorkout(w, d))
+        }
+      }
+      const startDate = date(2026, 3, 2) // Monday March 2
+      const trainingDays = [1, 2, 3, 4, 5] // Mon-Fri (5 days)
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(30)
+
+      // Verify week 1 start
+      expect(formatDate(sessions[0].date)).toBe('2026-03-02') // Mon W1
+      expect(sessions[0].weekNumber).toBe(1)
+      expect(sessions[0].dayNumber).toBe(1)
+
+      // Verify week 6 end
+      expect(formatDate(sessions[29].date)).toBe('2026-04-10') // Fri W6
+      expect(sessions[29].weekNumber).toBe(6)
+      expect(sessions[29].dayNumber).toBe(5)
+
+      // All dates should be unique
+      const dateStrings = sessions.map((s) => formatDate(s.date))
+      expect(new Set(dateStrings).size).toBe(30)
+
+      // No sessions on weekends
+      const weekendSessions = sessions.filter((s) => {
+        const day = s.date.getDay()
+        return day === 0 || day === 6
+      })
+      expect(weekendSessions).toHaveLength(0)
+    })
+  })
+
+  describe('non-sequential program weeks', () => {
+    it('should handle gaps in week numbers', () => {
+      // Program has weeks 1, 3 (skip week 2 — e.g. deload removed)
+      const workouts = [
+        makeWorkout(1, 1),
+        makeWorkout(1, 2),
+        makeWorkout(3, 1),
+        makeWorkout(3, 2),
+      ]
+      const startDate = date(2026, 2, 23) // Monday
+      const trainingDays = [1, 3] // Mon/Wed
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      expect(sessions).toHaveLength(4)
+      // Week 1
+      expect(formatDate(sessions[0].date)).toBe('2026-02-23') // Mon
+      expect(formatDate(sessions[1].date)).toBe('2026-02-25') // Wed
+      // Week 3 goes to the next calendar week (no gap — just sequential)
+      expect(formatDate(sessions[2].date)).toBe('2026-03-02') // Mon
+      expect(formatDate(sessions[3].date)).toBe('2026-03-04') // Wed
+    })
+  })
+
+  describe('all dates have time stripped to midnight', () => {
+    it('should produce dates with 00:00:00.000 time', () => {
+      const workouts = [makeWorkout(1, 1), makeWorkout(1, 2)]
+      // Start date with a non-midnight time
+      const startDate = new Date(2026, 2, 2, 14, 30, 45) // 2:30:45 PM
+      const trainingDays = [1, 2]
+
+      const sessions = generateSchedule(workouts, startDate, trainingDays)
+
+      for (const session of sessions) {
+        expect(session.date.getHours()).toBe(0)
+        expect(session.date.getMinutes()).toBe(0)
+        expect(session.date.getSeconds()).toBe(0)
+        expect(session.date.getMilliseconds()).toBe(0)
+      }
+    })
+  })
+
+  // ============================================================
   // Dealbreaker test from spec
   // ============================================================
 
