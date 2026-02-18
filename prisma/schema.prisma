@@ -7,6 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- Coaching Platform Enums ---
+
+enum ExperienceLevel {
+  beginner
+  intermediate
+  advanced
+}
+
+enum PrescriptionType {
+  percentage
+  rpe
+  rir
+  velocity
+  autoregulated
+  fixed
+}
+
+enum WeightUnit {
+  kg
+  lbs
+}
+
+enum ProgramType {
+  individual
+  template
+  group
+}
+
+enum PeriodizationType {
+  block
+  dup
+  linear
+  rpe_based
+  hybrid
+}
+
+// --- Existing Models ---
+
 model Submission {
   id             String   @id @default(uuid())
   generatedAt    DateTime

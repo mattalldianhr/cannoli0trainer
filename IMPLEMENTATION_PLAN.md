@@ -2,14 +2,14 @@
 
 ## Status
 - Total tasks: 66
-- Completed: 0
+- Completed: 2
 - In progress: 0
 
 ## Tasks
 
 ### Priority 1: Foundation (Data Layer)
 
-- [ ] **Task 1.1**: Define Prisma enums for ExperienceLevel, PrescriptionType, WeightUnit, ProgramType, PeriodizationType
+- [x] **Task 1.1**: Define Prisma enums for ExperienceLevel, PrescriptionType, WeightUnit, ProgramType, PeriodizationType
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes with all enums defined
 
@@ -216,6 +216,7 @@
 - [ ] **Task 9.5**: Update Header nav to include Dashboard, Athletes, Programs, Exercises links
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Nav links route to correct pages, active state shown
+  - Note: Current Header has research hub links (Home, Research, Interview, Submissions, Findings, PRD). Must replace or restructure for coaching platform nav.
 
 ### Priority 10: Progress Analytics
 
@@ -293,9 +294,39 @@
   - Spec: summaries/spec-review-teambuildr-data-alignment.md
   - Acceptance: Script compares source TeamBuildr data counts against imported database records, reports discrepancies
 
-- [ ] **Task 13.6**: Create production TeamBuildr export script with rate limiting and resume
+- [x] **Task 13.6**: Create production TeamBuildr export script with rate limiting and resume
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: `npx tsx scripts/teambuildr-export.ts --help` prints usage, supports --token, --account, --output, --resume flags
+  - **Completed**: Full implementation exists at `scripts/teambuildr-export.ts` with supporting libraries in `scripts/lib/` (teambuildr-client, rate-limiter, retry, checkpoint, logger). Supports --token, --account, --output, --resume, --athletes, --concurrency, --rate flags.
 
 ## Discoveries
-_Updated by Ralph during execution_
+
+_Updated by Ralph during planning review (2026-02-17)_
+
+### Codebase Baseline (2026-02-17)
+
+**Current state**: The codebase is a research/interview platform — not yet a coaching tool. The Prisma schema has only a `Submission` model. Zero coaching pages, API routes, or domain components exist. All 66 plan tasks start from scratch except Task 13.6.
+
+**What exists and is reusable**:
+- **UI component library**: 10 shadcn-style components (Button, Card, Badge, Input, Textarea, Label, Checkbox, RadioGroup, Progress, Separator) with Radix UI primitives and CVA variants — directly reusable for all coaching UI
+- **Layout components**: Header, Container, Footer — responsive, mobile-friendly, ready for nav updates
+- **Prisma + PostgreSQL**: Infrastructure configured and deployed on Railway. Existing `Submission` model confirms UUID PK pattern (`@default(uuid())`), `createdAt/updatedAt` timestamps — matches spec requirements exactly
+- **Prisma singleton**: `src/lib/prisma.ts` already exists for database access
+- **TeamBuildr export script**: `scripts/teambuildr-export.ts` is fully implemented (Task 13.6) with rate limiting, resume/checkpoint, CLI flags, and supporting libraries in `scripts/lib/`
+
+**Gaps confirmed (nothing partially done — all are net-new)**:
+- No coaching domain models in Prisma (Coach, Athlete, Program, Workout, Exercise, SetLog, etc.)
+- No seed script (`prisma/seed.ts` does not exist)
+- No API routes for coaching (only `/api/submissions` exists)
+- No coaching pages (`/dashboard`, `/athletes`, `/programs`, `/exercises`, `/train`, `/analytics`, `/meets` — all missing)
+- No coaching components (`components/programs/`, `components/meets/`, `components/shared/` — none exist)
+- No type definitions for coaching domain (`lib/programs/types.ts`, `lib/vbt/` — missing)
+- No charting library installed (recharts or alternatives)
+
+**Header nav issue**: Current Header (`src/components/layout/Header.tsx`) contains research hub navigation (Home, Research, Interview, Submissions, Findings, PRD). Task 9.5 must either replace these or add a mode switch. The branding also says "S&C Research Hub" — will need renaming to Cannoli Trainer or similar.
+
+**Authentication gap**: Spec 10 (Remote Program Delivery) requires athlete authentication (magic link / email login), but no auth tasks exist in the plan. This is deferred — the initial coach-facing build can use a hardcoded coach context. Auth should be added before the athlete portal (Priority 8+) goes live, but does not block Priorities 1-7.
+
+**No contradictions found**: All spec requirements are internally consistent. The plan's priority ordering matches the dependency chain (schema → API → UI → advanced features).
+
+**Task 13.6 confirmed complete**: The export script handles all specified acceptance criteria including --help flag, --token, --account, --output, --resume, plus additional --athletes and --concurrency flags. Supporting `scripts/lib/` includes: `teambuildr-client.ts` (API wrapper), `rate-limiter.ts`, `retry.ts`, `checkpoint.ts` (resume support), `logger.ts`.
