@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 92
+- Completed: 93
 - In progress: 0
-- Remaining: 87 (7 original + 97 new from spec review)
+- Remaining: 86 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -529,7 +529,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `User`, `Account`, `Session`, `VerificationToken` models added. `Athlete` gets optional `userId String? @unique`. Migration runs.
 
-- [ ] **Task 18.3**: Build athlete login page at `/athlete/login` with magic link form
+- [x] **Task 18.3**: Build athlete login page at `/athlete/login` with magic link form
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Email input + "Send Login Link" button. Success redirects to `/athlete/check-email`. Error shows inline message. Mobile-optimized.
 

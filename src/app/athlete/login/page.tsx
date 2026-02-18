@@ -1,0 +1,143 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dumbbell, Loader2, AlertCircle } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
+
+function LoginForm() {
+  const [email, setEmail] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const urlError = searchParams.get("error")
+
+  const errorMessage = error || (urlError === "AccessDenied"
+    ? "No athlete account found for this email. Contact your coach to get set up."
+    : urlError
+      ? "Something went wrong. Please try again."
+      : null)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+
+    if (!email.trim()) {
+      setError("Please enter your email address.")
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const { signIn } = await import("next-auth/react")
+      const result = await signIn("resend", {
+        email: email.trim(),
+        redirect: false,
+        callbackUrl: "/athlete",
+      })
+
+      if (result?.error) {
+        if (result.error === "AccessDenied") {
+          setError("No athlete account found for this email. Contact your coach to get set up.")
+        } else {
+          setError("Something went wrong. Please try again.")
+        }
+        setIsLoading(false)
+        return
+      }
+
+      // Redirect to check-email page on success
+      window.location.href = "/athlete/check-email"
+    } catch {
+      setError("Something went wrong. Please try again.")
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-background">
+      <div className="w-full max-w-sm space-y-6">
+        {/* Branding */}
+        <div className="flex flex-col items-center space-y-2">
+          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-primary/10">
+            <Dumbbell className="w-7 h-7 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Cannoli Trainer</h1>
+          <p className="text-sm text-muted-foreground">Athlete Portal</p>
+        </div>
+
+        {/* Login Card */}
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-lg">Sign in</CardTitle>
+            <CardDescription>
+              Enter your email and we&apos;ll send you a login link.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {errorMessage && (
+                <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  autoComplete="email"
+                  autoFocus
+                  className="h-12 text-base"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 text-base"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending login link...
+                  </>
+                ) : (
+                  "Send Login Link"
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-xs text-muted-foreground">
+          Don&apos;t have an account? Contact your coach to get started.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default function AthleteLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
+  )
+}
