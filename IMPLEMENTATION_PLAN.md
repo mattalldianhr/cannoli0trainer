@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 87
+- Completed: 88
 - In progress: 0
-- Remaining: 92 (7 original + 97 new from spec review)
+- Remaining: 91 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -507,7 +507,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Coach can mark a workout as skipped. Sets `isSkipped = true`. Skipped sessions appear visually distinct (strikethrough or dimmed). Only NOT_STARTED sessions can be skipped.
 
-- [ ] **Task 17.12**: Add training day selector to program assignment dialog
+- [x] **Task 17.12**: Add training day selector to program assignment dialog
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: "Assign to Athlete" flow gains a training day configuration UI. Shows 7 day-of-week checkboxes with Mon/Tue/Thu/Fri pre-checked. Presets available: "4-Day", "3-Day", "5-Day", "Custom".
 
