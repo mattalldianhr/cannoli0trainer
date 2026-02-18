@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { MeetDetail } from '@/components/meets/MeetDetail';
 
@@ -22,9 +23,10 @@ export default async function MeetDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const coachId = await getCurrentCoachId();
 
   const meet = await prisma.competitionMeet.findUnique({
-    where: { id },
+    where: { id, coachId },
     include: {
       coach: { select: { id: true, name: true } },
       entries: {

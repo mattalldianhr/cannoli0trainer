@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +32,7 @@ export const metadata = {
   title: 'Dashboard | Cannoli Trainer',
 };
 
-async function getDashboardStats() {
+async function getDashboardStats(coachId: string) {
   const now = new Date();
   const startOfWeek = new Date(now);
   startOfWeek.setDate(now.getDate() - now.getDay());
@@ -43,17 +44,19 @@ async function getDashboardStats() {
     workoutsThisWeek,
     athletesNeedingAttention,
   ] = await Promise.all([
-    prisma.athlete.count(),
+    prisma.athlete.count({ where: { coachId } }),
     prisma.program.count({
-      where: { isTemplate: false },
+      where: { coachId, isTemplate: false },
     }),
     prisma.workoutSession.count({
       where: {
+        athlete: { coachId },
         date: { gte: startOfWeek },
       },
     }),
     prisma.athlete.count({
       where: {
+        coachId,
         workoutSessions: {
           none: {
             date: {
@@ -73,13 +76,14 @@ async function getDashboardStats() {
   };
 }
 
-async function getRecentActivity() {
+async function getRecentActivity(coachId: string) {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   sevenDaysAgo.setHours(0, 0, 0, 0);
 
   const sessions = await prisma.workoutSession.findMany({
     where: {
+      athlete: { coachId },
       date: { gte: sevenDaysAgo },
     },
     include: {
@@ -103,13 +107,14 @@ async function getRecentActivity() {
   return grouped;
 }
 
-async function getAthletesNeedingAttention() {
+async function getAthletesNeedingAttention(coachId: string) {
   const threeDaysAgo = new Date();
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
   threeDaysAgo.setHours(0, 0, 0, 0);
 
   const athletes = await prisma.athlete.findMany({
     where: {
+      coachId,
       workoutSessions: {
         none: {
           date: { gte: threeDaysAgo },
@@ -137,13 +142,14 @@ async function getAthletesNeedingAttention() {
   }));
 }
 
-async function getUpcomingMeets() {
+async function getUpcomingMeets(coachId: string) {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
   const meets = await prisma.competitionMeet.findMany({
     where: {
+      coachId,
       date: {
         gte: now,
         lte: thirtyDaysFromNow,
@@ -166,11 +172,12 @@ async function getUpcomingMeets() {
 }
 
 export default async function DashboardPage() {
+  const coachId = await getCurrentCoachId();
   const [stats, recentActivity, athletesNeedingAttention, upcomingMeets] = await Promise.all([
-    getDashboardStats(),
-    getRecentActivity(),
-    getAthletesNeedingAttention(),
-    getUpcomingMeets(),
+    getDashboardStats(coachId),
+    getRecentActivity(coachId),
+    getAthletesNeedingAttention(coachId),
+    getUpcomingMeets(coachId),
   ]);
 
   const statCards = [

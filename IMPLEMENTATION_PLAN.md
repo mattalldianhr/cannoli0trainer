@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 134
+- Completed: 135
 - In progress: 0
-- Remaining: 45
+- Remaining: 44
 
 ## Tasks
 
@@ -717,7 +717,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/14-notifications.md
   - Acceptance: Json preference fields on Coach and Athlete models. Triggers check preferences before sending email.
 
-- [ ] **Task 28.5**: Create `getCurrentCoachId()` utility and audit all queries
+- [x] **Task 28.5**: Create `getCurrentCoachId()` utility and audit all queries
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: `src/lib/coach.ts` exports utility. Every coach-scoped query uses `coachId` filter. Hardcoded for now, swapped to session when auth added.
 

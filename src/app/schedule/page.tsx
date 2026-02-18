@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { WeeklyCalendar } from '@/components/schedule/WeeklyCalendar';
 import { Calendar } from 'lucide-react';
@@ -53,7 +54,9 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
   const weekEndDate = new Date(weekEndStr + 'T23:59:59');
 
   // Fetch all athletes and their sessions for this week
+  const coachId = await getCurrentCoachId();
   const athletes = await prisma.athlete.findMany({
+    where: { coachId },
     select: {
       id: true,
       name: true,

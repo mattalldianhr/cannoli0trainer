@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { AthleteList } from '@/components/athletes/AthleteList';
 
@@ -9,7 +10,9 @@ export const metadata = {
 };
 
 export default async function AthletesPage() {
+  const coachId = await getCurrentCoachId();
   const athletes = await prisma.athlete.findMany({
+    where: { coachId },
     include: {
       _count: {
         select: {

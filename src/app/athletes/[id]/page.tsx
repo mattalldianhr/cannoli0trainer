@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { AthleteProfile } from '@/components/athletes/AthleteProfile';
 
@@ -22,9 +23,10 @@ export default async function AthleteProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const coachId = await getCurrentCoachId();
 
   const athlete = await prisma.athlete.findUnique({
-    where: { id },
+    where: { id, coachId },
     include: {
       coach: {
         select: { id: true, name: true, brandName: true },

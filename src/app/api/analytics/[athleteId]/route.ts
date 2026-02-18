@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { estimateOneRMFromRPE } from '@/lib/rpe-table';
 import { calculateRpeAccuracy, type RPEAccuracyInput } from '@/lib/analytics/rpe-accuracy';
 
@@ -31,9 +32,10 @@ export async function GET(
     const exerciseId = searchParams.get('exerciseId');
     const rpeExerciseId = searchParams.get('rpeExerciseId');
 
-    // Validate athlete exists
+    // Validate athlete exists and belongs to current coach
+    const coachId = await getCurrentCoachId();
     const athlete = await prisma.athlete.findUnique({
-      where: { id: athleteId },
+      where: { id: athleteId, coachId },
       select: { id: true, name: true },
     });
 

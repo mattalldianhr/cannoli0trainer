@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { MeetList } from '@/components/meets/MeetList';
 
@@ -9,9 +10,10 @@ export const metadata = {
 };
 
 export default async function MeetsPage() {
-  const coach = await prisma.coach.findFirst();
+  const coachId = await getCurrentCoachId();
 
   const meets = await prisma.competitionMeet.findMany({
+    where: { coachId },
     include: {
       _count: { select: { entries: true } },
     },
@@ -35,7 +37,7 @@ export default async function MeetsPage() {
           Manage competitions and meet day logistics
         </p>
       </div>
-      <MeetList meets={meetData} coachId={coach?.id ?? ''} />
+      <MeetList meets={meetData} coachId={coachId} />
     </Container>
   );
 }

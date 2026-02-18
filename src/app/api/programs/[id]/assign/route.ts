@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { generateSchedule, type WorkoutInput } from '@/lib/scheduling/generate-schedule';
 import { persistSchedule } from '@/lib/scheduling/persist-schedule';
 import { detectConflicts, type ConflictingSession } from '@/lib/scheduling/detect-conflicts';
@@ -40,9 +41,10 @@ export async function POST(
       }
     }
 
-    // Verify program exists and fetch its workouts for scheduling
+    // Verify program exists and belongs to current coach
+    const coachId = await getCurrentCoachId();
     const program = await prisma.program.findUnique({
-      where: { id: programId },
+      where: { id: programId, coachId },
       include: {
         workouts: {
           select: { id: true, weekNumber: true, dayNumber: true, name: true },
@@ -57,9 +59,9 @@ export async function POST(
       );
     }
 
-    // Verify all athletes exist (include email+name+prefs for notifications)
+    // Verify all athletes exist and belong to coach (include email+name+prefs for notifications)
     const athletes = await prisma.athlete.findMany({
-      where: { id: { in: resolvedAthleteIds } },
+      where: { id: { in: resolvedAthleteIds }, coachId },
       select: { id: true, email: true, name: true, notificationPreferences: true },
     });
     const foundIds = new Set(athletes.map((a) => a.id));

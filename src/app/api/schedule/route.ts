@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,8 +33,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build athlete filter
-    const athleteWhere: Record<string, unknown> = {};
+    // Build athlete filter — always scope to current coach
+    const coachId = await getCurrentCoachId();
+    const athleteWhere: Record<string, unknown> = { coachId };
     if (athleteId && athleteId !== 'all') {
       athleteWhere.id = athleteId;
     }

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { AnalyticsPageClient } from '@/components/analytics/AnalyticsPageClient';
 
@@ -14,8 +15,10 @@ export default async function AnalyticsPage({
   searchParams: Promise<{ athleteId?: string; view?: string }>;
 }) {
   const { athleteId, view } = await searchParams;
+  const coachId = await getCurrentCoachId();
 
   const athletes = await prisma.athlete.findMany({
+    where: { coachId },
     select: { id: true, name: true },
     orderBy: { name: 'asc' },
   });

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { ExerciseList } from '@/components/exercises/ExerciseList';
 
@@ -9,7 +10,9 @@ export const metadata = {
 };
 
 export default async function ExercisesPage() {
+  const coachId = await getCurrentCoachId();
   const exercises = await prisma.exercise.findMany({
+    where: { OR: [{ coachId: null }, { coachId }] },
     select: {
       id: true,
       name: true,

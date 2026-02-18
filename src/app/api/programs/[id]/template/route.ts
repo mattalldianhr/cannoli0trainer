@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 export async function POST(
   request: Request,
@@ -7,10 +8,11 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    const coachId = await getCurrentCoachId();
     const body = await request.json();
 
     const source = await prisma.program.findUnique({
-      where: { id },
+      where: { id, coachId },
       include: {
         workouts: {
           include: {

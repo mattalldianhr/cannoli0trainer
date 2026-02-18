@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { ProgramBuilder } from '@/components/programs/ProgramBuilder';
-import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,17 +15,13 @@ export default async function NewProgramPage({
   searchParams: Promise<{ templateId?: string }>;
 }) {
   const { templateId } = await searchParams;
-  const coach = await prisma.coach.findFirst();
-
-  if (!coach) {
-    redirect('/programs');
-  }
+  const coachId = await getCurrentCoachId();
 
   // If templateId is provided, fetch the template to pre-populate the builder
   let templateData = undefined;
   if (templateId) {
     const template = await prisma.program.findUnique({
-      where: { id: templateId, isTemplate: true },
+      where: { id: templateId, isTemplate: true, coachId },
       include: {
         workouts: {
           include: {
@@ -74,7 +70,7 @@ export default async function NewProgramPage({
 
   return (
     <Container className="py-8">
-      <ProgramBuilder coachId={coach.id} templateProgram={templateData} />
+      <ProgramBuilder coachId={coachId} templateProgram={templateData} />
     </Container>
   );
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 /**
  * GET /api/analytics/[athleteId]/export
@@ -21,8 +22,10 @@ export async function GET(
     const from = searchParams.get('from');
     const to = searchParams.get('to');
 
+    const coachId = await getCurrentCoachId();
+
     const athlete = await prisma.athlete.findUnique({
-      where: { id: athleteId },
+      where: { id: athleteId, coachId },
       select: { id: true, name: true },
     });
 

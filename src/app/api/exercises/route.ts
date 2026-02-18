@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 export async function POST(request: Request) {
   try {
+    const coachId = await getCurrentCoachId();
     const body = await request.json();
 
     if (!body.name || !body.category) {
@@ -14,7 +16,7 @@ export async function POST(request: Request) {
 
     const exercise = await prisma.exercise.create({
       data: {
-        coachId: body.coachId ?? null,
+        coachId,
         name: body.name,
         category: body.category,
         force: body.force ?? null,
@@ -43,6 +45,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: NextRequest) {
   try {
+    const coachId = await getCurrentCoachId();
     const { searchParams } = request.nextUrl;
     const search = searchParams.get('search');
     const category = searchParams.get('category');
@@ -50,7 +53,10 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const offset = searchParams.get('offset');
 
-    const where: Record<string, unknown> = {};
+    // Include global exercises (coachId=null) and coach-specific exercises
+    const where: Record<string, unknown> = {
+      OR: [{ coachId: null }, { coachId }],
+    };
 
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };

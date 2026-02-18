@@ -1,31 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 export async function POST(request: Request) {
   try {
+    const coachId = await getCurrentCoachId();
     const body = await request.json();
 
-    if (!body.name || !body.coachId || !body.date) {
+    if (!body.name || !body.date) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, coachId, date' },
+        { error: 'Missing required fields: name, date' },
         { status: 400 }
-      );
-    }
-
-    const coach = await prisma.coach.findUnique({
-      where: { id: body.coachId },
-    });
-
-    if (!coach) {
-      return NextResponse.json(
-        { error: 'Coach not found' },
-        { status: 404 }
       );
     }
 
     const meet = await prisma.competitionMeet.create({
       data: {
-        coachId: body.coachId,
+        coachId,
         name: body.name,
         date: new Date(body.date),
         federation: body.federation ?? null,
@@ -90,16 +81,12 @@ export async function POST(request: Request) {
 
 export async function GET(request: NextRequest) {
   try {
+    const coachId = await getCurrentCoachId();
     const { searchParams } = request.nextUrl;
-    const coachId = searchParams.get('coachId');
     const search = searchParams.get('search');
     const upcoming = searchParams.get('upcoming');
 
-    const where: Record<string, unknown> = {};
-
-    if (coachId) {
-      where.coachId = coachId;
-    }
+    const where: Record<string, unknown> = { coachId };
 
     if (search) {
       where.OR = [

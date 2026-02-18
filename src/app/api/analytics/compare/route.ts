@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { estimateOneRMFromRPE } from '@/lib/rpe-table';
 
 /**
@@ -39,9 +40,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Validate athletes exist
+    const coachId = await getCurrentCoachId();
+
+    // Validate athletes exist and belong to this coach
     const athletes = await prisma.athlete.findMany({
-      where: { id: { in: athleteIds } },
+      where: { id: { in: athleteIds }, coachId },
       select: { id: true, name: true },
     });
 

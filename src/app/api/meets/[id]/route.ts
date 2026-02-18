@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 export async function GET(
   _request: Request,
@@ -7,8 +8,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const coachId = await getCurrentCoachId();
     const meet = await prisma.competitionMeet.findUnique({
-      where: { id },
+      where: { id, coachId },
       include: {
         coach: { select: { id: true, name: true } },
         entries: {
@@ -43,9 +45,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    const coachId = await getCurrentCoachId();
     const body = await request.json();
 
-    const existing = await prisma.competitionMeet.findUnique({ where: { id } });
+    const existing = await prisma.competitionMeet.findUnique({ where: { id, coachId } });
     if (!existing) {
       return NextResponse.json(
         { error: 'Meet not found' },
@@ -87,8 +90,9 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const coachId = await getCurrentCoachId();
 
-    const existing = await prisma.competitionMeet.findUnique({ where: { id } });
+    const existing = await prisma.competitionMeet.findUnique({ where: { id, coachId } });
     if (!existing) {
       return NextResponse.json(
         { error: 'Meet not found' },
