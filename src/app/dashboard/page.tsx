@@ -46,7 +46,7 @@ async function getDashboardStats(coachId: string) {
   ] = await Promise.all([
     prisma.athlete.count({ where: { coachId } }),
     prisma.program.count({
-      where: { coachId, isTemplate: false },
+      where: { coachId, isTemplate: false, isArchived: false },
     }),
     prisma.workoutSession.count({
       where: {

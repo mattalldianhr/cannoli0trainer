@@ -8,7 +8,7 @@ import {
   Plus,
   Calendar,
   Dumbbell,
-  Trash2,
+  Archive,
   Loader2,
   Copy,
 } from 'lucide-react';
@@ -73,8 +73,8 @@ export function TemplateList({ templates }: TemplateListProps) {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [periodizationFilter, setPeriodizationFilter] = useState('');
-  const [deleteTarget, setDeleteTarget] = useState<TemplateData | null>(null);
-  const [deleting, setDeleting] = useState(false);
+  const [archiveTarget, setArchiveTarget] = useState<TemplateData | null>(null);
+  const [archiving, setArchiving] = useState(false);
 
   const filtered = templates.filter((t) => {
     if (search) {
@@ -91,25 +91,25 @@ export function TemplateList({ templates }: TemplateListProps) {
     return true;
   });
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
+  const handleArchive = async () => {
+    if (!archiveTarget) return;
+    setArchiving(true);
 
     try {
-      const res = await fetch(`/api/programs/${deleteTarget.id}`, {
+      const res = await fetch(`/api/programs/${archiveTarget.id}`, {
         method: 'DELETE',
       });
 
       if (!res.ok) {
-        throw new Error('Failed to delete template');
+        throw new Error('Failed to archive template');
       }
 
-      setDeleteTarget(null);
+      setArchiveTarget(null);
       router.refresh();
     } catch (err) {
-      console.error('Failed to delete template:', err);
+      console.error('Failed to archive template:', err);
     } finally {
-      setDeleting(false);
+      setArchiving(false);
     }
   };
 
@@ -221,11 +221,11 @@ export function TemplateList({ templates }: TemplateListProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setDeleteTarget(template)}
-                        className="text-destructive hover:text-destructive"
+                        onClick={() => setArchiveTarget(template)}
+                        className="text-muted-foreground hover:text-foreground"
                       >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete template</span>
+                        <Archive className="h-4 w-4" />
+                        <span className="sr-only">Archive template</span>
                       </Button>
                     </div>
                   </div>
@@ -236,23 +236,23 @@ export function TemplateList({ templates }: TemplateListProps) {
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      {/* Archive Confirmation Dialog */}
+      <Dialog open={!!archiveTarget} onOpenChange={(open) => !open && setArchiveTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Template</DialogTitle>
+            <DialogTitle>Archive Template</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;{deleteTarget?.name}&quot;? This action cannot
-              be undone. Programs created from this template will not be affected.
+              Are you sure you want to archive &quot;{archiveTarget?.name}&quot;? It will be
+              hidden from the template list. Programs created from this template will not be affected.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+            <Button variant="ghost" onClick={() => setArchiveTarget(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-              {deleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Delete Template
+            <Button variant="destructive" onClick={handleArchive} disabled={archiving}>
+              {archiving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Archive Template
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
     const isTemplate = searchParams.get('isTemplate');
     const type = searchParams.get('type');
 
-    const where: Record<string, unknown> = { coachId };
+    const where: Record<string, unknown> = { coachId, isArchived: false };
 
     if (search) {
       where.OR = [

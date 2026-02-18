@@ -11,6 +11,7 @@ import { PRESCRIPTION_TYPE_LABELS } from '@/lib/programs/types';
 import type { PrescriptionType } from '@prisma/client';
 import { AssignAthletes } from '@/components/programs/AssignAthletes';
 import { SaveAsTemplate } from '@/components/programs/SaveAsTemplate';
+import { ArchiveProgram } from '@/components/programs/ArchiveProgram';
 import { ProgramOverview } from '@/components/programs/ProgramOverview';
 
 export const dynamic = 'force-dynamic';
@@ -109,6 +110,7 @@ export default async function ProgramDetailPage({
             />
           </>
         )}
+        <ArchiveProgram programId={program.id} programName={program.name} />
         <Button variant={program.isTemplate ? 'outline' : 'default'} asChild>
           <Link href={`/programs/${program.id}/edit`}>
             <Pencil className="h-4 w-4 mr-2" />

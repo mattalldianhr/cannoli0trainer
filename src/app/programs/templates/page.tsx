@@ -13,7 +13,7 @@ export const metadata = {
 
 export default async function TemplatesPage() {
   const templates = await prisma.program.findMany({
-    where: { isTemplate: true },
+    where: { isTemplate: true, isArchived: false },
     include: {
       _count: {
         select: {

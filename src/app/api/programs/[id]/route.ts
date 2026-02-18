@@ -211,14 +211,26 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
     const coachId = await getCurrentCoachId();
+    const { searchParams } = new URL(request.url);
+    const permanent = searchParams.get('permanent') === 'true';
 
-    const existing = await prisma.program.findUnique({ where: { id, coachId } });
+    const existing = await prisma.program.findUnique({
+      where: { id, coachId },
+      include: {
+        _count: {
+          select: {
+            assignments: true,
+            workoutSessions: true,
+          },
+        },
+      },
+    });
     if (!existing) {
       return NextResponse.json(
         { error: 'Program not found' },
@@ -226,13 +238,34 @@ export async function DELETE(
       );
     }
 
-    await prisma.program.delete({ where: { id } });
+    if (permanent) {
+      // Hard delete only allowed when zero assignments and zero sessions
+      if (existing._count.assignments > 0 || existing._count.workoutSessions > 0) {
+        return NextResponse.json(
+          {
+            error: 'Cannot permanently delete a program with assignments or workout sessions. Archive it instead.',
+            assignments: existing._count.assignments,
+            workoutSessions: existing._count.workoutSessions,
+          },
+          { status: 409 }
+        );
+      }
 
-    return NextResponse.json({ success: true });
+      await prisma.program.delete({ where: { id } });
+      return NextResponse.json({ success: true, action: 'deleted' });
+    }
+
+    // Default: soft-delete (archive)
+    await prisma.program.update({
+      where: { id },
+      data: { isArchived: true },
+    });
+
+    return NextResponse.json({ success: true, action: 'archived' });
   } catch (error) {
-    console.error('Failed to delete program:', error);
+    console.error('Failed to archive/delete program:', error);
     return NextResponse.json(
-      { error: 'Failed to delete program' },
+      { error: 'Failed to archive/delete program' },
       { status: 500 }
     );
   }

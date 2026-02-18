@@ -12,7 +12,7 @@ export const metadata = {
 export default async function ProgramsPage() {
   const coachId = await getCurrentCoachId();
   const programs = await prisma.program.findMany({
-    where: { coachId },
+    where: { coachId, isArchived: false },
     include: {
       _count: {
         select: {

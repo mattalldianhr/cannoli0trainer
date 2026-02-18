@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 135
+- Completed: 136
 - In progress: 0
-- Remaining: 44
+- Remaining: 43
 
 ## Tasks
 
@@ -721,7 +721,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: `src/lib/coach.ts` exports utility. Every coach-scoped query uses `coachId` filter. Hardcoded for now, swapped to session when auth added.
 
-- [ ] **Task 28.6**: Add `isArchived` field to Program model for soft-delete
+- [x] **Task 28.6**: Add `isArchived` field to Program model for soft-delete
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `isArchived Boolean @default(false)`. All list queries filter. "Archive" replaces "Delete". Hard delete only when zero assignments/sessions.
 
