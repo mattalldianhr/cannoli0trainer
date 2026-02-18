@@ -1,0 +1,7 @@
+## Quick Spec Review — Iteration 14 Summary
+
+- **Findings: 1** (P2 — gender field gap)
+- **Specs updated: None** (not blocking; noted in Discoveries)
+- **Detail**: Spec 09 says DOTS/Wilks requires "bodyweight + total + gender" but the Athlete model has no `gender` field. Task 26.2 handled this with a UI toggle defaulting to male. Logged as a P2 discovery for a future schema migration.
+- **Build status**: Clean — tsc and build passing, no errors
+- **Continue building? Yes**

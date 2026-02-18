@@ -1,0 +1,12 @@
+**Task 24.3 complete.** Here's what was done:
+
+**Changes:**
+1. **`AnalyticsDashboard.tsx`** — Added `compact` prop that hides the athlete selector dropdown and CSV export button when the dashboard is embedded on a profile page
+2. **`AthleteProfile.tsx`** — Replaced the basic stats-only Analytics tab with the full `AnalyticsDashboard` component pre-filtered to the athlete. The tab now shows:
+   - "View Full Analytics" link (preserved)
+   - 4-week training frequency heatmap (preserved)
+   - Full interactive charts: E1RM trends, weekly volume, compliance, RPE distribution/accuracy, bodyweight trend, and VBT analytics — all with date range selector
+   - Removed unused `BaseLineChart` import
+
+**Validation:** `tsc --noEmit` and `npm run build` both pass. Lint has pre-existing issue (documented in Discoveries).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

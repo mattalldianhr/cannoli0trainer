@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 127
+- Completed: 128
 - In progress: 0
-- Remaining: 52
+- Remaining: 51
 
 ## Tasks
 
@@ -385,6 +385,9 @@
 
 _Updated by Ralph during planning review (2026-02-17)_
 
+### Athlete Gender Field Missing (2026-02-18)
+Spec 09 and Task 26.2 require gender for DOTS/Wilks scoring but the Athlete model has no `gender` field. Task 26.2 implemented a per-athlete M/F toggle in the UI as a workaround (defaults to male). P2 — consider adding `gender String?` to Athlete model in a future schema migration (could be part of Task 28 infrastructure tasks).
+
 ### Workout History Import (2026-02-18)
 Full workout history imported via `seedWorkoutHistory()` in `prisma/seed.ts`. Creates one "TeamBuildr Import" Program per athlete as a container, with Workout records for each session date. Final counts: 2,033 WorkoutSessions, 2,033 Workouts, 12,283 WorkoutExercises, 31,660 SetLogs, 5,316 MaxSnapshots (deduplicated). All weights in kg. Import is idempotent — skips if WorkoutSessions already exist. Fixed 11 exercise name mismatches: 9 exercises added to `teambuildrNewExercises` (Bulgarian Split Squat, Glute Bridge, Kettlebell Swing, Nordic Hamstring Curl, Overhead Triceps Extension, Pendlay Row, Push-Ups, Romanian Deadlift With Dumbbells, Walking Barbell Lunge) and 2 case-sensitivity fixes added to `teambuildrToFreeExerciseDb` (Band Assisted Pull-up → Pull-Up, Bicep Exercise of choice → Choice). Total exercises now 948 (873 free-exercise-db + 75 new). Runtime type coercion applied for `prescribedLoad` (number → string), `reps` (string → number) from TeamBuildr JSON — types are looser at runtime than TypeScript definitions suggest.
 
@@ -684,7 +687,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 27: RPE/RIR Enhancements
 
-- [ ] **Task 27.1**: Build RPE history chart on athlete analytics (RPE over time per exercise)
+- [x] **Task 27.1**: Build RPE history chart on athlete analytics (RPE over time per exercise)
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Scatter + trend line chart of RPE values over time. Filterable by exercise. Individual sets as scatter points, moving average as trend line.
 

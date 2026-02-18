@@ -10,6 +10,7 @@ import { LoadVelocityChart } from '@/components/charts/LoadVelocityChart';
 import { VelocityProfileTable } from '@/components/charts/VelocityProfileTable';
 import { PreparednessIndicator } from '@/components/charts/PreparednessIndicator';
 import { VelocityTrendChart } from '@/components/charts/VelocityTrendChart';
+import { RPEHistoryChart, type RPEDataPoint } from '@/components/charts/RPEHistoryChart';
 import {
   buildVelocityProfile,
   calculatePreparedness,
@@ -69,6 +70,12 @@ interface RPEAccuracyData {
   weeklyTrend: { weekStart: string; avgDeviation: number; setsAnalyzed: number }[];
 }
 
+interface RPEHistoryData {
+  hasData: boolean;
+  dataPoints: RPEDataPoint[];
+  trendLine: { date: string; avgRPE: number }[];
+}
+
 interface BodyweightPoint {
   date: string;
   weight: number;
@@ -104,6 +111,7 @@ interface AnalyticsData {
   compliance: Compliance;
   rpeDistribution: RPEDistribution;
   rpeAccuracy: RPEAccuracyData | null;
+  rpeHistory: RPEHistoryData;
   bodyweightTrend: BodyweightPoint[];
   vbt: VBTData;
 }
@@ -594,6 +602,21 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
                       formatXAxis={formatWeek}
                     />
                   </div>
+
+                  {/* RPE History Scatter Chart */}
+                  {data.rpeHistory?.hasData && (
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">RPE History (Individual Sets)</h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Each point is a single set. The trend line shows RPE drift over time.
+                      </p>
+                      <RPEHistoryChart
+                        dataPoints={data.rpeHistory.dataPoints}
+                        trendLine={data.rpeHistory.trendLine}
+                        height={300}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

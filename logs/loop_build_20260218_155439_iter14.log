@@ -1,0 +1,25 @@
+**Task 26.2 complete.** Here's what was built:
+
+### `src/lib/meets/results.ts` — Score calculation module
+- `calculateMeetResult()` takes an athlete's meet entry data and computes:
+  - Best successful attempt per lift (squat, bench, deadlift)
+  - Total from best successful attempts
+  - DOTS, Wilks, and Wilks 2020 scores using the `powerlifting-formulas` package
+  - Made/attempted counts
+- Handles missed lifts (only good attempts count toward total)
+- Falls back to planned attempts when no make/miss data exists
+- Returns `null` scores when bodyweight is missing
+
+### `src/components/meets/MeetResultsSummary.tsx` — Results display component
+- Results card with Trophy icon header
+- Table showing: Athlete, Weight Class, BW, Squat, Bench, Deadlift, Total, Made count, DOTS, Wilks
+- Green check / red X badges per attempt showing make/miss
+- Sorted by total (highest first) with "1st" indicator
+- Gender toggle (M/F) per athlete for score calculation — defaults to male since Athlete model has no gender field
+- DOTS/Wilks columns only appear when bodyweight data is available
+- Helpful message when scores can't be calculated due to missing bodyweight
+
+### Integration
+- Replaced the basic summary table in `MeetDetail.tsx` with the new `MeetResultsSummary` component
+- All validation passes (tsc, build)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

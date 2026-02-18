@@ -58,6 +58,7 @@ export async function GET(
       rpeData,
       bodyweightData,
       vbtData,
+      rpeHistory,
     ] = await Promise.all([
       getE1RMTrends(athleteId, dateRange, exerciseId),
       getVolumeByWeek(athleteId, dateRange),
@@ -65,6 +66,7 @@ export async function GET(
       getRPEDistribution(athleteId, dateRange, rpeExerciseId),
       getBodyweightTrend(athleteId, dateRange),
       getVBTData(athleteId, dateRange),
+      getRPEHistory(athleteId, dateRange, rpeExerciseId),
     ]);
 
     // RPE accuracy requires MaxSnapshot e1RM data — computed from the RPE sets
@@ -82,6 +84,7 @@ export async function GET(
       compliance: complianceData,
       rpeDistribution: rpeData,
       rpeAccuracy,
+      rpeHistory,
       bodyweightTrend: bodyweightData,
       vbt: vbtData,
     });
@@ -637,6 +640,74 @@ async function getVBTData(
     exercises,
     byExercise: serialized,
   };
+}
+
+/**
+ * Get RPE history: individual set RPE data points over time for scatter + trend chart.
+ * Returns per-set data ordered by date, plus a moving average trend line.
+ */
+async function getRPEHistory(
+  athleteId: string,
+  dateRange: { gte?: Date; lte?: Date },
+  rpeExerciseId: string | null
+) {
+  const where: Record<string, unknown> = {
+    athleteId,
+    rpe: { not: null },
+  };
+  if (dateRange.gte || dateRange.lte) {
+    where.completedAt = dateRange;
+  }
+  if (rpeExerciseId) {
+    where.workoutExercise = { exerciseId: rpeExerciseId };
+  }
+
+  const sets = await prisma.setLog.findMany({
+    where,
+    select: {
+      rpe: true,
+      weight: true,
+      reps: true,
+      completedAt: true,
+      workoutExercise: {
+        select: {
+          exerciseId: true,
+          exercise: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: { completedAt: 'asc' },
+    take: 3000,
+  });
+
+  if (sets.length === 0) {
+    return { hasData: false, dataPoints: [], trendLine: [] };
+  }
+
+  // Build individual data points
+  const dataPoints = sets.map((set) => ({
+    date: set.completedAt.toISOString().split('T')[0],
+    rpe: set.rpe!,
+    weight: set.weight,
+    reps: set.reps,
+    exerciseName: set.workoutExercise.exercise.name,
+  }));
+
+  // Compute a 7-point simple moving average for the trend line
+  const windowSize = Math.min(7, Math.max(3, Math.floor(dataPoints.length / 5)));
+  const trendLine: { date: string; avgRPE: number }[] = [];
+  for (let i = 0; i < dataPoints.length; i++) {
+    const start = Math.max(0, i - Math.floor(windowSize / 2));
+    const end = Math.min(dataPoints.length, i + Math.ceil(windowSize / 2));
+    const window = dataPoints.slice(start, end);
+    const avg = window.reduce((sum, p) => sum + p.rpe, 0) / window.length;
+    trendLine.push({
+      date: dataPoints[i].date,
+      avgRPE: Math.round(avg * 100) / 100,
+    });
+  }
+
+  return { hasData: true, dataPoints, trendLine };
 }
 
 /**

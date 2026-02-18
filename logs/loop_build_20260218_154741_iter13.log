@@ -1,0 +1,15 @@
+**Task 26.1 complete.** Here's what was implemented:
+
+**Schema**: Added `attemptResults Json?` field to `MeetEntry` model with migration.
+
+**API**: Updated `PUT /api/meets/[id]/entries/[entryId]` to accept and persist `attemptResults`.
+
+**UI (MeetDetail.tsx)**:
+- **"Results" toggle button** per athlete card — activates results entry mode (auto-activates when saved results exist)
+- **3-state make/miss toggle** per attempt: click cycles through good (green check) → miss (red X) → clear
+- **Color-coded inputs**: green border/bg for good lifts, red for misses
+- **Smart best attempt**: `bestAttempt()` now only counts successful (good) attempts when results data exists
+- **Auto-calculated total**: sum of best successful attempt per lift
+- **Pre-fill from results**: attempt weights populate from saved `attemptResults` when available, falling back to planned attempts
+- **Results Summary table**: new "Attempts" column showing made/total (e.g. "7/9")
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

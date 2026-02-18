@@ -1,0 +1,27 @@
+Task 25.2 is complete. Here's what was implemented:
+
+**Task 25.2: Cross-session velocity trend chart (week-over-week fatigue)**
+
+**Changes:**
+
+1. **`src/lib/vbt/types.ts`** — Added 3 new types: `WeightedVelocitySet`, `WeeklyVelocityPoint`, and `VelocityTrendResult`
+
+2. **`src/lib/vbt/velocity-profile.ts`** — Added `calculateVelocityTrend()` function that:
+   - Filters sets to the ~80% 1RM load bracket (75-85%)
+   - Groups by ISO week (Monday start)
+   - Computes mean velocity per week
+   - Requires 3+ weeks of data
+   - Calculates week-over-week change using rolling 2-week averages
+   - Alerts when velocity declines >5% (overreaching indicator)
+
+3. **`src/components/charts/VelocityTrendChart.tsx`** — New Recharts LineChart component with:
+   - Weekly mean velocity line (blue normally, amber on alert)
+   - Reference line at overall average
+   - Custom tooltip showing week, velocity, and set count
+   - Week-over-week % change indicator
+   - Alert banner when >5% drop detected
+
+4. **`src/components/analytics/AnalyticsDashboard.tsx`** — Integrated the trend chart into the VBT analytics section between the preparedness/fatigue row and velocity profile table, with contextual empty states
+
+**Validation:** `tsc --noEmit` passes, `npm run build` passes, 221/221 tests pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

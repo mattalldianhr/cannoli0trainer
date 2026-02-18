@@ -3,3 +3,4 @@ export { BaseBarChart, type BarConfig } from './BaseBarChart';
 export { LoadVelocityChart } from './LoadVelocityChart';
 export { VelocityProfileTable } from './VelocityProfileTable';
 export { PreparednessIndicator } from './PreparednessIndicator';
+export { RPEHistoryChart, type RPEDataPoint } from './RPEHistoryChart';

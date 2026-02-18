@@ -1,0 +1,12 @@
+**Task 25.1 complete.** Here's what was done:
+
+**Added `VelocityLossIndicator` component** to `src/components/training/TrainingLog.tsx`:
+- Reuses the existing `calculateVelocityDrop()` from `@/lib/vbt` — no new calculation code needed
+- Extracts velocities from logged sets (sorted by set number), filters to non-null values
+- Shows velocity drop % (e.g., "Velocity loss: 20.7%") after logged sets for exercises with velocity data
+- Flags when >20% with amber color and "High fatigue" label
+- Shows "N/A (need 2+ sets)" when fewer than 2 velocity-tracked sets exist
+- Only renders for exercises where `showVelocity` is true (VBT prescription type or velocity target set) and at least one set has velocity data
+
+**Validation**: `tsc --noEmit` passes, `npm run build` passes. Lint has pre-existing issue (documented).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
