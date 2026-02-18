@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 51
+- Completed: 52
 - In progress: 0
 
 ## Tasks
@@ -232,7 +232,7 @@
   - Spec: specs/11-template-system.md
   - Acceptance: Creates template copy of program (isTemplate=true, no athlete loads)
 
-- [ ] **Task 8.2**: Create template listing page at `/programs/templates`
+- [x] **Task 8.2**: Create template listing page at `/programs/templates`
   - Spec: specs/11-template-system.md
   - Acceptance: Lists templates with metadata, search, and filter by periodization type
 
