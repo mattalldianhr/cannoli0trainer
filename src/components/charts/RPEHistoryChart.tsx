@@ -50,9 +50,12 @@ function CustomTooltip({
   const scatterEntry = payload.find((p) => p.dataKey === 'scatterRPE');
   if (scatterEntry) {
     const point = scatterEntry.payload;
+    const rpe = point.rpe as number;
+    const rir = 10 - rpe;
+    const rirStr = Number.isInteger(rir) ? String(rir) : rir.toFixed(1);
     return (
       <div className="rounded-md border bg-background px-3 py-2 text-xs shadow-sm">
-        <p className="font-medium">RPE {point.rpe as number}</p>
+        <p className="font-medium">RPE {rpe} / {rirStr} RIR</p>
         <p className="text-muted-foreground">{point.exerciseName as string}</p>
         <p className="text-muted-foreground">
           {point.weight as number} kg × {point.reps as number} reps
@@ -66,9 +69,11 @@ function CustomTooltip({
   const trendEntry = payload.find((p) => p.dataKey === 'trendRPE');
   if (trendEntry) {
     const point = trendEntry.payload;
+    const avgRPE = point.trendRPE as number;
+    const avgRIR = (10 - avgRPE).toFixed(1);
     return (
       <div className="rounded-md border bg-background px-3 py-2 text-xs shadow-sm">
-        <p className="font-medium">Moving Avg: {(point.trendRPE as number).toFixed(1)}</p>
+        <p className="font-medium">Moving Avg: RPE {avgRPE.toFixed(1)} / {avgRIR} RIR</p>
         <p className="text-muted-foreground">{formatDate(point.date as string)}</p>
       </div>
     );

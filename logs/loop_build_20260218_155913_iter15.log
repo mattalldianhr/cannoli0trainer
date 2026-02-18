@@ -1,0 +1,20 @@
+**Task 27.1 complete.** Here's what was implemented:
+
+**API** (`src/app/api/analytics/[athleteId]/route.ts`):
+- Added `getRPEHistory()` — queries SetLog for all sets with RPE, returns individual data points (date, rpe, weight, reps, exercise name) and a simple moving average trend line for RPE drift detection
+- Respects existing `rpeExerciseId` filter and date range params
+- Capped at 3,000 sets to prevent oversized responses
+
+**Chart** (`src/components/charts/RPEHistoryChart.tsx`):
+- ComposedChart with Scatter (individual sets, violet dots at 50% opacity) + Line (moving average trend)
+- Custom tooltip showing RPE, exercise name, weight/reps, and date
+- Y-axis fixed to 6-10.5 RPE range with 0.5 increments
+- Legend showing dot = individual sets, line = moving average, with total count
+
+**Dashboard** (`src/components/analytics/AnalyticsDashboard.tsx`):
+- Chart renders in the RPE section after Weekly Avg RPE
+- Only shows when `rpeHistory.hasData` is true
+- Filterable by exercise via the existing dropdown
+
+All validation passed: `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

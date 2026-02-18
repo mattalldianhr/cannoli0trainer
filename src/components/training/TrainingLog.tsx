@@ -149,6 +149,20 @@ function isToday(dateStr: string): boolean {
 }
 
 function prescriptionLabel(ex: ExerciseData): string {
+  const fmtRir = (v: number) => Number.isInteger(v) ? String(v) : v.toFixed(1);
+
+  if (ex.prescriptionType === 'autoregulated') {
+    if (ex.prescribedRPE != null) {
+      const rirStr = fmtRir(10 - ex.prescribedRPE);
+      let label = `Work up to RPE ${ex.prescribedRPE} / ${rirStr} RIR`;
+      if (ex.prescribedLoad && ex.prescribedLoad.match(/-\d+%/)) {
+        label += `, then ${ex.prescribedLoad}`;
+      }
+      return label;
+    }
+    return ex.prescribedLoad || 'Autoregulated';
+  }
+
   const parts: string[] = [];
 
   if (ex.prescribedSets) {
@@ -159,9 +173,9 @@ function prescriptionLabel(ex: ExerciseData): string {
   if (ex.prescriptionType === 'percentage' && ex.percentageOf1RM) {
     parts.push(`@ ${ex.percentageOf1RM}%`);
   } else if (ex.prescriptionType === 'rpe' && ex.prescribedRPE) {
-    parts.push(`@ RPE ${ex.prescribedRPE}`);
+    parts.push(`@ RPE ${ex.prescribedRPE} / ${fmtRir(10 - ex.prescribedRPE)} RIR`);
   } else if (ex.prescriptionType === 'rir' && ex.prescribedRIR != null) {
-    parts.push(`@ ${ex.prescribedRIR} RIR`);
+    parts.push(`@ ${ex.prescribedRIR} RIR / RPE ${10 - ex.prescribedRIR}`);
   } else if (ex.prescriptionType === 'velocity' && ex.velocityTarget) {
     parts.push(`@ ${ex.velocityTarget} m/s`);
   } else if (ex.prescribedLoad) {
@@ -325,7 +339,7 @@ function SetLogRow({
       <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />
       <span className="tabular-nums flex-1">
         Set {set.setNumber}: {set.weight} {set.unit} × {set.reps}
-        {set.rpe != null && ` @ RPE ${set.rpe}`}
+        {set.rpe != null && ` @ RPE ${set.rpe} / ${Number.isInteger(10 - set.rpe) ? String(10 - set.rpe) : (10 - set.rpe).toFixed(1)} RIR`}
         {set.velocity != null && ` @ ${set.velocity} m/s`}
       </span>
       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -758,7 +772,9 @@ function ExerciseCard({
               {/* RPE input — shown for RPE, RIR, autoregulated, or if explicitly requested */}
               {(exercise.prescriptionType === 'rpe' || exercise.prescriptionType === 'rir' || exercise.prescriptionType === 'autoregulated') && (
                 <div>
-                  <label className="text-xs text-muted-foreground">RPE (optional)</label>
+                  <label className="text-xs text-muted-foreground">
+                    RPE{rpe != null ? ` ${rpe} / ${Number.isInteger(10 - rpe) ? String(10 - rpe) : (10 - rpe).toFixed(1)} RIR` : ' (optional)'}
+                  </label>
                   <RPESelector
                     value={rpe}
                     onChange={setRPE}

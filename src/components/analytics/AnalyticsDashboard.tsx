@@ -399,7 +399,7 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Avg RPE
+                  Avg RPE / RIR
                 </CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -407,6 +407,11 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
                 <div className="text-2xl font-bold">
                   {data.rpeDistribution.averageRPE ?? '—'}
                 </div>
+                {data.rpeDistribution.averageRPE != null && (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {(10 - data.rpeDistribution.averageRPE).toFixed(1)} RIR avg
+                  </p>
+                )}
               </CardContent>
             </Card>
 

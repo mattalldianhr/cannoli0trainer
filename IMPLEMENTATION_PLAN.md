@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 129
+- Completed: 130
 - In progress: 0
-- Remaining: 50
+- Remaining: 49
 
 ## Tasks
 
@@ -695,7 +695,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: `lib/analytics/rpe-accuracy.ts` exports `calculateRpeAccuracy()`. Compares reported RPE to estimated via rpe-table reverse lookup. Per-exercise and aggregate "avg +/- X RPE" metric. Trend chart. Unit tested.
 
-- [ ] **Task 27.3**: Build autoregulated prescription display and RIR co-display
+- [x] **Task 27.3**: Build autoregulated prescription display and RIR co-display
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: "Work up to RPE X, then -Y%" when `prescriptionType = autoregulated`. RPE/RIR co-display (e.g., "RPE 8 / 2 RIR"). `RPEWithRIR` shared component. Half-increments supported.
 

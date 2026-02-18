@@ -1,0 +1,7 @@
+## Quick Spec Review — Iteration 16 Summary
+
+- **Findings: 0**
+- **Specs updated: None**
+- **Detail**: Task 27.2 (RPE accuracy unit tests) completed cleanly — 22 unit tests added covering `estimateRPEFromLoad` and `calculateRpeAccuracy`. No inconsistencies, missing fields, or spec mismatches reported. Build and type-check pass. The iter16 review log is empty (no issues flagged).
+- **Prior outstanding**: P2 gender field gap from iter 14 remains noted — not blocking.
+- **Continue building? Yes**

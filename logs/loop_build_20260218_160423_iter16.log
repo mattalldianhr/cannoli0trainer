@@ -1,0 +1,13 @@
+**Task 27.2 complete.** Here's the summary:
+
+**What was found**: The RPE accuracy module (`src/lib/analytics/rpe-accuracy.ts`), API integration in the analytics route, and dashboard UI (accuracy metric card + weekly trend chart) were all already implemented in prior tasks. The missing piece was **unit tests**.
+
+**What was done**:
+- Created `src/lib/analytics/rpe-accuracy.test.ts` with **22 unit tests** covering:
+  - `estimateRPEFromLoad` reverse lookup — 9 tests (exact matches, closest RPE between values, boundary conditions, rounding)
+  - `calculateRpeAccuracy` — 13 tests (null handling, perfect accuracy, over/underrating, aggregate deviation, weekly trend generation, invalid input filtering, rounding)
+- All validation passed: `tsc --noEmit`, `npm run build`
+- Committed as `0c2147f`
+
+**Status**: 129/179 tasks complete, 50 remaining.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

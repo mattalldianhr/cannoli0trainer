@@ -1444,16 +1444,22 @@ function PrescriptionFields({ prescription, onUpdate }: PrescriptionFieldsProps)
               />
             </div>
           </div>
-          {prescription.rpe != null && (
-            <p className="text-xs text-muted-foreground font-medium">
-              Work up to RPE {prescription.rpe}{prescription.rpeMax != null ? `-${prescription.rpeMax}` : ''}
-              {prescription.backoffPercent != null && prescription.backoffSets != null
-                ? `, then -${prescription.backoffPercent}% for ${prescription.backoffSets}x${prescription.reps}`
-                : prescription.backoffPercent != null
-                  ? `, then -${prescription.backoffPercent}%`
-                  : ''}
-            </p>
-          )}
+          {prescription.rpe != null && (() => {
+            const fmtRir = (v: number) => Number.isInteger(v) ? String(v) : v.toFixed(1);
+            const rirStr = prescription.rpeMax != null
+              ? ` / ${fmtRir(10 - prescription.rpeMax)}-${fmtRir(10 - prescription.rpe)} RIR`
+              : ` / ${fmtRir(10 - prescription.rpe)} RIR`;
+            return (
+              <p className="text-xs text-muted-foreground font-medium">
+                Work up to RPE {prescription.rpe}{prescription.rpeMax != null ? `-${prescription.rpeMax}` : ''}{rirStr}
+                {prescription.backoffPercent != null && prescription.backoffSets != null
+                  ? `, then -${prescription.backoffPercent}% for ${prescription.backoffSets}x${prescription.reps}`
+                  : prescription.backoffPercent != null
+                    ? `, then -${prescription.backoffPercent}%`
+                    : ''}
+              </p>
+            );
+          })()}
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Additional Instructions</Label>
             <Input
@@ -1518,9 +1524,10 @@ function RPEHint({ rpe, rpeMax }: { rpe: number | null; rpeMax: number | null })
     return 'light effort';
   };
 
+  const fmtRir = (v: number) => Number.isInteger(v) ? String(v) : v.toFixed(1);
   const display = rpeMax != null
-    ? `RPE ${rpe}-${rpeMax}: ${rpeDescription(rpe)} to ${rpeDescription(rpeMax)}`
-    : `RPE ${rpe}: ${rpeDescription(rpe)}`;
+    ? `RPE ${rpe}-${rpeMax} / ${fmtRir(10 - rpeMax)}-${fmtRir(10 - rpe)} RIR: ${rpeDescription(rpe)} to ${rpeDescription(rpeMax)}`
+    : `RPE ${rpe} / ${fmtRir(10 - rpe)} RIR: ${rpeDescription(rpe)}`;
 
   return <p className="text-xs text-muted-foreground">{display}</p>;
 }
@@ -1532,25 +1539,30 @@ function RPEHint({ rpe, rpeMax }: { rpe: number | null; rpeMax: number | null })
 function formatPrescription(exercise: ExerciseEntry): string {
   const p = exercise.prescription;
   const setsReps = `${p.sets}x${p.reps}`;
+  const fmtRir = (v: number) => Number.isInteger(v) ? String(v) : v.toFixed(1);
 
   switch (p.type) {
     case 'percentage':
       return p.percentage ? `${setsReps} @ ${p.percentage}%` : setsReps;
     case 'rpe': {
       if (p.rpe == null) return setsReps;
-      const rpeStr = p.rpeMax != null ? `RPE ${p.rpe}-${p.rpeMax}` : `RPE ${p.rpe}`;
+      const rpeStr = p.rpeMax != null
+        ? `RPE ${p.rpe}-${p.rpeMax} / ${fmtRir(10 - p.rpeMax)}-${fmtRir(10 - p.rpe)} RIR`
+        : `RPE ${p.rpe} / ${fmtRir(10 - p.rpe)} RIR`;
       return `${setsReps} @ ${rpeStr}`;
     }
     case 'rir':
-      return p.rir != null ? `${setsReps} @ ${p.rir} RIR` : setsReps;
+      return p.rir != null ? `${setsReps} @ ${p.rir} RIR / RPE ${10 - p.rir}` : setsReps;
     case 'velocity':
       return p.velocityTarget ? `${setsReps} @ ${p.velocityTarget} m/s` : setsReps;
     case 'autoregulated': {
       if (p.rpe == null) return p.instructions || setsReps;
-      const rpeLabel = p.rpeMax != null ? `RPE ${p.rpe}-${p.rpeMax}` : `RPE ${p.rpe}`;
+      const rpeLabel = p.rpeMax != null
+        ? `RPE ${p.rpe}-${p.rpeMax} / ${fmtRir(10 - p.rpeMax)}-${fmtRir(10 - p.rpe)} RIR`
+        : `RPE ${p.rpe} / ${fmtRir(10 - p.rpe)} RIR`;
       let result = `Work up to ${rpeLabel}`;
       if (p.backoffPercent != null && p.backoffSets != null) {
-        result += `, -${p.backoffPercent}% x${p.backoffSets}`;
+        result += `, then -${p.backoffPercent}% x${p.backoffSets}`;
       }
       return result;
     }

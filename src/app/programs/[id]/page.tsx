@@ -233,17 +233,29 @@ function formatExerciseSummary(ex: {
   percentageOf1RM: number | null;
 }): string {
   const sr = [ex.prescribedSets, ex.prescribedReps].filter(Boolean).join('x');
+  const fmtRir = (v: number) => Number.isInteger(v) ? String(v) : v.toFixed(1);
   switch (ex.prescriptionType) {
     case 'percentage':
       return ex.percentageOf1RM ? `${sr} @ ${ex.percentageOf1RM}%` : sr;
     case 'rpe':
-      return ex.prescribedRPE != null ? `${sr} @ RPE ${ex.prescribedRPE}` : sr;
+      return ex.prescribedRPE != null
+        ? `${sr} @ RPE ${ex.prescribedRPE} / ${fmtRir(10 - ex.prescribedRPE)} RIR`
+        : sr;
     case 'rir':
-      return ex.prescribedRIR != null ? `${sr} @ ${ex.prescribedRIR} RIR` : sr;
+      return ex.prescribedRIR != null
+        ? `${sr} @ ${ex.prescribedRIR} RIR / RPE ${10 - ex.prescribedRIR}`
+        : sr;
     case 'velocity':
       return ex.velocityTarget != null ? `${sr} @ ${ex.velocityTarget} m/s` : sr;
-    case 'autoregulated':
-      return ex.prescribedRPE != null ? `Work up to RPE ${ex.prescribedRPE}` : sr;
+    case 'autoregulated': {
+      if (ex.prescribedRPE == null) return ex.prescribedLoad || sr;
+      const rirStr = fmtRir(10 - ex.prescribedRPE);
+      let result = `Work up to RPE ${ex.prescribedRPE} / ${rirStr} RIR`;
+      if (ex.prescribedLoad && ex.prescribedLoad.match(/-\d+%/)) {
+        result += `, then ${ex.prescribedLoad}`;
+      }
+      return result;
+    }
     case 'fixed':
       return ex.prescribedLoad ? `${sr} @ ${ex.prescribedLoad}` : sr;
     default:
