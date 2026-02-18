@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 70
-- Completed: 7
+- Completed: 8
 - In progress: 0
 
 ## Tasks
@@ -33,7 +33,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, meet models have proper relations
 
-- [ ] **Task 1.7**: Add database indexes on coachId, athleteId, programId, workoutId foreign keys
+- [x] **Task 1.7**: Add database indexes on coachId, athleteId, programId, workoutId foreign keys
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, indexes defined on FK columns
 
@@ -92,9 +92,35 @@
   - Spec: specs/12-rpe-rir-support.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
   - Acceptance: `src/lib/rpe-table.ts` exports lookup function: given RPE (6-10) and reps (1-12), returns %1RM. Covers ~50 data points from Tuchscherer RPE table. TypeScript typed, unit tested.
 
-### Priority 3: Core API Routes
+### Priority 3: Testing Infrastructure & Data Validation
 
-- [ ] **Task 3.1**: Create CRUD API routes for Coach (`/api/coaches`)
+- [ ] **Task 3.1**: Install Vitest and configure for Next.js + Prisma project
+  - Spec: (none — infrastructure)
+  - Acceptance: `npx vitest run` executes with zero tests. `vitest.config.ts` configures path aliases (`@/*`), TypeScript, and test file patterns. `package.json` has `"test": "vitest run"` script. AGENTS.md updated with test command.
+
+- [ ] **Task 3.2**: Unit test TeamBuildr data transformer against known export data
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: Tests verify: prescribed (placeholder) vs actual (value) extraction, superset grouping mapping, exercise type code mapping (L→Lift, S→SAQ+C, etc.), workingMax/generatedMax→MaxSnapshot conversion, RPE extraction from additionalInformation. Uses real sample data from export.
+
+- [ ] **Task 3.3**: Unit test 1RM calculation library and RPE/RIR lookup table
+  - Spec: specs/12-rpe-rir-support.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
+  - Acceptance: Tests verify: `calculateOneRepMax(140, 5)` returns expected value for each formula (Epley, Brzycki). RPE table returns correct %1RM for known inputs (RPE 10 @ 1 rep = 100%, RPE 8 @ 5 reps = 76%). Wilks/DOTS return expected scores for known bodyweight+total combos.
+
+- [ ] **Task 3.4**: Integration test seed script — verify import counts match source data
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: Test seeds a test database, then asserts: 5 athletes, 2,033 WorkoutSessions, 12,437 WorkoutExercises, 16,552 SetLogs, 1,806 MaxSnapshots (PRs), 136+ exercises. Per-athlete tonnage matches source totals. Uses Prisma test client with isolated database or transaction rollback.
+
+- [ ] **Task 3.5**: Integration test API routes with seeded data (CRUD operations)
+  - Spec: specs/02-coach-dashboard.md, specs/03-athlete-management.md
+  - Acceptance: Tests hit API routes against seeded database: GET `/api/athletes` returns 5 athletes, GET `/api/athletes/[id]` returns correct profile, GET `/api/exercises` returns 800+ exercises with search filtering, POST/PUT/DELETE operations work and persist. Uses Next.js test server or direct route handler calls.
+
+- [ ] **Task 3.6**: Install Playwright and create E2E smoke tests for core pages
+  - Spec: (none — infrastructure)
+  - Acceptance: `npx playwright test` runs headless Chrome. Smoke tests verify: homepage loads, `/athletes` lists 5 athletes, `/exercises` shows exercise library with search, `/dashboard` displays stat cards with non-zero values, `/analytics` renders charts. All assertions against real seeded data.
+
+### Priority 4: Core API Routes
+
+- [ ] **Task 4.1**: Create CRUD API routes for Coach (`/api/coaches`)
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: POST creates coach, GET returns coach profile
 
@@ -359,3 +385,14 @@ _Updated by Ralph during planning review (2026-02-17)_
 **No contradictions found**: All spec requirements are internally consistent. The plan's priority ordering matches the dependency chain (schema → API → UI → advanced features).
 
 **Task 13.6 confirmed complete**: The export script handles all specified acceptance criteria including --help flag, --token, --account, --output, --resume, plus additional --athletes and --concurrency flags. Supporting `scripts/lib/` includes: `teambuildr-client.ts` (API wrapper), `rate-limiter.ts`, `retry.ts`, `checkpoint.ts` (resume support), `logger.ts`.
+
+### Plan Restructuring (2026-02-17)
+
+**Real data seeding moved to Priority 2**: Previously, data migration was Priority 13 (last). Now real data flows in immediately after the schema is ready:
+- Old Task 1.9 (seed 30 exercises) replaced with Priority 2 (8 tasks) covering free-exercise-db import, TeamBuildr data transformer, athlete/workout import, validation, calculation libraries, and RPE table
+- Old Tasks 13.1-13.2 (WorkoutSession, MaxSnapshot, superset fields) moved to Tasks 1.9-1.10 in Priority 1
+- Old Tasks 13.3-13.5 (import endpoint, transformer, validation) restructured into Tasks 2.3-2.6
+- Old Task 13.6 (export script, already complete) moved to Priority 14
+- All subsequent priorities renumbered (old P2→P3, old P3→P4, etc.)
+- Two new data sources: (1) TeamBuildr 37 MB export (5 athletes, 2,033 dates) and (2) free-exercise-db (800+ exercises, public domain)
+- Net change: 66 → 70 tasks (added 8 seeding tasks, removed 1 old seed task, consolidated 5 old migration tasks into new structure)

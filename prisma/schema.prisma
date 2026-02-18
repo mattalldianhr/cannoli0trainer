@@ -93,6 +93,8 @@ model Athlete {
   setLogs            SetLog[]
   bodyweightLogs     BodyweightLog[]
   meetEntries        MeetEntry[]
+
+  @@index([coachId])
 }
 
 model Program {
@@ -111,6 +113,8 @@ model Program {
   coach       Coach                @relation(fields: [coachId], references: [id])
   workouts    Workout[]
   assignments ProgramAssignment[]
+
+  @@index([coachId])
 }
 
 model ProgramAssignment {
@@ -123,6 +127,10 @@ model ProgramAssignment {
 
   program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
   athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([programId])
+  @@index([athleteId])
+  @@unique([programId, athleteId])
 }
 
 model Workout {
@@ -137,6 +145,8 @@ model Workout {
 
   program   Program           @relation(fields: [programId], references: [id], onDelete: Cascade)
   exercises WorkoutExercise[]
+
+  @@index([programId])
 }
 
 model Exercise {
@@ -152,6 +162,8 @@ model Exercise {
 
   coach            Coach             @relation(fields: [coachId], references: [id])
   workoutExercises WorkoutExercise[]
+
+  @@index([coachId])
 }
 
 model WorkoutExercise {
@@ -172,6 +184,9 @@ model WorkoutExercise {
   workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   exercise Exercise @relation(fields: [exerciseId], references: [id])
   setLogs  SetLog[]
+
+  @@index([workoutId])
+  @@index([exerciseId])
 }
 
 model SetLog {
@@ -190,6 +205,10 @@ model SetLog {
 
   workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   athlete         Athlete         @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([workoutExerciseId])
+  @@index([athleteId])
+  @@index([athleteId, completedAt])
 }
 
 model BodyweightLog {
@@ -200,6 +219,8 @@ model BodyweightLog {
   loggedAt  DateTime   @default(now())
 
   athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([athleteId])
 }
 
 model CompetitionMeet {
@@ -214,6 +235,8 @@ model CompetitionMeet {
 
   coach   Coach       @relation(fields: [coachId], references: [id])
   entries MeetEntry[]
+
+  @@index([coachId])
 }
 
 model MeetEntry {
@@ -236,4 +259,7 @@ model MeetEntry {
 
   meet    CompetitionMeet @relation(fields: [meetId], references: [id], onDelete: Cascade)
   athlete Athlete         @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@index([meetId])
+  @@index([athleteId])
 }
