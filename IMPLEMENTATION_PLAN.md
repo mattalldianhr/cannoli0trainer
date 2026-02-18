@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 27
+- Completed: 28
 - In progress: 0
 
 ## Tasks
@@ -128,7 +128,7 @@
   - Spec: specs/03-athlete-management.md
   - Acceptance: POST/GET/PUT/DELETE work, GET supports search query param
 
-- [ ] **Task 4.3**: Create CRUD API routes for Programs (`/api/programs`, `/api/programs/[id]`)
+- [x] **Task 4.3**: Create CRUD API routes for Programs (`/api/programs`, `/api/programs/[id]`)
   - Spec: specs/04-program-builder.md
   - Acceptance: POST/GET/PUT/DELETE work, includes nested workout/exercise data
 
