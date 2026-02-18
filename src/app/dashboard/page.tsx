@@ -44,19 +44,20 @@ async function getDashboardStats(coachId: string) {
     workoutsThisWeek,
     athletesNeedingAttention,
   ] = await Promise.all([
-    prisma.athlete.count({ where: { coachId } }),
+    prisma.athlete.count({ where: { coachId, isActive: true } }),
     prisma.program.count({
       where: { coachId, isTemplate: false, isArchived: false },
     }),
     prisma.workoutSession.count({
       where: {
-        athlete: { coachId },
+        athlete: { coachId, isActive: true },
         date: { gte: startOfWeek },
       },
     }),
     prisma.athlete.count({
       where: {
         coachId,
+        isActive: true,
         workoutSessions: {
           none: {
             date: {
@@ -83,7 +84,7 @@ async function getRecentActivity(coachId: string) {
 
   const sessions = await prisma.workoutSession.findMany({
     where: {
-      athlete: { coachId },
+      athlete: { coachId, isActive: true },
       date: { gte: sevenDaysAgo },
     },
     include: {
@@ -115,6 +116,7 @@ async function getAthletesNeedingAttention(coachId: string) {
   const athletes = await prisma.athlete.findMany({
     where: {
       coachId,
+      isActive: true,
       workoutSessions: {
         none: {
           date: { gte: threeDaysAgo },

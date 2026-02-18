@@ -11,33 +11,43 @@ export const metadata = {
 
 export default async function AthletesPage() {
   const coachId = await getCurrentCoachId();
-  const athletes = await prisma.athlete.findMany({
-    where: { coachId },
-    include: {
-      _count: {
-        select: {
-          setLogs: true,
-          workoutSessions: true,
-          programAssignments: true,
-        },
-      },
-      workoutSessions: {
-        orderBy: { date: 'desc' },
-        take: 1,
-        select: { date: true },
-      },
-      programAssignments: {
-        orderBy: { assignedAt: 'desc' },
-        take: 1,
-        include: {
-          program: { select: { name: true } },
-        },
+
+  const athleteInclude = {
+    _count: {
+      select: {
+        setLogs: true,
+        workoutSessions: true,
+        programAssignments: true,
       },
     },
-    orderBy: { name: 'asc' },
-  });
+    workoutSessions: {
+      orderBy: { date: 'desc' as const },
+      take: 1,
+      select: { date: true },
+    },
+    programAssignments: {
+      orderBy: { assignedAt: 'desc' as const },
+      take: 1,
+      include: {
+        program: { select: { name: true } },
+      },
+    },
+  };
 
-  const athleteData = athletes.map((athlete) => ({
+  const [activeAthletes, archivedAthletes] = await Promise.all([
+    prisma.athlete.findMany({
+      where: { coachId, isActive: true },
+      include: athleteInclude,
+      orderBy: { name: 'asc' },
+    }),
+    prisma.athlete.findMany({
+      where: { coachId, isActive: false },
+      include: athleteInclude,
+      orderBy: { name: 'asc' },
+    }),
+  ]);
+
+  const mapAthlete = (athlete: (typeof activeAthletes)[number]) => ({
     id: athlete.id,
     name: athlete.name,
     email: athlete.email,
@@ -46,22 +56,27 @@ export default async function AthletesPage() {
     experienceLevel: athlete.experienceLevel,
     isRemote: athlete.isRemote,
     isCompetitor: athlete.isCompetitor,
+    isActive: athlete.isActive,
     federation: athlete.federation,
     notes: athlete.notes,
     _count: athlete._count,
     lastWorkoutDate: athlete.workoutSessions[0]?.date?.toISOString() ?? null,
     currentProgram: athlete.programAssignments[0]?.program?.name ?? null,
-  }));
+  });
+
+  const activeData = activeAthletes.map(mapAthlete);
+  const archivedData = archivedAthletes.map(mapAthlete);
 
   return (
     <Container className="py-8">
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Athletes</h1>
         <p className="text-muted-foreground mt-1">
-          Manage your roster of {athleteData.length} athlete{athleteData.length !== 1 ? 's' : ''}
+          Manage your roster of {activeData.length} athlete{activeData.length !== 1 ? 's' : ''}
+          {archivedData.length > 0 && ` (${archivedData.length} archived)`}
         </p>
       </div>
-      <AthleteList athletes={athleteData} />
+      <AthleteList athletes={activeData} archivedAthletes={archivedData} />
     </Container>
   );
 }

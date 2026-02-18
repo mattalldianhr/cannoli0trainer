@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,25 +13,25 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 
-interface DeleteAthleteDialogProps {
+interface ArchiveAthleteDialogProps {
   athleteId: string;
   athleteName: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function DeleteAthleteDialog({
+export function ArchiveAthleteDialog({
   athleteId,
   athleteName,
   open,
   onOpenChange,
-}: DeleteAthleteDialogProps) {
+}: ArchiveAthleteDialogProps) {
   const router = useRouter();
-  const [deleting, setDeleting] = useState(false);
+  const [archiving, setArchiving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleDelete() {
-    setDeleting(true);
+  async function handleArchive() {
+    setArchiving(true);
     setError(null);
 
     try {
@@ -41,14 +41,14 @@ export function DeleteAthleteDialog({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Failed to delete athlete');
+        throw new Error(data.error || 'Failed to archive athlete');
       }
 
       router.push('/athletes');
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
-      setDeleting(false);
+      setArchiving(false);
     }
   }
 
@@ -57,13 +57,13 @@ export function DeleteAthleteDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
-            Delete Athlete
+            <Archive className="h-5 w-5 text-muted-foreground" />
+            Archive Athlete
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete <strong>{athleteName}</strong>? This will permanently
-            remove their profile, training history, and all associated data. This action cannot be
-            undone.
+            Are you sure you want to archive <strong>{athleteName}</strong>? They will be hidden from
+            your active roster but their training history and data will be preserved. You can
+            reactivate them at any time from the Archived tab.
           </DialogDescription>
         </DialogHeader>
 
@@ -78,21 +78,23 @@ export function DeleteAthleteDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={deleting}
+            disabled={archiving}
           >
             Cancel
           </Button>
           <Button
             type="button"
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={deleting}
+            onClick={handleArchive}
+            disabled={archiving}
           >
-            {deleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            {deleting ? 'Deleting...' : 'Delete Athlete'}
+            {archiving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+            {archiving ? 'Archiving...' : 'Archive Athlete'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
+// Keep backward-compatible export name
+export { ArchiveAthleteDialog as DeleteAthleteDialog };

@@ -13,7 +13,7 @@ import {
   MapPin,
   Mail,
   Pencil,
-  Trash2,
+  Archive,
   ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -180,8 +180,8 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
             Edit
           </Button>
           <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)}>
-            <Trash2 className="h-4 w-4 mr-1" />
-            Delete
+            <Archive className="h-4 w-4 mr-1" />
+            Archive
           </Button>
         </div>
       </div>

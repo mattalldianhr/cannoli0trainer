@@ -56,7 +56,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
   // Fetch all athletes and their sessions for this week
   const coachId = await getCurrentCoachId();
   const athletes = await prisma.athlete.findMany({
-    where: { coachId },
+    where: { coachId, isActive: true },
     select: {
       id: true,
       name: true,

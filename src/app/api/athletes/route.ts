@@ -47,8 +47,16 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const isCompetitor = searchParams.get('isCompetitor');
     const isRemote = searchParams.get('isRemote');
+    const isActive = searchParams.get('isActive');
 
     const where: Record<string, unknown> = { coachId };
+
+    // Default to active athletes unless explicitly requesting archived
+    if (isActive === 'false') {
+      where.isActive = false;
+    } else if (isActive !== 'all') {
+      where.isActive = true;
+    }
 
     if (search) {
       where.OR = [

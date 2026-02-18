@@ -61,7 +61,7 @@ export async function POST(
 
     // Verify all athletes exist and belong to coach (include email+name+prefs for notifications)
     const athletes = await prisma.athlete.findMany({
-      where: { id: { in: resolvedAthleteIds }, coachId },
+      where: { id: { in: resolvedAthleteIds }, coachId, isActive: true },
       select: { id: true, email: true, name: true, notificationPreferences: true },
     });
     const foundIds = new Set(athletes.map((a) => a.id));

@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     // Build athlete filter — always scope to current coach
     const coachId = await getCurrentCoachId();
-    const athleteWhere: Record<string, unknown> = { coachId };
+    const athleteWhere: Record<string, unknown> = { coachId, isActive: true };
     if (athleteId && athleteId !== 'all') {
       athleteWhere.id = athleteId;
     }

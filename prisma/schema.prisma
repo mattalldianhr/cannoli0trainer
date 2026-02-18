@@ -157,6 +157,7 @@ model Athlete {
   federation              String?
   notes                   String?         @db.Text
   metadata                Json?
+  isActive                Boolean         @default(true)
   notificationPreferences Json            @default("{\"emailOnProgramAssigned\":true}")
   userId                  String?         @unique
   createdAt               DateTime        @default(now())

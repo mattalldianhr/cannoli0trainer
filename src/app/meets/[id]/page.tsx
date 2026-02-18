@@ -54,7 +54,7 @@ export default async function MeetDetailPage({
 
   // Get all athletes for the add dialog
   const allAthletes = await prisma.athlete.findMany({
-    where: { coachId: meet.coachId },
+    where: { coachId: meet.coachId, isActive: true },
     select: { id: true, name: true, weightClass: true, bodyweight: true },
     orderBy: { name: 'asc' },
   });

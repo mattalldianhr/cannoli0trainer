@@ -95,6 +95,7 @@ export async function PUT(
         ...(body.federation !== undefined && { federation: body.federation }),
         ...(body.notes !== undefined && { notes: body.notes }),
         ...(body.metadata !== undefined && { metadata: body.metadata }),
+        ...(body.isActive !== undefined && { isActive: body.isActive }),
       },
     });
 
@@ -109,14 +110,30 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
     const coachId = await getCurrentCoachId();
+    const { searchParams } = new URL(request.url);
+    const permanent = searchParams.get('permanent') === 'true';
 
-    const existing = await prisma.athlete.findUnique({ where: { id, coachId } });
+    const existing = await prisma.athlete.findUnique({
+      where: { id, coachId },
+      include: {
+        _count: {
+          select: {
+            setLogs: true,
+            workoutSessions: true,
+            programAssignments: true,
+            bodyweightLogs: true,
+            meetEntries: true,
+            maxSnapshots: true,
+          },
+        },
+      },
+    });
     if (!existing) {
       return NextResponse.json(
         { error: 'Athlete not found' },
@@ -124,13 +141,43 @@ export async function DELETE(
       );
     }
 
-    await prisma.athlete.delete({ where: { id } });
+    if (permanent) {
+      // Hard delete only allowed when zero data exists
+      const totalData =
+        existing._count.setLogs +
+        existing._count.workoutSessions +
+        existing._count.programAssignments +
+        existing._count.bodyweightLogs +
+        existing._count.meetEntries +
+        existing._count.maxSnapshots;
 
-    return NextResponse.json({ success: true });
+      if (totalData > 0) {
+        return NextResponse.json(
+          {
+            error: 'Cannot permanently delete an athlete with training data. Archive them instead.',
+            setLogs: existing._count.setLogs,
+            workoutSessions: existing._count.workoutSessions,
+            programAssignments: existing._count.programAssignments,
+          },
+          { status: 409 }
+        );
+      }
+
+      await prisma.athlete.delete({ where: { id } });
+      return NextResponse.json({ success: true, action: 'deleted' });
+    }
+
+    // Default: soft-delete (archive)
+    await prisma.athlete.update({
+      where: { id },
+      data: { isActive: false },
+    });
+
+    return NextResponse.json({ success: true, action: 'archived' });
   } catch (error) {
-    console.error('Failed to delete athlete:', error);
+    console.error('Failed to archive/delete athlete:', error);
     return NextResponse.json(
-      { error: 'Failed to delete athlete' },
+      { error: 'Failed to archive/delete athlete' },
       { status: 500 }
     );
   }

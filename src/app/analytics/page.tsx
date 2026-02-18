@@ -18,7 +18,7 @@ export default async function AnalyticsPage({
   const coachId = await getCurrentCoachId();
 
   const athletes = await prisma.athlete.findMany({
-    where: { coachId },
+    where: { coachId, isActive: true },
     select: { id: true, name: true },
     orderBy: { name: 'asc' },
   });

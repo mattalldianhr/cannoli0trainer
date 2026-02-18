@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, UserPlus, ClipboardList, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, UserPlus, ClipboardList, X, RotateCcw, Archive } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { BulkAssignDialog } from './BulkAssignDialog';
 
-type FilterType = 'all' | 'competitors' | 'remote' | 'needs_attention';
+type FilterType = 'all' | 'competitors' | 'remote' | 'needs_attention' | 'archived';
 
 interface AthleteData {
   id: string;
@@ -22,6 +23,7 @@ interface AthleteData {
   experienceLevel: string;
   isRemote: boolean;
   isCompetitor: boolean;
+  isActive: boolean;
   federation: string | null;
   notes: string | null;
   _count: {
@@ -35,6 +37,7 @@ interface AthleteData {
 
 interface AthleteListProps {
   athletes: AthleteData[];
+  archivedAthletes?: AthleteData[];
 }
 
 const FILTERS: { key: FilterType; label: string }[] = [
@@ -42,6 +45,7 @@ const FILTERS: { key: FilterType; label: string }[] = [
   { key: 'competitors', label: 'Competitors' },
   { key: 'remote', label: 'Remote' },
   { key: 'needs_attention', label: 'Needs Attention' },
+  { key: 'archived', label: 'Archived' },
 ];
 
 function daysSinceDate(dateStr: string | null): number | null {
@@ -50,19 +54,26 @@ function daysSinceDate(dateStr: string | null): number | null {
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-export function AthleteList({ athletes }: AthleteListProps) {
+export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProps) {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [reactivating, setReactivating] = useState<string | null>(null);
 
-  const filtered = athletes.filter((athlete) => {
+  const isArchivedView = activeFilter === 'archived';
+  const sourceList = isArchivedView ? archivedAthletes : athletes;
+
+  const filtered = sourceList.filter((athlete) => {
     if (search) {
       const q = search.toLowerCase();
       const matchesName = athlete.name.toLowerCase().includes(q);
       const matchesEmail = athlete.email?.toLowerCase().includes(q);
       if (!matchesName && !matchesEmail) return false;
     }
+
+    if (isArchivedView) return true;
 
     switch (activeFilter) {
       case 'competitors':
@@ -104,9 +115,30 @@ export function AthleteList({ athletes }: AthleteListProps) {
     setSelected(new Set());
   };
 
-  const selectedNames = athletes
+  const selectedNames = sourceList
     .filter((a) => selected.has(a.id))
     .map((a) => a.name);
+
+  async function handleReactivate(athleteId: string) {
+    setReactivating(athleteId);
+    try {
+      const res = await fetch(`/api/athletes/${athleteId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: true }),
+      });
+      if (res.ok) {
+        router.refresh();
+      }
+    } finally {
+      setReactivating(null);
+    }
+  }
+
+  // Hide the archived filter chip if there are no archived athletes
+  const visibleFilters = archivedAthletes.length > 0
+    ? FILTERS
+    : FILTERS.filter((f) => f.key !== 'archived');
 
   return (
     <div className="space-y-4">
@@ -131,10 +163,13 @@ export function AthleteList({ athletes }: AthleteListProps) {
 
       {/* Filter Chips */}
       <div className="flex gap-2 flex-wrap">
-        {FILTERS.map((filter) => (
+        {visibleFilters.map((filter) => (
           <button
             key={filter.key}
-            onClick={() => setActiveFilter(filter.key)}
+            onClick={() => {
+              setActiveFilter(filter.key);
+              clearSelection();
+            }}
             className={cn(
               'inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium transition-colors',
               activeFilter === filter.key
@@ -142,7 +177,11 @@ export function AthleteList({ athletes }: AthleteListProps) {
                 : 'bg-background text-muted-foreground border-border hover:bg-muted'
             )}
           >
+            {filter.key === 'archived' && <Archive className="h-3 w-3 mr-1" />}
             {filter.label}
+            {filter.key === 'archived' && archivedAthletes.length > 0 && (
+              <span className="ml-1 text-xs">({archivedAthletes.length})</span>
+            )}
           </button>
         ))}
       </div>
@@ -151,8 +190,9 @@ export function AthleteList({ athletes }: AthleteListProps) {
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           {filtered.length} athlete{filtered.length !== 1 ? 's' : ''}
+          {isArchivedView && ' (archived)'}
         </p>
-        {filtered.length > 0 && (
+        {filtered.length > 0 && !isArchivedView && (
           <button
             onClick={toggleAll}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -163,7 +203,7 @@ export function AthleteList({ athletes }: AthleteListProps) {
       </div>
 
       {/* Bulk Action Bar */}
-      {isSelecting && (
+      {isSelecting && !isArchivedView && (
         <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-2.5">
           <span className="text-sm font-medium">
             {selected.size} selected
@@ -190,14 +230,18 @@ export function AthleteList({ athletes }: AthleteListProps) {
       {filtered.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
-            {search ? 'No athletes match your search.' : 'No athletes found.'}
+            {isArchivedView
+              ? 'No archived athletes.'
+              : search
+                ? 'No athletes match your search.'
+                : 'No athletes found.'}
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-3">
           {filtered.map((athlete) => {
             const daysSince = daysSinceDate(athlete.lastWorkoutDate);
-            const needsAttention = daysSince === null || daysSince >= 3;
+            const needsAttention = !isArchivedView && (daysSince === null || daysSince >= 3);
             const isChecked = selected.has(athlete.id);
 
             return (
@@ -205,26 +249,29 @@ export function AthleteList({ athletes }: AthleteListProps) {
                 key={athlete.id}
                 className={cn(
                   'hover:bg-muted/50 transition-colors cursor-pointer',
-                  isChecked && 'ring-2 ring-primary bg-primary/5'
+                  isChecked && 'ring-2 ring-primary bg-primary/5',
+                  isArchivedView && 'opacity-75'
                 )}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
-                    {/* Checkbox */}
-                    <div
-                      className="shrink-0"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleAthlete(athlete.id);
-                      }}
-                    >
-                      <Checkbox
-                        checked={isChecked}
-                        onCheckedChange={() => toggleAthlete(athlete.id)}
-                        aria-label={`Select ${athlete.name}`}
-                      />
-                    </div>
+                    {/* Checkbox (not shown for archived) */}
+                    {!isArchivedView && (
+                      <div
+                        className="shrink-0"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleAthlete(athlete.id);
+                        }}
+                      >
+                        <Checkbox
+                          checked={isChecked}
+                          onCheckedChange={() => toggleAthlete(athlete.id)}
+                          aria-label={`Select ${athlete.name}`}
+                        />
+                      </div>
+                    )}
 
                     {/* Card content as link */}
                     <Link href={`/athletes/${athlete.id}`} className="flex-1 min-w-0">
@@ -233,10 +280,13 @@ export function AthleteList({ athletes }: AthleteListProps) {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-semibold truncate">{athlete.name}</span>
-                            {athlete.isCompetitor && (
+                            {isArchivedView && (
+                              <Badge variant="outline" className="text-xs">Archived</Badge>
+                            )}
+                            {!isArchivedView && athlete.isCompetitor && (
                               <Badge variant="default" className="text-xs">Competitor</Badge>
                             )}
-                            {athlete.isRemote && (
+                            {!isArchivedView && athlete.isRemote && (
                               <Badge variant="secondary" className="text-xs">Remote</Badge>
                             )}
                             {needsAttention && (
@@ -256,29 +306,47 @@ export function AthleteList({ athletes }: AthleteListProps) {
                           </div>
                         </div>
 
-                        {/* Right: Quick stats */}
-                        <div className="flex items-center gap-4 text-sm text-right shrink-0">
-                          <div>
-                            <p className="text-xs text-muted-foreground">Sessions</p>
-                            <p className="font-semibold">{athlete._count.workoutSessions}</p>
+                        {/* Right: Quick stats or reactivate */}
+                        {isArchivedView ? (
+                          <div className="shrink-0">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={reactivating === athlete.id}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleReactivate(athlete.id);
+                              }}
+                            >
+                              <RotateCcw className={cn('h-4 w-4 mr-1', reactivating === athlete.id && 'animate-spin')} />
+                              {reactivating === athlete.id ? 'Reactivating...' : 'Reactivate'}
+                            </Button>
                           </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground">Sets</p>
-                            <p className="font-semibold">{athlete._count.setLogs}</p>
+                        ) : (
+                          <div className="flex items-center gap-4 text-sm text-right shrink-0">
+                            <div>
+                              <p className="text-xs text-muted-foreground">Sessions</p>
+                              <p className="font-semibold">{athlete._count.workoutSessions}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-muted-foreground">Sets</p>
+                              <p className="font-semibold">{athlete._count.setLogs}</p>
+                            </div>
+                            <div className="hidden sm:block">
+                              <p className="text-xs text-muted-foreground">Last Workout</p>
+                              <p className={cn('font-semibold', needsAttention && 'text-destructive')}>
+                                {athlete.lastWorkoutDate
+                                  ? daysSince === 0
+                                    ? 'Today'
+                                    : daysSince === 1
+                                      ? 'Yesterday'
+                                      : `${daysSince}d ago`
+                                  : 'Never'}
+                              </p>
+                            </div>
                           </div>
-                          <div className="hidden sm:block">
-                            <p className="text-xs text-muted-foreground">Last Workout</p>
-                            <p className={cn('font-semibold', needsAttention && 'text-destructive')}>
-                              {athlete.lastWorkoutDate
-                                ? daysSince === 0
-                                  ? 'Today'
-                                  : daysSince === 1
-                                    ? 'Yesterday'
-                                    : `${daysSince}d ago`
-                                : 'Never'}
-                            </p>
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </Link>
                   </div>

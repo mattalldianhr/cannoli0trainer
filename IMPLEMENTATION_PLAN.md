@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 141
+- Completed: 142
 - In progress: 0
-- Remaining: 38
+- Remaining: 37
 
 ## Tasks
 
@@ -732,7 +732,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `isArchived Boolean @default(false)`. All list queries filter. "Archive" replaces "Delete". Hard delete only when zero assignments/sessions.
 
-- [ ] **Task 28.7**: Add `isActive` field to Athlete model for archive vs hard delete
+- [x] **Task 28.7**: Add `isActive` field to Athlete model for archive vs hard delete
   - Spec: specs/03-athlete-management.md
   - Acceptance: `isActive Boolean @default(true)`. Default filter to active only. "Archived" tab. Reactivation supported. Hard delete only when zero data.
 
