@@ -9,6 +9,7 @@ import {
   Clock,
   CheckCircle2,
   Circle,
+  History,
   Info,
   Loader2,
   Plus,
@@ -43,6 +44,7 @@ interface PreviousPerf {
   weight: number;
   unit: string;
   rpe: number | null;
+  date: string;
 }
 
 interface ExerciseData {
@@ -349,6 +351,54 @@ function SetLogRow({
   );
 }
 
+function formatPrevDate(dateStr: string): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function PreviousPerformance({ sets }: { sets: PreviousPerf[] }) {
+  if (sets.length === 0) return null;
+
+  const dateLabel = sets[0].date ? formatPrevDate(sets[0].date) : '';
+
+  // Summarize: if all sets have the same weight and reps, show compact "3×5 @ 225 lbs"
+  const allSameWeight = sets.every((s) => s.weight === sets[0].weight);
+  const allSameReps = sets.every((s) => s.reps === sets[0].reps);
+
+  if (allSameWeight && allSameReps && sets.length > 1) {
+    const { weight, unit, reps, rpe } = sets[0];
+    return (
+      <div className="ml-7 mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <History className="h-3 w-3 flex-shrink-0" />
+        <span>
+          Last{dateLabel && ` (${dateLabel})`}: {sets.length}×{reps} @ {weight} {unit}
+          {rpe != null && ` RPE ${rpe}`}
+        </span>
+      </div>
+    );
+  }
+
+  // Show individual sets when weights/reps vary
+  return (
+    <div className="ml-7 mt-2 space-y-0.5">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <History className="h-3 w-3 flex-shrink-0" />
+        <span>Last{dateLabel && ` (${dateLabel})`}:</span>
+      </div>
+      <div className="ml-[18px] text-xs text-muted-foreground tabular-nums">
+        {sets.map((s, i) => (
+          <span key={i}>
+            {i > 0 && ' · '}
+            {s.weight} {s.unit} × {s.reps}
+            {s.rpe != null && ` @${s.rpe}`}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ExerciseCard({
   exercise,
   athleteId,
@@ -361,7 +411,6 @@ function ExerciseCard({
   const completedSets = exercise.setLogs.length;
   const totalSets = exercise.prescribedSets ? parseInt(exercise.prescribedSets, 10) : 0;
   const isComplete = totalSets > 0 && completedSets >= totalSets;
-  const prevPerf = exercise.previousPerformance[0];
   const showVelocity = exercise.prescriptionType === 'velocity' || exercise.velocityTarget != null;
 
   const [expanded, setExpanded] = useState(!isComplete);
@@ -515,11 +564,8 @@ function ExerciseCard({
         )}
 
         {/* Previous performance reference */}
-        {prevPerf && (
-          <div className="ml-7 mt-2 text-xs text-muted-foreground">
-            Last: {prevPerf.weight} {prevPerf.unit} × {prevPerf.reps}
-            {prevPerf.rpe != null && ` @ RPE ${prevPerf.rpe}`}
-          </div>
+        {exercise.previousPerformance.length > 0 && (
+          <PreviousPerformance sets={exercise.previousPerformance} />
         )}
 
         {/* Expanded section: logged sets + new set form */}

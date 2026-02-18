@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 57
+- Completed: 58
 - In progress: 0
 
 ## Tasks
@@ -260,7 +260,7 @@
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Each set has input fields, completing set saves to database
 
-- [ ] **Task 10.3**: Add previous performance reference per exercise
+- [x] **Task 10.3**: Add previous performance reference per exercise
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Shows "Last: X lbs x Y reps" from most recent session
 

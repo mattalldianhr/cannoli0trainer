@@ -90,44 +90,52 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // For each exercise, fetch the last performance (most recent SetLog for the same exercise)
-    const exerciseIds = workout.exercises.map((we) => we.exerciseId);
-    const previousPerformance = await prisma.setLog.findMany({
-      where: {
-        athleteId,
-        workoutExercise: {
-          exerciseId: { in: exerciseIds },
-          workout: {
-            // Exclude current workout
-            id: { not: workout.id },
-          },
-        },
-      },
-      include: {
-        workoutExercise: {
-          select: { exerciseId: true },
-        },
-      },
-      orderBy: { completedAt: 'desc' },
-    });
+    // For each exercise, find the most recent previous session's sets
+    const uniqueExerciseIds = [...new Set(workout.exercises.map((we) => we.exerciseId))];
+    const prevByExercise = new Map<string, { reps: number; weight: number; unit: string; rpe: number | null; date: string }[]>();
 
-    // Group previous performance by exerciseId — take the most recent session's sets
-    const prevByExercise = new Map<string, { reps: number; weight: number; unit: string; rpe: number | null }[]>();
-    for (const log of previousPerformance) {
-      const exId = log.workoutExercise.exerciseId;
-      if (!prevByExercise.has(exId)) {
-        prevByExercise.set(exId, []);
-      }
-      const existing = prevByExercise.get(exId)!;
-      // Only keep the first batch (most recent date) — stop if we already have sets and this is a different date
-      if (existing.length > 0) continue;
-      existing.push({
-        reps: log.reps,
-        weight: log.weight,
-        unit: log.unit,
-        rpe: log.rpe,
-      });
-    }
+    await Promise.all(
+      uniqueExerciseIds.map(async (exerciseId) => {
+        // Step 1: Find the most recent SetLog for this exercise (excluding current workout)
+        const mostRecentSet = await prisma.setLog.findFirst({
+          where: {
+            athleteId,
+            workoutExercise: {
+              exerciseId,
+              workout: { id: { not: workout.id } },
+            },
+          },
+          select: { workoutExerciseId: true },
+          orderBy: { completedAt: 'desc' },
+        });
+
+        if (!mostRecentSet) return;
+
+        // Step 2: Get all sets from that same WorkoutExercise
+        const prevSets = await prisma.setLog.findMany({
+          where: {
+            workoutExerciseId: mostRecentSet.workoutExerciseId,
+            athleteId,
+          },
+          orderBy: { setNumber: 'asc' },
+        });
+
+        if (prevSets.length > 0) {
+          // Use the first set's completedAt as the session date
+          const sessionDate = prevSets[0].completedAt.toISOString().split('T')[0];
+          prevByExercise.set(
+            exerciseId,
+            prevSets.map((sl) => ({
+              reps: sl.reps,
+              weight: sl.weight,
+              unit: sl.unit,
+              rpe: sl.rpe,
+              date: sessionDate,
+            })),
+          );
+        }
+      }),
+    );
 
     const exercises = workout.exercises.map((we) => ({
       id: we.id,
