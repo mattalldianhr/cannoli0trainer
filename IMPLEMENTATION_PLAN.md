@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 26
+- Completed: 27
 - In progress: 0
 
 ## Tasks
@@ -124,7 +124,7 @@
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: POST creates coach, GET returns coach profile
 
-- [ ] **Task 4.2**: Create CRUD API routes for Athletes (`/api/athletes`, `/api/athletes/[id]`)
+- [x] **Task 4.2**: Create CRUD API routes for Athletes (`/api/athletes`, `/api/athletes/[id]`)
   - Spec: specs/03-athlete-management.md
   - Acceptance: POST/GET/PUT/DELETE work, GET supports search query param
 
