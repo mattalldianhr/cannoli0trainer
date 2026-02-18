@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 86
+- Completed: 87
 - In progress: 0
-- Remaining: 93 (7 original + 97 new from spec review)
+- Remaining: 92 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -503,7 +503,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Coach can move a workout from one date to another via the calendar UI. Moving updates the WorkoutSession's `date` field and sets `isManuallyScheduled = true`. If the target date already has a session, swap the two sessions' dates.
 
-- [ ] **Task 17.11**: Implement skip workout action on calendar
+- [x] **Task 17.11**: Implement skip workout action on calendar
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Coach can mark a workout as skipped. Sets `isSkipped = true`. Skipped sessions appear visually distinct (strikethrough or dimmed). Only NOT_STARTED sessions can be skipped.
 

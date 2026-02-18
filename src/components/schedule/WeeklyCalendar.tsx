@@ -14,6 +14,8 @@ import {
   Filter,
   Move,
   X,
+  SkipForward,
+  Undo2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -108,6 +110,7 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
   );
   const [moveState, setMoveState] = useState<MoveState | null>(null);
   const [isMoving, setIsMoving] = useState(false);
+  const [skippingSessionId, setSkippingSessionId] = useState<string | null>(null);
 
   // Generate the 7 dates (Mon-Sun) for this week
   const weekDates = useMemo(() => {
@@ -208,6 +211,30 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
       setIsMoving(false);
     }
   }, [moveState, router]);
+
+  // Skip or unskip a session
+  const handleToggleSkip = useCallback(async (sessionId: string, currentlySkipped: boolean) => {
+    setSkippingSessionId(sessionId);
+    try {
+      const res = await fetch(`/api/schedule/${sessionId}/skip`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ skip: !currentlySkipped }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || 'Failed to update skip status');
+        return;
+      }
+
+      router.refresh();
+    } catch {
+      alert('Failed to update skip status');
+    } finally {
+      setSkippingSessionId(null);
+    }
+  }, [router]);
 
   return (
     <div className="space-y-4">
@@ -364,6 +391,8 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
                                   isMoveTarget={canSwap}
                                   isMoving={isMoving}
                                   onStartMove={handleStartMove}
+                                  onToggleSkip={handleToggleSkip}
+                                  isSkipping={skippingSessionId === session.id}
                                   moveActive={!!moveState}
                                 />
                               ) : (canDropEmpty) ? (
@@ -420,6 +449,8 @@ interface SessionCellProps {
   isMoveTarget: boolean;
   isMoving: boolean;
   onStartMove: (session: SessionData, athleteId: string) => void;
+  onToggleSkip: (sessionId: string, currentlySkipped: boolean) => void;
+  isSkipping: boolean;
   moveActive: boolean;
 }
 
@@ -430,6 +461,8 @@ function SessionCell({
   isMoveTarget,
   isMoving,
   onStartMove,
+  onToggleSkip,
+  isSkipping,
   moveActive,
 }: SessionCellProps) {
   const statusColors = {
@@ -487,7 +520,52 @@ function SessionCell({
     );
   }
 
-  // Normal state: clickable link, but NOT_STARTED sessions also show a move handle
+  // Normal state: clickable link, but NOT_STARTED sessions also show action buttons
+  const actionButtons = !moveActive && session.status === 'NOT_STARTED' && (
+    <span className="ml-auto flex items-center gap-0.5">
+      {session.isSkipped ? (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onToggleSkip(session.id, session.isSkipped);
+          }}
+          disabled={isSkipping}
+          className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-50"
+          title="Unskip this workout"
+        >
+          <Undo2 className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+        </button>
+      ) : (
+        <>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggleSkip(session.id, session.isSkipped);
+            }}
+            disabled={isSkipping}
+            className="p-0.5 rounded hover:bg-muted transition-colors disabled:opacity-50"
+            title="Skip this workout"
+          >
+            <SkipForward className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onStartMove(session, athleteId);
+            }}
+            className="p-0.5 rounded hover:bg-muted transition-colors"
+            title="Move this workout"
+          >
+            <Move className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+          </button>
+        </>
+      )}
+    </span>
+  );
+
   const content = (
     <>
       <div className="flex items-center gap-1 mb-0.5">
@@ -502,19 +580,7 @@ function SessionCell({
             {Math.round(session.completionPercentage)}%
           </span>
         )}
-        {canMove && !moveActive && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onStartMove(session, athleteId);
-            }}
-            className="ml-auto p-0.5 rounded hover:bg-muted transition-colors"
-            title="Move this workout"
-          >
-            <Move className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-          </button>
-        )}
+        {actionButtons}
       </div>
       <p className={cn(
         'text-xs font-medium truncate',
