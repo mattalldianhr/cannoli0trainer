@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 113
+- Completed: 114
 - In progress: 0
-- Remaining: 66
+- Remaining: 65
 
 ## Tasks
 
@@ -616,7 +616,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Collapsible "Notes" textarea per exercise. Persisted. Coach-visible.
 
-- [ ] **Task 21.3**: Document offline queueing approach (stretch goal)
+- [x] **Task 21.3**: Document offline queueing approach (stretch goal)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Design doc describing localStorage queue strategy, background sync, pending indicator.
 
