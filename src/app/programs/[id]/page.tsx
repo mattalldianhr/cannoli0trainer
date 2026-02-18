@@ -9,6 +9,7 @@ import { ArrowLeft, Pencil, Dumbbell } from 'lucide-react';
 import { PRESCRIPTION_TYPE_LABELS } from '@/lib/programs/types';
 import type { PrescriptionType } from '@prisma/client';
 import { AssignAthletes } from '@/components/programs/AssignAthletes';
+import { SaveAsTemplate } from '@/components/programs/SaveAsTemplate';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -83,10 +84,17 @@ export default async function ProgramDetailPage({
           )}
         </div>
         {!program.isTemplate && (
-          <AssignAthletes
-            programId={program.id}
-            assignedAthleteIds={program.assignments.map((a) => a.athlete.id)}
-          />
+          <>
+            <SaveAsTemplate
+              programId={program.id}
+              programName={program.name}
+              programDescription={program.description}
+            />
+            <AssignAthletes
+              programId={program.id}
+              assignedAthleteIds={program.assignments.map((a) => a.athlete.id)}
+            />
+          </>
         )}
         <Button asChild>
           <Link href={`/programs/${program.id}/edit`}>

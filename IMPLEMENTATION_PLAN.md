@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 50
+- Completed: 51
 - In progress: 0
 
 ## Tasks
@@ -228,7 +228,7 @@
 
 ### Priority 8: Template System
 
-- [ ] **Task 8.1**: Add "Save as Template" button to program builder
+- [x] **Task 8.1**: Add "Save as Template" button to program builder
   - Spec: specs/11-template-system.md
   - Acceptance: Creates template copy of program (isTemplate=true, no athlete loads)
 
