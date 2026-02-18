@@ -8,7 +8,13 @@ export const metadata = {
   title: 'Analytics | Cannoli Trainer',
 };
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ athleteId?: string }>;
+}) {
+  const { athleteId } = await searchParams;
+
   const athletes = await prisma.athlete.findMany({
     select: { id: true, name: true },
     orderBy: { name: 'asc' },
@@ -23,7 +29,7 @@ export default async function AnalyticsPage() {
         </p>
       </div>
 
-      <AnalyticsDashboard athletes={athletes} />
+      <AnalyticsDashboard athletes={athletes} initialAthleteId={athleteId} />
     </Container>
   );
 }

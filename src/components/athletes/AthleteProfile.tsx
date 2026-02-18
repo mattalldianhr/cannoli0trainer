@@ -14,6 +14,7 @@ import {
   Mail,
   Pencil,
   Trash2,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -506,6 +507,17 @@ function AnalyticsTab({ athlete }: { athlete: AthleteProfileData }) {
 
   return (
     <div className="space-y-6">
+      {/* View Full Analytics Link */}
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/analytics?athleteId=${athlete.id}`}>
+            <BarChart3 className="h-4 w-4 mr-1" />
+            View Full Analytics
+            <ExternalLink className="h-3 w-3 ml-1" />
+          </Link>
+        </Button>
+      </div>
+
       {/* Summary Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <Card>

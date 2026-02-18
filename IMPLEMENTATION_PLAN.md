@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 107
+- Completed: 108
 - In progress: 0
-- Remaining: 73 (7 original + 97 new from spec review)
+- Remaining: 72 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -587,7 +587,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/03-athlete-management.md
   - Acceptance: Line chart on `/athletes/[id]` when BodyweightLog data exists. Recharts, 90-day default. Hidden when no data.
 
-- [ ] **Task 19.3**: Add per-athlete analytics link on athlete profile
+- [x] **Task 19.3**: Add per-athlete analytics link on athlete profile
   - Spec: specs/03-athlete-management.md
   - Acceptance: "View Analytics" button navigates to `/analytics?athleteId=[id]`.
 
