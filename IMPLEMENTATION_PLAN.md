@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 31
+- Completed: 32
 - In progress: 0
 
 ## Tasks
@@ -144,7 +144,7 @@
   - Spec: specs/07-progress-analytics.md
   - Acceptance: POST creates log, GET returns history for athlete
 
-- [ ] **Task 4.7**: Create API routes for Meets (`/api/meets`, `/api/meets/[id]`)
+- [x] **Task 4.7**: Create API routes for Meets (`/api/meets`, `/api/meets/[id]`)
   - Spec: specs/09-competition-prep.md
   - Acceptance: POST/GET/PUT work, includes meet entries with athlete data
 
