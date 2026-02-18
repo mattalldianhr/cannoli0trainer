@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 89
+- Completed: 90
 - In progress: 0
-- Remaining: 90 (7 original + 97 new from spec review)
+- Remaining: 89 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -515,7 +515,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Tests cover standard, spillover, mid-week start, empty program, and weekend scenarios. All pass with `npx vitest run`.
 
-- [ ] **Task 17.14**: Integration test full assignment-to-train flow
+- [x] **Task 17.14**: Integration test full assignment-to-train flow
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: End-to-end: create program, assign to athlete, verify WorkoutSessions created, call `/api/train` for scheduled date, verify correct exercises returned.
 
