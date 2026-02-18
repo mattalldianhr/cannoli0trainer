@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 102
+- Completed: 103
 - In progress: 0
-- Remaining: 78 (7 original + 97 new from spec review)
+- Remaining: 77 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -569,7 +569,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Email to coach with athlete name, workout name, completion %. Only on transition to FULLY_COMPLETED.
 
-- [ ] **Task 18.13**: Add PWA manifest and mobile meta tags for "Add to Home Screen"
+- [x] **Task 18.13**: Add PWA manifest and mobile meta tags for "Add to Home Screen"
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `public/manifest.json`, meta tags, apple-touch-icon. Chrome DevTools shows valid manifest.
 
