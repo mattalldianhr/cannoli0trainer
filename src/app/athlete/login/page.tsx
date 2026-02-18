@@ -141,8 +141,43 @@ function LoginForm() {
         <p className="text-center text-xs text-muted-foreground">
           Don&apos;t have an account? Contact your coach to get started.
         </p>
+
+        {/* Dev bypass — only rendered in non-production */}
+        {process.env.NODE_ENV !== "production" && <DevLoginButton />}
       </div>
     </div>
+  )
+}
+
+function DevLoginButton() {
+  const [loading, setLoading] = useState(false)
+
+  async function handleDevLogin() {
+    setLoading(true)
+    try {
+      const { signIn } = await import("next-auth/react")
+      await signIn("dev-login", { callbackUrl: "/athlete" })
+    } catch {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Button
+      variant="outline"
+      className="w-full border-dashed border-yellow-500/50 text-yellow-600 hover:bg-yellow-500/10"
+      onClick={handleDevLogin}
+      disabled={loading}
+    >
+      {loading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Signing in...
+        </>
+      ) : (
+        "Dev Login (Matt Alldian)"
+      )}
+    </Button>
   )
 }
 

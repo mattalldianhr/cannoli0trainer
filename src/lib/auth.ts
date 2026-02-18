@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import Resend from "next-auth/providers/resend"
+import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
@@ -28,6 +29,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       apiKey: process.env.AUTH_RESEND_KEY,
       from: process.env.EMAIL_FROM || "Cannoli Trainer <noreply@cannoli.mattalldian.com>",
     }),
+    // Dev-only bypass: sign in as first athlete without email verification
+    ...(process.env.NODE_ENV !== "production"
+      ? [
+          Credentials({
+            id: "dev-login",
+            name: "Dev Login",
+            credentials: {},
+            async authorize() {
+              const athlete = await prisma.athlete.findFirst({
+                where: { email: { not: null } },
+                include: { user: true },
+                orderBy: { createdAt: "asc" },
+              })
+              if (!athlete?.user) return null
+              return {
+                id: athlete.user.id,
+                email: athlete.user.email,
+                name: athlete.user.name,
+              }
+            },
+          }),
+        ]
+      : []),
   ],
   session: {
     strategy: "jwt",
