@@ -133,15 +133,18 @@ model Program {
 }
 
 model ProgramAssignment {
-  id         String    @id @default(uuid())
-  programId  String
-  athleteId  String
-  assignedAt DateTime  @default(now())
-  startDate  DateTime?
-  endDate    DateTime?
+  id           String    @id @default(uuid())
+  programId    String
+  athleteId    String
+  assignedAt   DateTime  @default(now())
+  startDate    DateTime?
+  endDate      DateTime?
+  trainingDays Json      @default("[1,2,4,5]")
+  isActive     Boolean   @default(true)
 
-  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
-  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  program         Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
+  athlete         Athlete          @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  workoutSessions WorkoutSession[]
 
   @@index([programId])
   @@index([athleteId])
@@ -158,8 +161,9 @@ model Workout {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  program   Program           @relation(fields: [programId], references: [id], onDelete: Cascade)
-  exercises WorkoutExercise[]
+  program          Program           @relation(fields: [programId], references: [id], onDelete: Cascade)
+  exercises        WorkoutExercise[]
+  workoutSessions  WorkoutSession[]
 
   @@index([programId])
 }
@@ -296,26 +300,36 @@ model MeetEntry {
 }
 
 model WorkoutSession {
-  id                   String               @id @default(uuid())
-  athleteId            String
-  date                 DateTime             @db.Date
-  programId            String?
-  title                String?
-  durationSeconds      Int?
-  completionPercentage Float                @default(0)
-  completedItems       Int                  @default(0)
-  totalItems           Int                  @default(0)
-  status               WorkoutSessionStatus @default(NOT_STARTED)
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
+  id                    String               @id @default(uuid())
+  athleteId             String
+  date                  DateTime             @db.Date
+  programId             String?
+  title                 String?
+  durationSeconds       Int?
+  completionPercentage  Float                @default(0)
+  completedItems        Int                  @default(0)
+  totalItems            Int                  @default(0)
+  status                WorkoutSessionStatus @default(NOT_STARTED)
+  workoutId             String?
+  programAssignmentId   String?
+  isManuallyScheduled   Boolean              @default(false)
+  isSkipped             Boolean              @default(false)
+  weekNumber            Int?
+  dayNumber             Int?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  athlete Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
-  program Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+  athlete           Athlete            @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  program           Program?           @relation(fields: [programId], references: [id], onDelete: SetNull)
+  workout           Workout?           @relation(fields: [workoutId], references: [id], onDelete: SetNull)
+  programAssignment ProgramAssignment? @relation(fields: [programAssignmentId], references: [id], onDelete: SetNull)
 
   @@unique([athleteId, date])
   @@index([athleteId])
   @@index([athleteId, date])
   @@index([programId])
+  @@index([workoutId])
+  @@index([programAssignmentId])
 }
 
 model MaxSnapshot {

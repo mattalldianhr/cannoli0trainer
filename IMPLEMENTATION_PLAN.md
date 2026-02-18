@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 76
+- Completed: 77
 - In progress: 0
-- Remaining: 103 (7 original + 97 new from spec review)
+- Remaining: 102 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -463,7 +463,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 17: Workout Scheduling & Calendar
 
-- [ ] **Task 17.1**: Add scheduling fields to ProgramAssignment and WorkoutSession in Prisma schema
+- [x] **Task 17.1**: Add scheduling fields to ProgramAssignment and WorkoutSession in Prisma schema
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: ProgramAssignment gains `trainingDays` (Json, default `[1,2,4,5]`) and `isActive` (Boolean, default true). WorkoutSession gains `workoutId` (FK -> Workout, optional), `programAssignmentId` (FK -> ProgramAssignment, optional), `isManuallyScheduled` (Boolean, default false), `isSkipped` (Boolean, default false), `weekNumber` (Int?), `dayNumber` (Int?). Migration runs successfully. `npx prisma validate` passes.
 
