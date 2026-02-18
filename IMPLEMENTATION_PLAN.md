@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 112
+- Completed: 113
 - In progress: 0
-- Remaining: 67
+- Remaining: 66
 
 ## Tasks
 
@@ -612,7 +612,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Rest timer after completing a set. Defaults to WorkoutExercise.restTimeSeconds or 120s. Start/pause/dismiss controls. Audio/vibration at zero.
 
-- [ ] **Task 21.2**: Add per-exercise notes field for athlete comments
+- [x] **Task 21.2**: Add per-exercise notes field for athlete comments
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Collapsible "Notes" textarea per exercise. Persisted. Coach-visible.
 

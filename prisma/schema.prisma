@@ -266,6 +266,7 @@ model WorkoutExercise {
   restTimeSeconds  Int?
   tempo            String?
   notes            String?          @db.Text
+  athleteNotes     String?          @db.Text
 
   workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   exercise Exercise @relation(fields: [exerciseId], references: [id])

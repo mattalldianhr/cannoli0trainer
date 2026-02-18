@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Dumbbell,
   ChevronLeft,
@@ -21,12 +21,14 @@ import {
   Weight,
   Repeat,
   TrendingUp,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { RPESelector } from '@/components/shared/RPESelector';
 import { RestTimer } from '@/components/training/RestTimer';
 import { cn } from '@/lib/utils';
@@ -69,6 +71,7 @@ interface ExerciseData {
   restTimeSeconds: number | null;
   tempo: string | null;
   notes: string | null;
+  athleteNotes: string | null;
   exercise: {
     id: string;
     name: string;
@@ -429,6 +432,46 @@ function ExerciseCard({
   const [expanded, setExpanded] = useState(!isComplete);
   const [saving, setSaving] = useState(false);
   const [showRestTimer, setShowRestTimer] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(!!exercise.athleteNotes);
+  const [notesValue, setNotesValue] = useState(exercise.athleteNotes ?? '');
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesSaved, setNotesSaved] = useState(false);
+  const notesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync notes value when exercise data refreshes (e.g. after refetch)
+  useEffect(() => {
+    setNotesValue(exercise.athleteNotes ?? '');
+    setNotesOpen(!!exercise.athleteNotes);
+  }, [exercise.athleteNotes]);
+
+  const saveNotes = useCallback(async (value: string) => {
+    setNotesSaving(true);
+    try {
+      await fetch(`/api/workout-exercises/${exercise.id}/notes`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ athleteNotes: value || null }),
+      });
+      setNotesSaved(true);
+      setTimeout(() => setNotesSaved(false), 2000);
+    } finally {
+      setNotesSaving(false);
+    }
+  }, [exercise.id]);
+
+  const handleNotesChange = (value: string) => {
+    setNotesValue(value);
+    setNotesSaved(false);
+    if (notesTimerRef.current) clearTimeout(notesTimerRef.current);
+    notesTimerRef.current = setTimeout(() => saveNotes(value), 1500);
+  };
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (notesTimerRef.current) clearTimeout(notesTimerRef.current);
+    };
+  }, []);
 
   // Form state for the new set
   const defaults = getDefaultFormValues(exercise);
@@ -703,6 +746,46 @@ function ExerciseCard({
                 Log Set {nextSetNumber}
               </Button>
             </div>
+
+            {/* Athlete notes */}
+            <div>
+              <button
+                type="button"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setNotesOpen(!notesOpen)}
+              >
+                <MessageSquare className="h-3 w-3" />
+                <span>{notesOpen ? 'Hide notes' : notesValue ? 'Show notes' : 'Add notes'}</span>
+                {notesValue && !notesOpen && (
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+                )}
+              </button>
+              {notesOpen && (
+                <div className="mt-1.5 space-y-1">
+                  <Textarea
+                    placeholder="Add notes about this exercise..."
+                    value={notesValue}
+                    onChange={(e) => handleNotesChange(e.target.value)}
+                    className="min-h-[60px] text-sm resize-none"
+                    rows={2}
+                  />
+                  <div className="flex items-center justify-end gap-2 text-xs text-muted-foreground">
+                    {notesSaving && (
+                      <span className="flex items-center gap-1">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Saving...
+                      </span>
+                    )}
+                    {notesSaved && !notesSaving && (
+                      <span className="flex items-center gap-1 text-green-600">
+                        <Check className="h-3 w-3" />
+                        Saved
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -711,6 +794,12 @@ function ExerciseCard({
           <div className="ml-7 mt-2 text-xs text-muted-foreground">
             {completedSets} set{completedSets !== 1 ? 's' : ''} logged
             {isComplete && ' — Complete'}
+            {exercise.athleteNotes && (
+              <span className="ml-2 inline-flex items-center gap-1">
+                <MessageSquare className="h-3 w-3" />
+                has notes
+              </span>
+            )}
           </div>
         )}
       </CardContent>

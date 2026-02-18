@@ -177,6 +177,7 @@ export async function GET(request: NextRequest) {
       restTimeSeconds: we.restTimeSeconds,
       tempo: we.tempo,
       notes: we.notes,
+      athleteNotes: we.athleteNotes,
       exercise: we.exercise,
       setLogs: we.setLogs.map((sl) => ({
         id: sl.id,
