@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 63
+- Completed: 64
 - In progress: 0
 
 ## Tasks
@@ -286,7 +286,7 @@
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows meets in next 30 days with athlete count
 
-- [ ] **Task 11.5**: Update Header nav to include Dashboard, Athletes, Programs, Exercises links
+- [x] **Task 11.5**: Update Header nav to include Dashboard, Athletes, Programs, Exercises links
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Nav links route to correct pages, active state shown
   - Note: Current Header has research hub links (Home, Research, Interview, Submissions, Findings, PRD). Must replace or restructure for coaching platform nav.
