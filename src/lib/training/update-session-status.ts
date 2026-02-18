@@ -92,13 +92,14 @@ export async function updateSessionStatus(workoutExerciseId: string, athleteId: 
   if (status === 'FULLY_COMPLETED' && previousStatus !== 'FULLY_COMPLETED') {
     const athlete = await prisma.athlete.findUnique({
       where: { id: athleteId },
-      select: { name: true, coach: { select: { email: true } } },
+      select: { name: true, coachId: true, coach: { select: { id: true, email: true } } },
     });
 
-    if (athlete?.coach?.email) {
+    if (athlete?.coachId) {
       // Fire-and-forget — don't await, don't block the response
       notifyWorkoutCompletion({
-        coachEmail: athlete.coach.email,
+        coachId: athlete.coachId,
+        coachEmail: athlete.coach?.email ?? '',
         athleteName: athlete.name,
         athleteId,
         workoutName: session.title || workout.name,

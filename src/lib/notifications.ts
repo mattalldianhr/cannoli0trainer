@@ -1,34 +1,55 @@
 import { sendEmail, brandedEmailHtml, emailCtaButton, APP_URL } from '@/lib/email';
+import { prisma } from '@/lib/prisma';
 
 /**
- * Send email notification when a program is assigned to an athlete.
+ * Send email notification and create Notification DB record when a program is assigned.
  * Fire-and-forget — errors are logged but never thrown.
  */
 export async function notifyProgramAssignment({
+  athleteId,
   athleteEmail,
   athleteName,
   programName,
   startDate,
 }: {
+  athleteId: string;
   athleteEmail: string;
   athleteName: string;
   programName: string;
   startDate?: string | null;
 }) {
+  const title = `New program assigned: ${programName}`;
+  const startDateText = startDate
+    ? `starting ${new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}`
+    : '';
+  const body = `Your coach has assigned you a new program: ${programName}${startDateText ? ` ${startDateText}` : ''}.`;
+
+  // Always create the DB record (for future in-app notification support)
+  try {
+    await prisma.notification.create({
+      data: {
+        recipientId: athleteId,
+        recipientType: 'ATHLETE',
+        type: 'PROGRAM_ASSIGNED',
+        title,
+        body,
+      },
+    });
+  } catch (error) {
+    console.error('[notifications] Failed to create PROGRAM_ASSIGNED notification record:', error);
+  }
+
+  // Send email (skip if no email address)
   if (!athleteEmail) {
     console.warn('[notifications] No email for athlete, skipping program assignment email');
     return;
   }
 
-  const startDateText = startDate
-    ? `starting ${new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}`
-    : '';
-
   const trainUrl = `${APP_URL}/athlete/train`;
 
   await sendEmail({
     to: athleteEmail,
-    subject: `New program assigned: ${programName}`,
+    subject: title,
     html: brandedEmailHtml({
       body: `
         <p style="font-size: 16px; color: #1f2937;">Hey ${athleteName},</p>
@@ -45,10 +66,11 @@ export async function notifyProgramAssignment({
 }
 
 /**
- * Send email notification to coach when an athlete completes a workout.
+ * Send email notification and create Notification DB record when a workout is completed.
  * Fire-and-forget — errors are logged but never thrown.
  */
 export async function notifyWorkoutCompletion({
+  coachId,
   coachEmail,
   athleteName,
   athleteId,
@@ -56,6 +78,7 @@ export async function notifyWorkoutCompletion({
   completionPercent,
   date,
 }: {
+  coachId: string;
   coachEmail: string;
   athleteName: string;
   athleteId: string;
@@ -63,21 +86,40 @@ export async function notifyWorkoutCompletion({
   completionPercent: number;
   date: string;
 }) {
+  const title = `${athleteName} completed ${workoutName}`;
+  const dateText = new Date(date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+  const body = `${athleteName} completed ${workoutName} on ${dateText}. Completion: ${completionPercent}%.`;
+
+  // Always create the DB record (for future in-app notification support)
+  try {
+    await prisma.notification.create({
+      data: {
+        recipientId: coachId,
+        recipientType: 'COACH',
+        type: 'WORKOUT_COMPLETED',
+        title,
+        body,
+      },
+    });
+  } catch (error) {
+    console.error('[notifications] Failed to create WORKOUT_COMPLETED notification record:', error);
+  }
+
+  // Send email (skip if no email address)
   if (!coachEmail) {
     console.warn('[notifications] No coach email, skipping workout completion email');
     return;
   }
 
   const athleteUrl = `${APP_URL}/athletes/${athleteId}`;
-  const dateText = new Date(date).toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
 
   await sendEmail({
     to: coachEmail,
-    subject: `${athleteName} completed ${workoutName}`,
+    subject: title,
     html: brandedEmailHtml({
       body: `
         <p style="font-size: 16px; color: #1f2937;">

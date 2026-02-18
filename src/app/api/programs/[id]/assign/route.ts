@@ -203,16 +203,15 @@ export async function POST(
 
     const totalSessionsCreated = schedulingResults.reduce((sum, r) => sum + r.created, 0);
 
-    // Fire-and-forget: send email notifications to assigned athletes
+    // Fire-and-forget: create notification records + send emails to assigned athletes
     for (const athlete of athletes) {
-      if (athlete.email) {
-        notifyProgramAssignment({
-          athleteEmail: athlete.email,
-          athleteName: athlete.name,
-          programName: program.name,
-          startDate: startDate ?? null,
-        }).catch(() => {}); // already logged internally
-      }
+      notifyProgramAssignment({
+        athleteId: athlete.id,
+        athleteEmail: athlete.email ?? '',
+        athleteName: athlete.name,
+        programName: program.name,
+        startDate: startDate ?? null,
+      }).catch(() => {}); // already logged internally
     }
 
     return NextResponse.json({

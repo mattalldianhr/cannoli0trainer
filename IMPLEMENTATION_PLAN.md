@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 132
+- Completed: 133
 - In progress: 0
-- Remaining: 47
+- Remaining: 46
 
 ## Tasks
 
@@ -709,7 +709,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/14-notifications.md
   - Acceptance: `src/lib/email.ts` wrapping Resend SDK. Error handling (never blocks caller). Branded email templates.
 
-- [ ] **Task 28.3**: Add notification triggers to existing flows
+- [x] **Task 28.3**: Add notification triggers to existing flows
   - Spec: specs/14-notifications.md
   - Acceptance: ProgramAssignment creates PROGRAM_ASSIGNED notification + email. WorkoutSession FULLY_COMPLETED creates WORKOUT_COMPLETED notification + email. Fire-and-forget.
 
