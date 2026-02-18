@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 148
+- Completed: 149
 - In progress: 0
-- Remaining: 31
+- Remaining: 30
 
 ## Tasks
 
@@ -765,7 +765,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 30: UX Polish
 
-- [ ] **Task 30.1**: Create shared EmptyState component
+- [x] **Task 30.1**: Create shared EmptyState component
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: `src/components/ui/EmptyState.tsx` with icon, title, description, optional CTA. Centered layout.
 
