@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { updateSessionStatus } from '@/lib/training/update-session-status';
 
 export async function POST(request: Request) {
   try {
@@ -53,6 +54,9 @@ export async function POST(request: Request) {
         },
       },
     });
+
+    // Update session completion status
+    await updateSessionStatus(body.workoutExerciseId, body.athleteId);
 
     return NextResponse.json(setLog, { status: 201 });
   } catch (error) {

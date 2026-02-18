@@ -11,11 +11,18 @@ import {
   Circle,
   Info,
   Loader2,
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { RPESelector } from '@/components/shared/RPESelector';
 import { cn } from '@/lib/utils';
 
 interface SetLogData {
@@ -93,6 +100,13 @@ interface TrainingLogProps {
   initialAthleteId?: string;
 }
 
+interface SetFormValues {
+  weight: string;
+  reps: string;
+  rpe: number | null;
+  velocity: string;
+}
+
 function formatDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
@@ -146,57 +160,338 @@ function prescriptionTypeBadge(type: string): string {
   return map[type] ?? type;
 }
 
-function ExerciseCard({ exercise }: { exercise: ExerciseData }) {
+/** Get default form values based on prescription, previous performance, or last logged set */
+function getDefaultFormValues(exercise: ExerciseData): SetFormValues {
+  const lastSet = exercise.setLogs[exercise.setLogs.length - 1];
+  const prevPerf = exercise.previousPerformance[0];
+
+  // Weight: last logged set > previous performance > prescribed load > empty
+  let weight = '';
+  if (lastSet) {
+    weight = String(lastSet.weight);
+  } else if (prevPerf) {
+    weight = String(prevPerf.weight);
+  } else if (exercise.prescribedLoad) {
+    const parsed = parseFloat(exercise.prescribedLoad);
+    if (!isNaN(parsed)) weight = String(parsed);
+  }
+
+  // Reps: prescribed reps > last set > previous performance > empty
+  let reps = '';
+  if (exercise.prescribedReps) {
+    const parsed = parseInt(exercise.prescribedReps, 10);
+    if (!isNaN(parsed)) reps = String(parsed);
+  } else if (lastSet) {
+    reps = String(lastSet.reps);
+  } else if (prevPerf) {
+    reps = String(prevPerf.reps);
+  }
+
+  // RPE: prescribed RPE > null
+  const rpe = exercise.prescribedRPE ?? null;
+
+  // Velocity: prescribed target > empty
+  const velocity = exercise.velocityTarget ? String(exercise.velocityTarget) : '';
+
+  return { weight, reps, rpe, velocity };
+}
+
+function SetLogRow({
+  set,
+  onUpdate,
+  onDelete,
+  saving,
+}: {
+  set: SetLogData;
+  onUpdate: (id: string, data: { reps: number; weight: number; rpe: number | null; velocity: number | null }) => void;
+  onDelete: (id: string) => void;
+  saving: boolean;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [editWeight, setEditWeight] = useState(String(set.weight));
+  const [editReps, setEditReps] = useState(String(set.reps));
+  const [editRPE, setEditRPE] = useState<number | null>(set.rpe);
+  const [editVelocity, setEditVelocity] = useState(set.velocity != null ? String(set.velocity) : '');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleSave = () => {
+    const w = parseFloat(editWeight);
+    const r = parseInt(editReps, 10);
+    if (isNaN(w) || isNaN(r) || w < 0 || r < 0) return;
+    const v = editVelocity ? parseFloat(editVelocity) : null;
+    onUpdate(set.id, { reps: r, weight: w, rpe: editRPE, velocity: v });
+    setEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditWeight(String(set.weight));
+    setEditReps(String(set.reps));
+    setEditRPE(set.rpe);
+    setEditVelocity(set.velocity != null ? String(set.velocity) : '');
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="space-y-2 rounded-md border border-border p-2 bg-muted/30">
+        <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground mb-1">
+          Editing Set {set.setNumber}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-xs text-muted-foreground">Weight</label>
+            <Input
+              type="number"
+              inputMode="decimal"
+              step="any"
+              value={editWeight}
+              onChange={(e) => setEditWeight(e.target.value)}
+              className="h-9 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">Reps</label>
+            <Input
+              type="number"
+              inputMode="numeric"
+              min="0"
+              value={editReps}
+              onChange={(e) => setEditReps(e.target.value)}
+              className="h-9 text-sm"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground">RPE (optional)</label>
+          <RPESelector
+            value={editRPE}
+            onChange={setEditRPE}
+            allowClear
+            showDescription={false}
+            className="mt-0.5"
+          />
+        </div>
+        {editVelocity !== '' && (
+          <div>
+            <label className="text-xs text-muted-foreground">Velocity (m/s)</label>
+            <Input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              value={editVelocity}
+              onChange={(e) => setEditVelocity(e.target.value)}
+              className="h-9 text-sm"
+            />
+          </div>
+        )}
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={handleSave} disabled={saving} className="h-8">
+            <Check className="h-3.5 w-3.5 mr-1" />
+            Save
+          </Button>
+          <Button size="sm" variant="ghost" onClick={handleCancel} disabled={saving} className="h-8">
+            Cancel
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="group flex items-center gap-2 text-sm text-muted-foreground">
+      <CheckCircle2 className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />
+      <span className="tabular-nums flex-1">
+        Set {set.setNumber}: {set.weight} {set.unit} × {set.reps}
+        {set.rpe != null && ` @ RPE ${set.rpe}`}
+        {set.velocity != null && ` @ ${set.velocity} m/s`}
+      </span>
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="p-1 rounded hover:bg-muted"
+          aria-label={`Edit set ${set.setNumber}`}
+        >
+          <Pencil className="h-3 w-3" />
+        </button>
+        {confirmDelete ? (
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              onClick={() => { onDelete(set.id); setConfirmDelete(false); }}
+              className="p-1 rounded hover:bg-destructive/10 text-destructive"
+              aria-label="Confirm delete"
+              disabled={saving}
+            >
+              <Check className="h-3 w-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(false)}
+              className="p-1 rounded hover:bg-muted"
+              aria-label="Cancel delete"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            className="p-1 rounded hover:bg-destructive/10 text-destructive"
+            aria-label={`Delete set ${set.setNumber}`}
+          >
+            <Trash2 className="h-3 w-3" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ExerciseCard({
+  exercise,
+  athleteId,
+  onSetChange,
+}: {
+  exercise: ExerciseData;
+  athleteId: string;
+  onSetChange: () => void;
+}) {
   const completedSets = exercise.setLogs.length;
   const totalSets = exercise.prescribedSets ? parseInt(exercise.prescribedSets, 10) : 0;
   const isComplete = totalSets > 0 && completedSets >= totalSets;
   const prevPerf = exercise.previousPerformance[0];
+  const showVelocity = exercise.prescriptionType === 'velocity' || exercise.velocityTarget != null;
+
+  const [expanded, setExpanded] = useState(!isComplete);
+  const [saving, setSaving] = useState(false);
+
+  // Form state for the new set
+  const defaults = getDefaultFormValues(exercise);
+  const [weight, setWeight] = useState(defaults.weight);
+  const [reps, setReps] = useState(defaults.reps);
+  const [rpe, setRPE] = useState<number | null>(defaults.rpe);
+  const [velocity, setVelocity] = useState(defaults.velocity);
+
+  const nextSetNumber = completedSets + 1;
+
+  const handleLogSet = async () => {
+    const w = parseFloat(weight);
+    const r = parseInt(reps, 10);
+    if (isNaN(w) || isNaN(r) || w < 0 || r < 0) return;
+
+    setSaving(true);
+    try {
+      const body: Record<string, unknown> = {
+        workoutExerciseId: exercise.id,
+        athleteId,
+        setNumber: nextSetNumber,
+        reps: r,
+        weight: w,
+        unit: 'lbs',
+      };
+      if (rpe != null) body.rpe = rpe;
+      const v = velocity ? parseFloat(velocity) : null;
+      if (v != null && !isNaN(v)) body.velocity = v;
+
+      const res = await fetch('/api/sets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        onSetChange();
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdateSet = async (
+    id: string,
+    data: { reps: number; weight: number; rpe: number | null; velocity: number | null },
+  ) => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/sets/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        onSetChange();
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteSet = async (id: string) => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/sets/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        onSetChange();
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Card className={cn(
       'transition-all',
       isComplete && 'border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20',
-      exercise.supersetColor && `border-l-4`,
+      exercise.supersetColor && 'border-l-4',
     )} style={exercise.supersetColor ? { borderLeftColor: exercise.supersetColor } : undefined}>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              {isComplete ? (
-                <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-              ) : (
-                <Circle className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-              )}
-              <h3 className="font-semibold text-base truncate">{exercise.exercise.name}</h3>
-            </div>
+        {/* Exercise header — tap to expand/collapse */}
+        <button
+          type="button"
+          className="w-full text-left"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                {isComplete ? (
+                  <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                ) : (
+                  <Circle className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                )}
+                <h3 className="font-semibold text-base truncate">{exercise.exercise.name}</h3>
+              </div>
 
-            <div className="flex flex-wrap items-center gap-2 ml-7">
-              <span className="text-sm font-medium">{prescriptionLabel(exercise)}</span>
-              <Badge variant="secondary" className="text-xs">
-                {prescriptionTypeBadge(exercise.prescriptionType)}
-              </Badge>
-              {exercise.supersetGroup && (
-                <Badge
-                  variant="outline"
-                  className="text-xs"
-                  style={exercise.supersetColor ? { borderColor: exercise.supersetColor, color: exercise.supersetColor } : undefined}
-                >
-                  SS: {exercise.supersetGroup}
+              <div className="flex flex-wrap items-center gap-2 ml-7">
+                <span className="text-sm font-medium">{prescriptionLabel(exercise)}</span>
+                <Badge variant="secondary" className="text-xs">
+                  {prescriptionTypeBadge(exercise.prescriptionType)}
                 </Badge>
-              )}
-              {exercise.isUnilateral && (
-                <Badge variant="outline" className="text-xs">Unilateral</Badge>
-              )}
+                {exercise.supersetGroup && (
+                  <Badge
+                    variant="outline"
+                    className="text-xs"
+                    style={exercise.supersetColor ? { borderColor: exercise.supersetColor, color: exercise.supersetColor } : undefined}
+                  >
+                    SS: {exercise.supersetGroup}
+                  </Badge>
+                )}
+                {exercise.isUnilateral && (
+                  <Badge variant="outline" className="text-xs">Unilateral</Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="text-right flex-shrink-0">
+              <span className="text-sm font-medium tabular-nums">
+                {completedSets}/{totalSets || '?'}
+              </span>
+              <p className="text-xs text-muted-foreground">sets</p>
             </div>
           </div>
-
-          <div className="text-right flex-shrink-0">
-            <span className="text-sm font-medium tabular-nums">
-              {completedSets}/{totalSets || '?'}
-            </span>
-            <p className="text-xs text-muted-foreground">sets</p>
-          </div>
-        </div>
+        </button>
 
         {/* Tempo / rest info */}
         {(exercise.tempo || exercise.restTimeSeconds) && (
@@ -227,22 +522,120 @@ function ExerciseCard({ exercise }: { exercise: ExerciseData }) {
           </div>
         )}
 
-        {/* Completed sets summary */}
-        {exercise.setLogs.length > 0 && (
-          <div className="ml-7 mt-3 space-y-1">
-            {exercise.setLogs.map((set) => (
-              <div
-                key={set.id}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
-                <span className="tabular-nums">
-                  Set {set.setNumber}: {set.weight} {set.unit} × {set.reps}
-                  {set.rpe != null && ` @ RPE ${set.rpe}`}
-                  {set.velocity != null && ` @ ${set.velocity} m/s`}
-                </span>
+        {/* Expanded section: logged sets + new set form */}
+        {expanded && (
+          <div className="ml-7 mt-3 space-y-2">
+            {/* Existing logged sets */}
+            {exercise.setLogs.length > 0 && (
+              <div className="space-y-1.5">
+                {exercise.setLogs.map((set) => (
+                  <SetLogRow
+                    key={set.id}
+                    set={set}
+                    onUpdate={handleUpdateSet}
+                    onDelete={handleDeleteSet}
+                    saving={saving}
+                  />
+                ))}
               </div>
-            ))}
+            )}
+
+            {/* New set form */}
+            <div className="rounded-md border border-dashed border-border p-3 space-y-3 bg-muted/20">
+              <div className="text-xs font-medium text-muted-foreground">
+                Set {nextSetNumber}{totalSets > 0 ? ` of ${totalSets}` : ''}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor={`weight-${exercise.id}`}>
+                    Weight (lbs)
+                  </label>
+                  <Input
+                    id={`weight-${exercise.id}`}
+                    type="number"
+                    inputMode="decimal"
+                    step="any"
+                    min="0"
+                    placeholder="0"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    className="h-9 text-sm tabular-nums"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor={`reps-${exercise.id}`}>
+                    Reps
+                  </label>
+                  <Input
+                    id={`reps-${exercise.id}`}
+                    type="number"
+                    inputMode="numeric"
+                    min="0"
+                    placeholder="0"
+                    value={reps}
+                    onChange={(e) => setReps(e.target.value)}
+                    className="h-9 text-sm tabular-nums"
+                  />
+                </div>
+              </div>
+
+              {/* RPE input — shown for RPE, RIR, autoregulated, or if explicitly requested */}
+              {(exercise.prescriptionType === 'rpe' || exercise.prescriptionType === 'rir' || exercise.prescriptionType === 'autoregulated') && (
+                <div>
+                  <label className="text-xs text-muted-foreground">RPE (optional)</label>
+                  <RPESelector
+                    value={rpe}
+                    onChange={setRPE}
+                    allowClear
+                    showDescription={false}
+                    className="mt-0.5"
+                  />
+                </div>
+              )}
+
+              {/* Velocity input — shown for VBT prescriptions */}
+              {showVelocity && (
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor={`velocity-${exercise.id}`}>
+                    Velocity (m/s)
+                  </label>
+                  <Input
+                    id={`velocity-${exercise.id}`}
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    value={velocity}
+                    onChange={(e) => setVelocity(e.target.value)}
+                    className="h-9 text-sm tabular-nums"
+                  />
+                </div>
+              )}
+
+              <Button
+                size="sm"
+                className="w-full h-9"
+                onClick={handleLogSet}
+                disabled={saving || !weight || !reps}
+              >
+                {saving ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                ) : (
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                )}
+                Log Set {nextSetNumber}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Collapsed: just show set count summary */}
+        {!expanded && exercise.setLogs.length > 0 && (
+          <div className="ml-7 mt-2 text-xs text-muted-foreground">
+            {completedSets} set{completedSets !== 1 ? 's' : ''} logged
+            {isComplete && ' — Complete'}
           </div>
         )}
       </CardContent>
@@ -408,7 +801,12 @@ export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
           {/* Exercise list */}
           <div className="space-y-3">
             {exercises.map((ex) => (
-              <ExerciseCard key={ex.id} exercise={ex} />
+              <ExerciseCard
+                key={ex.id}
+                exercise={ex}
+                athleteId={athleteId}
+                onSetChange={fetchWorkout}
+              />
             ))}
           </div>
         </>

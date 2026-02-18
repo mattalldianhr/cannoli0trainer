@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 56
+- Completed: 57
 - In progress: 0
 
 ## Tasks
@@ -256,7 +256,7 @@
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Displays assigned exercises with prescriptions, mobile-optimized
 
-- [ ] **Task 10.2**: Implement set logging interface with reps, weight, RPE, velocity inputs
+- [x] **Task 10.2**: Implement set logging interface with reps, weight, RPE, velocity inputs
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Each set has input fields, completing set saves to database
 

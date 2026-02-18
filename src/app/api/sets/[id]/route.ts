@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { updateSessionStatus } from '@/lib/training/update-session-status';
 
 export async function GET(
   _request: Request,
@@ -71,6 +72,9 @@ export async function PUT(
       },
     });
 
+    // Update session completion status
+    await updateSessionStatus(existing.workoutExerciseId, existing.athleteId);
+
     return NextResponse.json(setLog);
   } catch (error) {
     console.error('Failed to update set log:', error);
@@ -102,6 +106,9 @@ export async function DELETE(
     await prisma.setLog.delete({
       where: { id },
     });
+
+    // Update session completion status
+    await updateSessionStatus(existing.workoutExerciseId, existing.athleteId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
