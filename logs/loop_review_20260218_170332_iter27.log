@@ -1,0 +1,10 @@
+## Quick Spec Review — Iter 27 Summary
+
+- **Findings**: 0 new issues
+  - Task 29.3 (Zod validation for Settings API) completed cleanly
+  - Added Zod schema with proper validation for all settings fields
+  - `tsc --noEmit` and `npm run build` both pass
+- **Specs updated**: None needed
+- **Carry-forward P2** (from iter 23): "Archived Programs" filter/tab on `/programs` page — not blocking
+- **Progress**: ~145/179 tasks complete
+- **Continue building?** Yes

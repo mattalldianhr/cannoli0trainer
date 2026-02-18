@@ -1,0 +1,9 @@
+## Quick Spec Review — Iter 26 Summary
+
+- **Findings**: 0 new issues
+  - Task 29.2 (Settings page) built cleanly: profile, preferences, notifications sections with validation
+  - Build and tsc pass, committed as `861e4f4`
+- **Specs updated**: None needed
+- **Carry-forward P2** (from iter 23): "Archived Programs" filter/tab on `/programs` page — not blocking
+- **Progress**: ~145/179 tasks complete
+- **Continue building?** Yes

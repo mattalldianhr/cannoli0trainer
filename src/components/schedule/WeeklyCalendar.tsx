@@ -16,6 +16,7 @@ import {
   X,
   SkipForward,
   Undo2,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
 
 interface SessionData {
@@ -341,8 +343,19 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
               <tbody>
                 {displayedAthletes.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
-                      No athletes to display.
+                    <td colSpan={8} className="px-4 py-2">
+                      <EmptyState
+                        icon={Users}
+                        title="No athletes to display"
+                        description={filterAthleteId !== 'all' ? 'Try selecting a different athlete filter.' : 'Add athletes and assign programs to see their schedule here.'}
+                        action={
+                          filterAthleteId !== 'all' ? undefined : (
+                            <Button asChild variant="outline" size="sm">
+                              <Link href="/athletes/new">Add Athlete</Link>
+                            </Button>
+                          )
+                        }
+                      />
                     </td>
                   </tr>
                 ) : (

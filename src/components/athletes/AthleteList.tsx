@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, UserPlus, ClipboardList, X, RotateCcw, Archive } from 'lucide-react';
+import { Search, UserPlus, Users, ClipboardList, X, RotateCcw, Archive } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
 import { BulkAssignDialog } from './BulkAssignDialog';
 
@@ -228,15 +229,33 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
 
       {/* Athlete Cards */}
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {isArchivedView
-              ? 'No archived athletes.'
-              : search
-                ? 'No athletes match your search.'
-                : 'No athletes found.'}
-          </CardContent>
-        </Card>
+        isArchivedView ? (
+          <EmptyState
+            icon={Archive}
+            title="No archived athletes"
+            description="Archived athletes will appear here."
+          />
+        ) : search ? (
+          <EmptyState
+            icon={Search}
+            title="No athletes match your search"
+            description="Try a different search term."
+          />
+        ) : (
+          <EmptyState
+            icon={Users}
+            title="No athletes yet"
+            description="Add your first athlete to start building your roster."
+            action={
+              <Button asChild>
+                <Link href="/athletes/new">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Your First Athlete
+                </Link>
+              </Button>
+            }
+          />
+        )
       ) : (
         <div className="grid gap-3">
           {filtered.map((athlete) => {

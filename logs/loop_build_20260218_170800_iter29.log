@@ -1,0 +1,13 @@
+**Task 29.5 complete.** 
+
+The rest timer now uses a 3-tier fallback:
+1. **Per-exercise** `restTimeSeconds` (from WorkoutExercise) — highest priority
+2. **Coach preference** `defaultRestTimerSeconds` (from Settings) — new fallback
+3. **Hard-coded 120s** — ultimate fallback if coach has no setting
+
+Changes:
+- `src/app/api/train/route.ts` — fetches `defaultRestTimerSeconds` from coach and includes it in all response paths
+- `src/components/training/TrainingLog.tsx` — `ExerciseCard` accepts the coach default and uses it in the fallback chain
+
+Status: **148/179 tasks complete, 31 remaining.**
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

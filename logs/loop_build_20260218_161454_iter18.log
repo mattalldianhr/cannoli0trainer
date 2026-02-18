@@ -1,0 +1,9 @@
+**Task 28.1 complete.** Added to the Prisma schema:
+
+- `NotificationRecipientType` enum (`COACH`, `ATHLETE`)
+- `NotificationType` enum (`PROGRAM_ASSIGNED`, `WORKOUT_COMPLETED`, `CHECK_IN_REMINDER`)
+- `Notification` model with `id`, `recipientId`, `recipientType`, `type`, `title`, `body`, `isRead`, `createdAt`
+- Indexes on `[recipientId, recipientType]` and `[recipientId, isRead]`
+
+Migration `20260218211539_add_notification_model` applied successfully. All validation passed (prisma validate, tsc, build).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

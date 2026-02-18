@@ -1,0 +1,8 @@
+## Quick Spec Review — Iter 30 Summary
+
+- **Findings**: 0 issues
+  - Task 30.1 (EmptyState component) completed cleanly — tsc + build pass, committed
+- **Specs updated**: None needed
+- **Carry-forward P2**: "Archived Programs" filter/tab on `/programs` page (from iter 23) — not blocking
+- **Progress**: ~149/179 tasks complete, ~30 remaining
+- **Continue building?** Yes

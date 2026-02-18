@@ -1,0 +1,16 @@
+**Task 29.3 complete.** 
+
+The existing settings API route at `src/app/api/settings/route.ts` already had GET/PUT handlers with manual validation. I:
+
+1. **Installed `zod`** as a project dependency
+2. **Replaced manual validation** with a `settingsUpdateSchema` Zod schema covering all fields:
+   - `name`: trimmed, min 1 char
+   - `email`: trimmed, valid email format
+   - `brandName`: trimmed, nullable
+   - `defaultWeightUnit`: enum `kg`/`lbs`
+   - `defaultRestTimerSeconds`: integer 0-600
+   - `notificationPreferences`: object with boolean flags
+3. **Used `safeParse`** to return the first validation error with 400 status
+4. Extracted shared `coachSelect` to reduce duplication
+5. All checks pass: `tsc --noEmit`, `npm run build`
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

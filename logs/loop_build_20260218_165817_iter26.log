@@ -1,0 +1,16 @@
+**Task 29.2 complete.** Here's what was built:
+
+**Settings API** (`/api/settings`):
+- `GET` returns coach profile, preferences, and notification settings
+- `PUT` updates with validation (weight unit must be kg/lbs, rest timer 0-600s, name non-empty)
+
+**Settings Page** (`/settings`):
+- **Profile section**: name, email, brand name
+- **Preferences section**: default weight unit (kg/lbs dropdown), timezone selector (15 common timezones), default rest timer (numeric input with 0-600s range)
+- **Notifications section**: checkboxes for email on workout complete and check-in reminders
+- Success/error feedback on save
+
+**Navigation**: Gear icon added to both desktop and mobile nav, with active state highlighting.
+
+All validation passes (tsc, build). Committed as `861e4f4`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

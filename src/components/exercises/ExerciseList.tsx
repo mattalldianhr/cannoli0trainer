@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
 import { DeleteExerciseDialog } from './DeleteExerciseDialog';
 
@@ -141,13 +142,27 @@ export function ExerciseList({ exercises }: ExerciseListProps) {
 
       {/* Exercise Cards */}
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {search || activeCategory !== 'all' || activeTags.length > 0
-              ? 'No exercises match your filters.'
-              : 'No exercises found.'}
-          </CardContent>
-        </Card>
+        (search || activeCategory !== 'all' || activeTags.length > 0) ? (
+          <EmptyState
+            icon={Search}
+            title="No exercises match your filters"
+            description="Try adjusting your search or filters."
+          />
+        ) : (
+          <EmptyState
+            icon={Dumbbell}
+            title="No exercises found"
+            description="Add a custom exercise to get started."
+            action={
+              <Button asChild>
+                <Link href="/exercises/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Exercise
+                </Link>
+              </Button>
+            }
+          />
+        )
       ) : (
         <div className="grid gap-3">
           {filtered.map((exercise) => (

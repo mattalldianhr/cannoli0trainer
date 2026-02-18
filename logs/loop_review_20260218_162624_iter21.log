@@ -1,0 +1,8 @@
+## Quick Spec Review — Iter 21 Summary
+
+- **Findings**: 1 (P2 — naming/layout mismatch)
+- **Specs updated**: `specs/14-notifications.md` — updated Email Service section to reflect actual two-file layout (`email.ts` + `notifications.ts`) and actual function names (`notifyProgramAssignment`, `notifyWorkoutCompletion`, `parseCoachPreferences`, `parseAthletePreferences`). Also updated Integration Points to reference actual call sites and function names.
+- **Build status**: Clean — Task 28.4 (notification preferences) completed successfully, all validation passed (prisma validate, prisma generate, tsc, build)
+- **Continue building?** Yes
+
+Task 28 (all 4 subtasks) is fully complete. The spec-to-implementation delta was minor — function naming convention differed but the architecture matched exactly. Spec is now accurate.

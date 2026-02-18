@@ -1,0 +1,10 @@
+**Task 30.1 complete.** Created `src/components/ui/EmptyState.tsx` with:
+- `icon` prop (optional LucideIcon) — renders in a muted circular background
+- `title` prop (required) — semibold heading
+- `description` prop (optional) — muted subtext, max-w-sm
+- `action` prop (optional ReactNode) — for CTA buttons
+- `className` prop for custom styling
+- Centered layout with consistent spacing
+
+All validation passes (tsc, build). Committed as `c9604fb`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

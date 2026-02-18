@@ -1,0 +1,14 @@
+**Task 28.4 complete.** Here's what was done:
+
+**Schema changes:**
+- Added `notificationPreferences Json` field to **Coach** model with default `{"emailOnWorkoutComplete":true,"emailOnCheckIn":true}`
+- Added `notificationPreferences Json` field to **Athlete** model with default `{"emailOnProgramAssigned":true}`
+- Migration `20260218212407_add_notification_preferences` created and applied
+
+**Code changes:**
+- `src/lib/notifications.ts` — Added `parseCoachPreferences()` and `parseAthletePreferences()` helpers with typed interfaces. Both `notifyProgramAssignment` and `notifyWorkoutCompletion` now accept an optional `notificationPreferences` param, parse it with safe defaults, and skip email sends when the user has opted out. DB notification records are always created regardless of preference.
+- `src/app/api/programs/[id]/assign/route.ts` — Athlete query now includes `notificationPreferences`, passed to `notifyProgramAssignment`
+- `src/lib/training/update-session-status.ts` — Coach query now includes `notificationPreferences`, passed to `notifyWorkoutCompletion`
+
+**Validation:** prisma validate, prisma generate, tsc --noEmit, and build all pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

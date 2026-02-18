@@ -1,0 +1,17 @@
+**Task 28.7 complete.** Here's a summary of what was done:
+
+### Changes
+1. **Prisma schema**: Added `isActive Boolean @default(true)` to the Athlete model, with migration `20260218214854_add_athlete_is_active`
+
+2. **API routes**:
+   - `DELETE /api/athletes/[id]` — now archives by default (sets `isActive: false`), hard delete only via `?permanent=true` when athlete has zero data (mirrors the Program archive pattern)
+   - `GET /api/athletes` — filters active only by default, `?isActive=false` for archived, `?isActive=all` for all
+   - `PUT /api/athletes/[id]` — supports `isActive` field for reactivation
+
+3. **UI**:
+   - Athlete list now has an "Archived" filter tab (hidden when no archived athletes exist) with count badge and "Reactivate" buttons
+   - Athlete profile "Delete" button replaced with "Archive" button
+   - `DeleteAthleteDialog` renamed to `ArchiveAthleteDialog` with friendlier messaging about data preservation
+
+4. **Query audit**: Added `isActive: true` to all 11 athlete listing queries across dashboard, analytics, schedule, train, meets, program assignment, and schedule API
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

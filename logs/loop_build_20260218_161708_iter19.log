@@ -1,0 +1,11 @@
+**Task 28.2 complete.**
+
+**What was done:**
+- Created `src/lib/email.ts` — generic Resend SDK wrapper with:
+  - `sendEmail()` — low-level send with error handling (logs errors, never throws, returns boolean)
+  - `brandedEmailHtml()` — Cannoli Strength branded template (orange header, grey footer)
+  - `emailCtaButton()` — reusable CTA button helper
+  - Lazy Resend singleton, graceful degradation when `AUTH_RESEND_KEY` is unset
+- Refactored `src/lib/notifications.ts` to use the shared email service, eliminating duplicated Resend client initialization and template HTML
+- All validation passes (tsc, build)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

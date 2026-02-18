@@ -1,0 +1,11 @@
+Everything checks out.
+
+## Quick Spec Review — Iter 22 Summary
+
+- **Findings**: 0
+- **Specs updated**: None needed — Task 28.5 (coach isolation) built clean with no spec deviations
+- **Build status**: Clean — tsc clean, build clean, committed as `8dcb18f`
+- **Previous review (Iter 21)**: Already caught and fixed a P2 naming mismatch in `specs/14-notifications.md`
+- **Continue building?** Yes
+
+Task 28 (all 5 subtasks) is fully complete. No spec issues remain.

@@ -1,0 +1,10 @@
+The P2 from iter 23 (missing "Archived Programs" filter on `/programs` page) was not addressed in iter 24 — iter 24 focused on Athlete archiving. That's a separate concern.
+
+## Quick Spec Review — Iter 24 Summary
+
+- **Findings**: 0 new issues
+  - Task 28.7 (Athlete `isActive` soft-delete) built cleanly and aligns with spec `03-athlete-management.md` which specifies "filter by status (active/inactive)"
+  - Implementation matches acceptance criteria: `isActive Boolean @default(true)`, active-only default filter, Archived tab, reactivation support, hard delete only with zero data
+- **Specs updated**: None needed
+- **Carry-forward P2** (from iter 23): "Archived Programs" filter/tab on `/programs` page still missing — not blocking
+- **Continue building?** Yes

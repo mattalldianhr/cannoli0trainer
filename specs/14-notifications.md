@@ -86,19 +86,23 @@ Preferences are checked before sending email. The Notification DB record is alwa
 
 **Provider**: Resend (via `resend` npm package)
 
-**Implementation file**: `src/lib/email.ts`
+**Low-level email**: `src/lib/email.ts`
+- `sendEmail({ to, subject, html })` — Resend wrapper
+- `brandedEmailHtml({ title, body, ctaLabel?, ctaUrl? })` — branded HTML template
+- `emailCtaButton(label, url)` — reusable CTA button HTML
 
-Key functions:
-- `sendEmail({ to, subject, html })` — low-level Resend wrapper
-- `sendNotificationEmail(notification)` — maps notification type to branded email template
+**Notification logic**: `src/lib/notifications.ts`
+- `notifyProgramAssignment({ athleteId, athleteName, athleteEmail, programName, startDate, notificationPreferences? })` — creates DB record + sends email to athlete
+- `notifyWorkoutCompletion({ athleteId, athleteName, coachId, coachEmail, sessionName, completionPct, date, notificationPreferences? })` — creates DB record + sends email to coach
+- `parseCoachPreferences(raw)` / `parseAthletePreferences(raw)` — safe JSON preference parsers with defaults
 - All email sends are wrapped in try/catch — failures are logged but never block the calling operation
 
 **Email templates**: Simple branded HTML with Cannoli Gang colors (orange accent, dark background). No complex templating engine — template strings are sufficient for V1.
 
 ## Integration Points
 
-1. **Program assignment** (`/api/programs/[id]/assign` or server action): After creating ProgramAssignment, call `createAndSendNotification({ type: PROGRAM_ASSIGNED, recipientId: athlete.id, ... })`
-2. **Workout completion** (`/api/workout-sessions/[id]` PATCH): When status updates to FULLY_COMPLETED, call `createAndSendNotification({ type: WORKOUT_COMPLETED, recipientId: coach.id, ... })`
+1. **Program assignment** (`/api/programs/[id]/assign`): After creating ProgramAssignment, calls `notifyProgramAssignment(...)` with athlete details and preferences
+2. **Workout completion** (`src/lib/training/update-session-status.ts`): When status changes to FULLY_COMPLETED, calls `notifyWorkoutCompletion(...)` with coach details and preferences
 
 ## Acceptance Criteria
 - [ ] Notification model exists in Prisma schema with proper indexes
@@ -126,3 +130,4 @@ Key functions:
 | Date | Change |
 |------|--------|
 | 2026-02-18 | Initial spec created from implied features audit gap #1 |
+| 2026-02-18 | Updated function names and file layout to match implementation (Tasks 28.1-28.4) |

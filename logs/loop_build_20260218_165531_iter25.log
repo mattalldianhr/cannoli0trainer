@@ -1,0 +1,13 @@
+**Iteration complete.**
+
+**Task 28.8** — Already implemented via `attemptResults` JSON field (Task 26.1). Marked complete with note.
+
+**Task 29.1** — Added three settings fields to the Coach model:
+- `defaultWeightUnit WeightUnit @default(lbs)` — uses existing `WeightUnit` enum
+- `timezone String @default("America/New_York")` 
+- `defaultRestTimerSeconds Int @default(120)`
+
+Migration `20260218215701_add_coach_settings_fields` applied successfully. All validation passed (`prisma validate`, `tsc --noEmit`, `npm run build`).
+
+**Status**: 144/179 complete, 35 remaining. Next task: **Task 29.2** (Create Settings page at `/settings`).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

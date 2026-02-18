@@ -1,0 +1,10 @@
+**Task 28.3 complete.** Here's what was done:
+
+- **Updated `src/lib/notifications.ts`**: Both `notifyProgramAssignment` and `notifyWorkoutCompletion` now create a `Notification` database record (via Prisma) before sending the email. DB records are always persisted (for future in-app notification support), while emails are only sent when a valid address is available. Errors in DB record creation are caught and logged without blocking.
+
+- **Updated `src/app/api/programs/[id]/assign/route.ts`**: Added `athleteId` to the notification call and removed the email-only guard (the function now handles missing emails internally).
+
+- **Updated `src/lib/training/update-session-status.ts`**: Added `coachId` fetch and pass-through to `notifyWorkoutCompletion`. Changed the guard from `athlete?.coach?.email` to `athlete?.coachId` so notification records are created even when coach has no email.
+
+All validation passed: `tsc --noEmit` ✓, `npm run build` ✓.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

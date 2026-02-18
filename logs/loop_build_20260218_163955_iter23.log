@@ -1,0 +1,25 @@
+Task 28.6 is complete. Here's a summary of what was done:
+
+**Task 28.6: Add `isArchived` field to Program model for soft-delete**
+
+**Schema changes:**
+- Added `isArchived Boolean @default(false)` to the `Program` model
+- Migration `20260218214203_add_program_is_archived` created and applied
+
+**Query filters updated (4 locations):**
+- `src/app/programs/page.tsx` — programs list page
+- `src/app/programs/templates/page.tsx` — templates list page
+- `src/app/api/programs/route.ts` — API GET endpoint
+- `src/app/dashboard/page.tsx` — dashboard program count
+
+**API behavior changed:**
+- `DELETE /api/programs/[id]` now **archives** by default (sets `isArchived: true`)
+- `DELETE /api/programs/[id]?permanent=true` hard-deletes, but **only** when zero assignments AND zero workout sessions (returns 409 otherwise)
+
+**UI changes:**
+- `TemplateList.tsx` — "Delete" replaced with "Archive" (icon, wording, dialog)
+- New `ArchiveProgram.tsx` component — archive button with confirmation dialog
+- Added archive button to program detail page header (`/programs/[id]`)
+
+**Validation:** `prisma validate` ✓, `prisma generate` ✓, `tsc --noEmit` ✓, `npm run build` ✓
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

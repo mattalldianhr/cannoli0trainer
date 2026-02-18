@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
 import { CreateMeetDialog } from './CreateMeetDialog';
 
@@ -118,15 +119,31 @@ export function MeetList({ meets, coachId }: MeetListProps) {
 
       {/* Meet Cards */}
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {search
-              ? 'No meets match your search.'
-              : meets.length === 0
-                ? 'No meets created yet. Create your first meet to get started.'
-                : 'No meets match the selected filter.'}
-          </CardContent>
-        </Card>
+        search ? (
+          <EmptyState
+            icon={Search}
+            title="No meets match your search"
+            description="Try a different search term."
+          />
+        ) : meets.length === 0 ? (
+          <EmptyState
+            icon={Trophy}
+            title="No meets scheduled yet"
+            description="Create your first meet to start tracking competition prep."
+            action={
+              <Button onClick={() => setDialogOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Schedule Your First Meet
+              </Button>
+            }
+          />
+        ) : (
+          <EmptyState
+            icon={Calendar}
+            title="No meets match the selected filter"
+            description="Try a different filter."
+          />
+        )
       ) : (
         <div className="grid gap-3">
           {filtered.map((meet) => {

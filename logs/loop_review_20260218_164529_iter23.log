@@ -1,0 +1,7 @@
+## Quick Spec Review — Iter 23 Summary
+
+- **Findings**: 1
+  - **P2**: Task 28.6 built archive/soft-delete correctly but is missing the "Archived Programs" filter/tab on `/programs` page (spec requires a way to view archived programs). Noted in Discoveries section.
+- **Specs updated**: None (P2, not blocking)
+- **Build status**: Clean — `tsc`, `prisma validate`, `prisma generate`, `npm run build` all pass. Committed as `5856b84`.
+- **Continue building?** Yes

@@ -1,0 +1,10 @@
+## Quick Spec Review — Iter 29 Summary
+
+- **Findings**: 0 new issues
+  - Task 29.5 (wire default rest timer preference into training log) completed cleanly
+  - 3-tier fallback: per-exercise rest time → coach preference → hard-coded 120s
+  - Changes isolated to API route and TrainingLog component
+- **Specs updated**: None needed
+- **Carry-forward P2** (from iter 23): "Archived Programs" filter/tab on `/programs` page — not blocking
+- **Progress**: 148/179 tasks complete, 31 remaining
+- **Continue building?** Yes

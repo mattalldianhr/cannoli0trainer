@@ -1,0 +1,12 @@
+**Task 29.4 complete.** Changes made:
+
+1. **`/api/train/route.ts`** — Fetches the coach's `defaultWeightUnit` from the database and includes it in all API response paths
+2. **`TrainingLog.tsx`** — Extracts `defaultWeightUnit` from the API response (`data?.defaultWeightUnit ?? 'lbs'`) and:
+   - Passes it to `ExerciseCard` as `weightUnit` prop
+   - Uses it in `handleLogSet` (replaced hardcoded `'lbs'`)
+   - Uses it in the weight input label (`Weight (kg)` or `Weight (lbs)`)
+   - Uses it in session header volume display
+   - Passes it to `WorkoutSummary` for the volume stat card
+
+Per-set override still works since each `SetLog` stores its own `unit` field independently in the database — the coach preference only controls the default for new sets.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

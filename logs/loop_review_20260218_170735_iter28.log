@@ -1,0 +1,10 @@
+## Quick Spec Review — Iter 28 Summary
+
+- **Findings**: 0 new issues
+  - Task 29.4 (wire default weight unit into set logging) completed cleanly
+  - Coach's `defaultWeightUnit` fetched from DB, threaded through TrainingLog, ExerciseCard, WorkoutSummary
+  - Per-set override preserved via `SetLog.unit` field
+- **Specs updated**: None needed
+- **Carry-forward P2** (from iter 23): "Archived Programs" filter/tab on `/programs` page — not blocking
+- **Progress**: ~145/179 tasks complete
+- **Continue building?** Yes

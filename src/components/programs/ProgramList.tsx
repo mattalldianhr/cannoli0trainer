@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Calendar, Users, Dumbbell, BookTemplate } from 'lucide-react';
+import { Search, Plus, Calendar, Users, Dumbbell, BookTemplate, ClipboardList } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 interface ProgramData {
   id: string;
@@ -112,13 +113,27 @@ export function ProgramList({ programs }: ProgramListProps) {
 
       {/* Program Cards */}
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {search
-              ? 'No programs match your search.'
-              : 'No programs yet. Create one to get started.'}
-          </CardContent>
-        </Card>
+        search ? (
+          <EmptyState
+            icon={Search}
+            title="No programs match your search"
+            description="Try a different search term."
+          />
+        ) : (
+          <EmptyState
+            icon={ClipboardList}
+            title="No training programs yet"
+            description="Create your first program to start building athlete training plans."
+            action={
+              <Button asChild>
+                <Link href="/programs/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Program
+                </Link>
+              </Button>
+            }
+          />
+        )
       ) : (
         <div className="grid gap-3">
           {filtered.map((program) => {

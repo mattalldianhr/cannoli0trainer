@@ -1,0 +1,9 @@
+## Quick Spec Review — Iter 25 Summary
+
+- **Findings**: 0 new issues
+  - Task 28.8 correctly identified as already implemented (via `attemptResults` JSON field from Task 26.1) — no duplicate work
+  - Task 29.1 (Coach settings fields) built cleanly: `defaultWeightUnit`, `timezone`, `defaultRestTimerSeconds` added with sensible defaults. Migration applied successfully.
+- **Specs updated**: None needed
+- **Carry-forward P2** (from iter 23): "Archived Programs" filter/tab on `/programs` page still not addressed — not blocking
+- **Progress**: 144/179 tasks complete, 35 remaining
+- **Continue building?** Yes

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 149
+- Completed: 150
 - In progress: 0
-- Remaining: 30
+- Remaining: 29
 
 ## Tasks
 
@@ -769,7 +769,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: `src/components/ui/EmptyState.tsx` with icon, title, description, optional CTA. Centered layout.
 
-- [ ] **Task 30.2**: Add empty states to all coach pages
+- [x] **Task 30.2**: Add empty states to all coach pages
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Dashboard, athletes, programs, exercises, analytics, meets, and athlete/train all have appropriate empty states with CTAs.
 

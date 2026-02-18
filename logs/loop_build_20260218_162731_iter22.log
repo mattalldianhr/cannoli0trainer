@@ -1,0 +1,14 @@
+**Task 28.5 complete.** Here's what was done:
+
+**Created:** `src/lib/coach.ts` — exports `getCurrentCoachId()` which returns the first coach's ID from the database (placeholder until auth is added).
+
+**Updated 30 files** across pages and API routes:
+- **Server pages** (7): dashboard, athletes, programs, exercises, meets, schedule, analytics — all list queries now filter by `coachId`
+- **Detail pages** (4): athletes/[id], programs/[id], programs/[id]/edit, meets/[id] — ownership verified via `where: { id, coachId }`
+- **New/edit pages** (4): athletes/new, exercises/new, programs/new, exercises/[id]/edit — replaced `prisma.coach.findFirst()` with `getCurrentCoachId()`
+- **API list routes** (5): athletes, programs, exercises, meets, schedule — always scoped to coach
+- **API detail routes** (6): athletes/[id], programs/[id], meets/[id], programs/[id]/template, programs/[id]/assign, analytics/[athleteId] — ownership checks on all GET/PUT/DELETE
+- **API analytics** (2): compare and export routes — verify athletes belong to coach
+
+**Validation:** tsc clean, build clean. Committed as `8dcb18f`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
