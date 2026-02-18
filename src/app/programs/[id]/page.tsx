@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,8 @@ import type { PrescriptionType } from '@prisma/client';
 import { AssignAthletes } from '@/components/programs/AssignAthletes';
 import { SaveAsTemplate } from '@/components/programs/SaveAsTemplate';
 import { ProgramOverview } from '@/components/programs/ProgramOverview';
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -30,9 +33,10 @@ export default async function ProgramDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const coachId = await getCurrentCoachId();
 
   const program = await prisma.program.findUnique({
-    where: { id },
+    where: { id, coachId },
     include: {
       workouts: {
         include: {

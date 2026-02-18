@@ -1,7 +1,10 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { ProgramBuilder } from '@/components/programs/ProgramBuilder';
 import { notFound } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -21,9 +24,10 @@ export default async function EditProgramPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const coachId = await getCurrentCoachId();
 
   const program = await prisma.program.findUnique({
-    where: { id },
+    where: { id, coachId },
     include: {
       workouts: {
         include: {

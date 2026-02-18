@@ -1,7 +1,10 @@
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 import { Container } from '@/components/layout/Container';
 import { ExerciseForm } from '@/components/exercises/ExerciseForm';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Edit Exercise | Cannoli Trainer',
@@ -13,11 +16,7 @@ export default async function EditExercisePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
-  const coach = await prisma.coach.findFirst();
-  if (!coach) {
-    redirect('/exercises');
-  }
+  const coachId = await getCurrentCoachId();
 
   const exercise = await prisma.exercise.findUnique({
     where: { id },
@@ -42,7 +41,7 @@ export default async function EditExercisePage({
   return (
     <Container className="py-8 max-w-2xl">
       <ExerciseForm
-        coachId={coach.id}
+        coachId={coachId}
         exercise={{
           ...exercise,
           tags: (exercise.tags as string[]) ?? [],
