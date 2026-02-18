@@ -36,10 +36,33 @@ export async function GET(request: NextRequest) {
     });
 
     if (!session) {
+      // Find the next upcoming NOT_STARTED session for this athlete
+      const nextSession = await prisma.workoutSession.findFirst({
+        where: {
+          athleteId,
+          date: { gt: dateOnly },
+          status: 'NOT_STARTED',
+          isSkipped: false,
+        },
+        orderBy: { date: 'asc' },
+        select: {
+          date: true,
+          title: true,
+          program: { select: { name: true } },
+        },
+      });
+
       return NextResponse.json({
         session: null,
         exercises: [],
         message: 'No workout scheduled for this date',
+        nextSession: nextSession
+          ? {
+              date: nextSession.date.toISOString(),
+              title: nextSession.title,
+              programName: nextSession.program?.name ?? null,
+            }
+          : null,
       });
     }
 

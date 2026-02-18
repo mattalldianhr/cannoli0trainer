@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 82
+- Completed: 83
 - In progress: 0
-- Remaining: 97 (7 original + 97 new from spec review)
+- Remaining: 96 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -487,7 +487,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: When a ProgramAssignment is deleted (or `isActive` set to false), delete all WorkoutSessions where `programAssignmentId` matches AND `status = NOT_STARTED` AND `date >= today`. Preserve sessions with status `PARTIALLY_COMPLETED` or `FULLY_COMPLETED`.
 
-- [ ] **Task 17.7**: Enhance `/api/train` to return `nextSession` when no workout exists for today
+- [x] **Task 17.7**: Enhance `/api/train` to return `nextSession` when no workout exists for today
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: When no WorkoutSession exists for the requested date, the response includes `nextSession: { date, title, programName }` by querying the next upcoming NOT_STARTED session.
 

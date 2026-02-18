@@ -90,10 +90,17 @@ interface SessionData {
   program: { id: string; name: string } | null;
 }
 
+interface NextSessionData {
+  date: string;
+  title: string | null;
+  programName: string | null;
+}
+
 interface TrainResponse {
   session: SessionData | null;
   exercises: ExerciseData[];
   message?: string;
+  nextSession?: NextSessionData | null;
 }
 
 interface AthleteOption {
@@ -846,11 +853,24 @@ export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
         <Card>
           <CardContent className="py-12 text-center">
             <Dumbbell className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-            <h3 className="text-lg font-medium mb-1">No workout scheduled</h3>
+            <h3 className="text-lg font-medium mb-1">
+              {isToday(date) ? 'Rest Day' : 'No workout scheduled'}
+            </h3>
             <p className="text-sm text-muted-foreground">
               {selectedAthlete?.name ?? 'This athlete'} has no workout assigned for{' '}
               {isToday(date) ? 'today' : displayDate(date)}.
             </p>
+            {data?.nextSession && (
+              <button
+                type="button"
+                className="mt-4 inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                onClick={() => setDate(data.nextSession!.date.split('T')[0])}
+              >
+                <Calendar className="h-4 w-4" />
+                Next: {displayDate(data.nextSession.date.split('T')[0])}
+                {data.nextSession.title && ` — ${data.nextSession.title}`}
+              </button>
+            )}
           </CardContent>
         </Card>
       )}
