@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   ArrowUp,
@@ -17,6 +16,8 @@ import {
   Save,
   Loader2,
   StickyNote,
+  Check,
+  CloudOff,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,19 +61,38 @@ interface ProgramBuilderProps {
   templateProgram?: ProgramWithDetails;
 }
 
-export function ProgramBuilder({ coachId, initialProgram, templateProgram }: ProgramBuilderProps) {
-  const router = useRouter();
-  const isEditMode = !!initialProgram;
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error' | 'dirty';
 
+export function ProgramBuilder({ coachId, initialProgram, templateProgram }: ProgramBuilderProps) {
   const [program, setProgram] = useState<ProgramFormState>(() => {
     if (initialProgram) return programResponseToForm(initialProgram);
     if (templateProgram) return templateToNewProgramForm(templateProgram);
     return createDefaultProgramForm();
   });
 
+  // Track whether this program has been persisted (edit mode or after first save)
+  const [programId, setProgramId] = useState<string | undefined>(initialProgram?.id);
+  const isEditMode = !!programId;
+
   // Save state
-  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Snapshot of last-saved state for dirty detection (initialized once via useState)
+  const [initialSnapshot] = useState(() => {
+    if (initialProgram) return JSON.stringify(programResponseToForm(initialProgram));
+    if (templateProgram) return JSON.stringify(templateToNewProgramForm(templateProgram));
+    return JSON.stringify(createDefaultProgramForm());
+  });
+  const lastSavedSnapshotRef = useRef(initialSnapshot);
+  // Auto-save timer ref
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Prevent auto-save from racing with manual save
+  const isSavingRef = useRef(false);
+
+  // Compute dirty state
+  const currentSnapshot = JSON.stringify(program);
+  const isDirty = currentSnapshot !== lastSavedSnapshotRef.current;
 
   // Track which weeks/days are collapsed
   const [collapsedWeeks, setCollapsedWeeks] = useState<Set<string>>(new Set());
@@ -373,22 +393,25 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
   // Save
   // ============================================================
 
-  const handleSave = useCallback(async () => {
-    if (!program.name.trim()) {
+  const performSave = useCallback(async (currentProgram: ProgramFormState): Promise<boolean> => {
+    if (!currentProgram.name.trim()) {
       setSaveError('Program name is required');
-      return;
+      setSaveStatus('error');
+      return false;
     }
 
-    setSaving(true);
+    if (isSavingRef.current) return false;
+    isSavingRef.current = true;
+    setSaveStatus('saving');
     setSaveError(null);
 
     try {
-      const payload = programFormToPayload(program, coachId);
+      const payload = programFormToPayload(currentProgram, coachId);
 
-      const url = isEditMode
-        ? `/api/programs/${program.id}`
+      const url = programId
+        ? `/api/programs/${programId}`
         : '/api/programs';
-      const method = isEditMode ? 'PUT' : 'POST';
+      const method = programId ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
         method,
@@ -402,13 +425,83 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
       }
 
       const saved = await res.json();
-      router.push(`/programs/${saved.id}`);
+
+      // After first save of a new program, capture the ID and update the URL
+      if (!programId) {
+        setProgramId(saved.id);
+        setProgram((prev) => ({ ...prev, id: saved.id }));
+        window.history.replaceState(null, '', `/programs/${saved.id}/edit`);
+      }
+
+      // Update saved snapshot
+      lastSavedSnapshotRef.current = JSON.stringify(currentProgram);
+      setSaveStatus('saved');
+      return true;
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Failed to save program');
+      setSaveStatus('error');
+      return false;
     } finally {
-      setSaving(false);
+      isSavingRef.current = false;
     }
-  }, [program, coachId, isEditMode, router]);
+  }, [coachId, programId]);
+
+  const handleSave = useCallback(async () => {
+    // Cancel any pending auto-save
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+      autoSaveTimerRef.current = null;
+    }
+    await performSave(program);
+  }, [program, performSave]);
+
+  // ============================================================
+  // Auto-save (2s debounce after changes)
+  // ============================================================
+
+  useEffect(() => {
+    // Don't auto-save if there's nothing to save or no name yet
+    if (!isDirty || !program.name.trim()) {
+      if (!isDirty && saveStatus === 'dirty') setSaveStatus('saved');
+      return;
+    }
+
+    // Show dirty state immediately
+    if (saveStatus !== 'saving') setSaveStatus('dirty');
+
+    // Clear any existing timer
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
+    // Set new debounced save
+    autoSaveTimerRef.current = setTimeout(() => {
+      autoSaveTimerRef.current = null;
+      performSave(program);
+    }, 2000);
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+        autoSaveTimerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSnapshot]);
+
+  // ============================================================
+  // Warn on navigation with unsaved changes
+  // ============================================================
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
 
   // ============================================================
   // Summary stats
@@ -446,16 +539,14 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
           )}
         </div>
         <div className="ml-auto flex items-center gap-3">
-          {saveError && (
-            <span className="text-sm text-destructive">{saveError}</span>
-          )}
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? (
+          <SaveStatusIndicator status={saveStatus} error={saveError} />
+          <Button onClick={handleSave} disabled={saveStatus === 'saving'} size="sm" variant={isDirty ? 'default' : 'outline'}>
+            {saveStatus === 'saving' ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Save className="h-4 w-4 mr-2" />
             )}
-            {saving ? 'Saving...' : isEditMode ? 'Save Changes' : 'Save Program'}
+            {saveStatus === 'saving' ? 'Saving...' : 'Save'}
           </Button>
         </div>
       </div>
@@ -589,17 +680,15 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
 
       {/* Bottom Save */}
       {(totalWeeks > 0 || program.name) && (
-        <div className="flex justify-end gap-3 pt-2">
-          {saveError && (
-            <span className="text-sm text-destructive self-center">{saveError}</span>
-          )}
-          <Button onClick={handleSave} disabled={saving} size="lg">
-            {saving ? (
+        <div className="flex justify-end items-center gap-3 pt-2">
+          <SaveStatusIndicator status={saveStatus} error={saveError} />
+          <Button onClick={handleSave} disabled={saveStatus === 'saving'} size="lg" variant={isDirty ? 'default' : 'outline'}>
+            {saveStatus === 'saving' ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Save className="h-4 w-4 mr-2" />
             )}
-            {saving ? 'Saving...' : isEditMode ? 'Save Changes' : 'Save Program'}
+            {saveStatus === 'saving' ? 'Saving...' : 'Save'}
           </Button>
         </div>
       )}
@@ -612,6 +701,44 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
       />
     </div>
   );
+}
+
+// ============================================================
+// Save Status Indicator
+// ============================================================
+
+function SaveStatusIndicator({ status, error }: { status: SaveStatus; error: string | null }) {
+  switch (status) {
+    case 'saving':
+      return (
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Saving...
+        </span>
+      );
+    case 'saved':
+      return (
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Check className="h-3.5 w-3.5 text-green-600" />
+          All changes saved
+        </span>
+      );
+    case 'dirty':
+      return (
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <CloudOff className="h-3.5 w-3.5" />
+          Unsaved changes
+        </span>
+      );
+    case 'error':
+      return (
+        <span className="flex items-center gap-1.5 text-sm text-destructive">
+          {error || 'Save failed'}
+        </span>
+      );
+    default:
+      return null;
+  }
 }
 
 // ============================================================

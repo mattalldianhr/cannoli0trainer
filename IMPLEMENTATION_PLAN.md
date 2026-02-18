@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 119
+- Completed: 120
 - In progress: 0
-- Remaining: 60
+- Remaining: 59
 
 ## Tasks
 
@@ -644,7 +644,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/04-program-builder.md
   - Acceptance: Program description, day notes, exercise notes. Note icon when collapsed with content. Persisted on save.
 
-- [ ] **Task 23.3**: Implement auto-save with dirty state tracking and save indicator
+- [x] **Task 23.3**: Implement auto-save with dirty state tracking and save indicator
   - Spec: specs/04-program-builder.md
   - Acceptance: 2s debounce save, "Saving..."/"All changes saved" indicator, beforeunload warning.
 
