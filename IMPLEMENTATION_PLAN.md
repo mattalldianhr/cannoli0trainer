@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 101
+- Completed: 102
 - In progress: 0
 - Remaining: 78 (7 original + 97 new from spec review)
 
@@ -565,7 +565,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Resend email with program name, start date, link to `/athlete/train`. Fire-and-forget.
 
-- [ ] **Task 18.12**: Send email notification on workout completion
+- [x] **Task 18.12**: Send email notification on workout completion
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Email to coach with athlete name, workout name, completion %. Only on transition to FULLY_COMPLETED.
 

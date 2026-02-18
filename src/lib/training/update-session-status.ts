@@ -1,9 +1,11 @@
 import { prisma } from '@/lib/prisma';
+import { notifyWorkoutCompletion } from '@/lib/notifications';
 
 /**
  * Recalculates and updates WorkoutSession completion status after a set is logged/updated/deleted.
  * Finds the session for the given athlete + workoutExercise's workout, counts completed exercises,
  * and updates the session's status, completionPercentage, and completedItems.
+ * Sends an email notification to the coach on transition to FULLY_COMPLETED.
  */
 export async function updateSessionStatus(workoutExerciseId: string, athleteId: string) {
   // Find the workout that owns this exercise
@@ -74,6 +76,8 @@ export async function updateSessionStatus(workoutExerciseId: string, athleteId: 
 
   if (!session) return;
 
+  const previousStatus = session.status;
+
   await prisma.workoutSession.update({
     where: { id: session.id },
     data: {
@@ -83,4 +87,26 @@ export async function updateSessionStatus(workoutExerciseId: string, athleteId: 
       totalItems,
     },
   });
+
+  // Send email notification to coach on transition to FULLY_COMPLETED
+  if (status === 'FULLY_COMPLETED' && previousStatus !== 'FULLY_COMPLETED') {
+    const athlete = await prisma.athlete.findUnique({
+      where: { id: athleteId },
+      select: { name: true, coach: { select: { email: true } } },
+    });
+
+    if (athlete?.coach?.email) {
+      // Fire-and-forget — don't await, don't block the response
+      notifyWorkoutCompletion({
+        coachEmail: athlete.coach.email,
+        athleteName: athlete.name,
+        athleteId,
+        workoutName: session.title || workout.name,
+        completionPercent: completionPercentage,
+        date: session.date?.toISOString() || new Date().toISOString(),
+      }).catch(() => {
+        // Silently ignore — notifyWorkoutCompletion already logs errors internally
+      });
+    }
+  }
 }
