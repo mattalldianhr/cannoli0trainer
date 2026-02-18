@@ -28,6 +28,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { RPESelector } from '@/components/shared/RPESelector';
+import { RestTimer } from '@/components/training/RestTimer';
 import { cn } from '@/lib/utils';
 
 interface SetLogData {
@@ -427,6 +428,7 @@ function ExerciseCard({
 
   const [expanded, setExpanded] = useState(!isComplete);
   const [saving, setSaving] = useState(false);
+  const [showRestTimer, setShowRestTimer] = useState(false);
 
   // Form state for the new set
   const defaults = getDefaultFormValues(exercise);
@@ -436,6 +438,7 @@ function ExerciseCard({
   const [velocity, setVelocity] = useState(defaults.velocity);
 
   const nextSetNumber = completedSets + 1;
+  const restDuration = exercise.restTimeSeconds ?? 120;
 
   const handleLogSet = async () => {
     const w = parseFloat(weight);
@@ -464,6 +467,11 @@ function ExerciseCard({
 
       if (res.ok) {
         onSetChange();
+        // Show rest timer after logging a set (unless exercise is now complete)
+        const willBeComplete = totalSets > 0 && (completedSets + 1) >= totalSets;
+        if (!willBeComplete) {
+          setShowRestTimer(true);
+        }
       }
     } finally {
       setSaving(false);
@@ -596,6 +604,15 @@ function ExerciseCard({
                   />
                 ))}
               </div>
+            )}
+
+            {/* Rest timer */}
+            {showRestTimer && (
+              <RestTimer
+                duration={restDuration}
+                onDismiss={() => setShowRestTimer(false)}
+                exerciseName={exercise.exercise.name}
+              />
             )}
 
             {/* New set form */}

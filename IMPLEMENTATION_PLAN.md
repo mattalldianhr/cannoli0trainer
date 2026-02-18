@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 111
+- Completed: 112
 - In progress: 0
-- Remaining: 68
+- Remaining: 67
 
 ## Tasks
 
@@ -608,7 +608,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 21: Training Log Enhancements
 
-- [ ] **Task 21.1**: Implement rest timer between sets
+- [x] **Task 21.1**: Implement rest timer between sets
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Rest timer after completing a set. Defaults to WorkoutExercise.restTimeSeconds or 120s. Start/pause/dismiss controls. Audio/vibration at zero.
 
