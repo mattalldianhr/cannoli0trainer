@@ -12,7 +12,7 @@ npm run dev
 
 ## Test
 ```bash
-npx tsc --noEmit
+npm run test
 ```
 
 ## Typecheck

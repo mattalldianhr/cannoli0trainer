@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 19
+- Completed: 20
 - In progress: 0
 
 ## Tasks
@@ -94,7 +94,7 @@
 
 ### Priority 3: Testing Infrastructure & Data Validation
 
-- [ ] **Task 3.1**: Install Vitest and configure for Next.js + Prisma project
+- [x] **Task 3.1**: Install Vitest and configure for Next.js + Prisma project
   - Spec: (none — infrastructure)
   - Acceptance: `npx vitest run` executes with zero tests. `vitest.config.ts` configures path aliases (`@/*`), TypeScript, and test file patterns. `package.json` has `"test": "vitest run"` script. AGENTS.md updated with test command.
 
