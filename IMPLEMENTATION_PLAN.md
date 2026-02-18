@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 43
+- Completed: 44
 - In progress: 0
 
 ## Tasks
@@ -198,7 +198,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: TypeScript interfaces for program editing state compile without errors
 
-- [ ] **Task 7.3**: Create program builder page at `/programs/new` with week/day structure
+- [x] **Task 7.3**: Create program builder page at `/programs/new` with week/day structure
   - Spec: specs/04-program-builder.md
   - Acceptance: Can create program, add weeks, add days within weeks
 
