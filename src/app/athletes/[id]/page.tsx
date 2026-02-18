@@ -57,6 +57,16 @@ export default async function AthleteProfilePage({
         },
         orderBy: { workingMax: 'desc' },
       },
+      bodyweightLogs: {
+        orderBy: { loggedAt: 'asc' },
+        take: 200,
+        select: {
+          id: true,
+          weight: true,
+          unit: true,
+          loggedAt: true,
+        },
+      },
       meetEntries: {
         include: {
           meet: { select: { id: true, name: true, date: true, location: true, federation: true } },
@@ -120,6 +130,12 @@ export default async function AthleteProfilePage({
       generatedMax: ms.generatedMax,
       date: ms.date.toISOString(),
       exercise: ms.exercise,
+    })),
+    bodyweightLogs: athlete.bodyweightLogs.map((bw) => ({
+      id: bw.id,
+      weight: bw.weight,
+      unit: bw.unit,
+      loggedAt: bw.loggedAt.toISOString(),
     })),
     meetEntries: athlete.meetEntries.map((me) => ({
       id: me.id,

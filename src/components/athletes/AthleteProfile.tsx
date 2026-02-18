@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { BaseLineChart } from '@/components/charts/BaseLineChart';
 import { EditAthleteForm } from './EditAthleteForm';
 import { DeleteAthleteDialog } from './DeleteAthleteDialog';
 
@@ -63,6 +64,12 @@ interface AthleteProfileData {
     generatedMax: number | null;
     date: string;
     exercise: { id: string; name: string; category: string | null };
+  }[];
+  bodyweightLogs: {
+    id: string;
+    weight: number;
+    unit: string;
+    loggedAt: string;
   }[];
   meetEntries: {
     id: string;
@@ -563,16 +570,27 @@ function AnalyticsTab({ athlete }: { athlete: AthleteProfileData }) {
         </Card>
       )}
 
-      {/* Placeholder for charts */}
-      <Card>
-        <CardContent className="p-6 text-center text-muted-foreground">
-          <BarChart3 className="h-12 w-12 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">
-            Detailed analytics charts will be available once the charting library is installed
-            (Task 12.1).
-          </p>
-        </CardContent>
-      </Card>
+      {/* Bodyweight Trend Chart */}
+      {athlete.bodyweightLogs.length > 0 && (
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Weight className="h-5 w-5" />
+              <h2 className="text-lg font-semibold">Bodyweight Trend</h2>
+            </div>
+            <BaseLineChart
+              data={athlete.bodyweightLogs.map((bw) => ({
+                date: new Date(bw.loggedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                weight: bw.weight,
+              }))}
+              lines={[{ dataKey: 'weight', label: `Weight (${athlete.bodyweightLogs[0]?.unit ?? 'kg'})` }]}
+              xAxisKey="date"
+              yAxisLabel={athlete.bodyweightLogs[0]?.unit ?? 'kg'}
+              height={250}
+            />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

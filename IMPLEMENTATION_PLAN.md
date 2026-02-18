@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 106
+- Completed: 107
 - In progress: 0
-- Remaining: 74 (7 original + 97 new from spec review)
+- Remaining: 73 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -583,7 +583,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/03-athlete-management.md
   - Acceptance: Checkboxes on athlete rows, bulk "Assign Program" action, program picker dialog, success toast. Existing assignments skipped.
 
-- [ ] **Task 19.2**: Add bodyweight trend chart to athlete profile page
+- [x] **Task 19.2**: Add bodyweight trend chart to athlete profile page
   - Spec: specs/03-athlete-management.md
   - Acceptance: Line chart on `/athletes/[id]` when BodyweightLog data exists. Recharts, 90-day default. Hidden when no data.
 
