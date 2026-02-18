@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 66
-- Completed: 3
+- Completed: 4
 - In progress: 0
 
 ## Tasks
@@ -17,7 +17,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, Coach model present
 
-- [ ] **Task 1.3**: Create Athlete model with all profile fields and FK to Coach
+- [x] **Task 1.3**: Create Athlete model with all profile fields and FK to Coach
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, Athlete has coachId relation
 
