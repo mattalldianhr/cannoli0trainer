@@ -19,3 +19,20 @@ export interface RegressionLinePoint {
   weight: number;
   velocity: number;
 }
+
+/** Velocity profile row: avg velocity at a given %1RM */
+export interface VelocityProfileRow {
+  percentageLabel: string;
+  percentage: number;
+  avgVelocity: number | null;
+  sampleCount: number;
+}
+
+/** Preparedness comparison: today's velocity vs rolling baseline */
+export interface PreparednessResult {
+  currentVelocity: number;
+  baselineVelocity: number;
+  difference: number;
+  percentageDiff: number;
+  status: 'above' | 'at' | 'below';
+}

@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 70
+- Completed: 71
 - In progress: 0
 
 ## Tasks
@@ -321,7 +321,7 @@
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Scatter plot of (weight, velocity) with linear regression trend line
 
-- [ ] **Task 13.2**: Create velocity profile table and preparedness indicator
+- [x] **Task 13.2**: Create velocity profile table and preparedness indicator
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Table shows avg velocity at different %1RM, indicator compares to baseline
 
