@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 69
+- Completed: 70
 - In progress: 0
 
 ## Tasks
@@ -317,7 +317,7 @@
 
 ### Priority 13: VBT Analytics
 
-- [ ] **Task 13.1**: Create load-velocity scatter chart component
+- [x] **Task 13.1**: Create load-velocity scatter chart component
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Scatter plot of (weight, velocity) with linear regression trend line
 
