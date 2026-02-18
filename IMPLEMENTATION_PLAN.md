@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 128
+- Completed: 129
 - In progress: 0
-- Remaining: 51
+- Remaining: 50
 
 ## Tasks
 
@@ -691,7 +691,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Scatter + trend line chart of RPE values over time. Filterable by exercise. Individual sets as scatter points, moving average as trend line.
 
-- [ ] **Task 27.2**: Implement RPE accuracy metric (reported vs estimated effort)
+- [x] **Task 27.2**: Implement RPE accuracy metric (reported vs estimated effort)
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: `lib/analytics/rpe-accuracy.ts` exports `calculateRpeAccuracy()`. Compares reported RPE to estimated via rpe-table reverse lookup. Per-exercise and aggregate "avg +/- X RPE" metric. Trend chart. Unit tested.
 
