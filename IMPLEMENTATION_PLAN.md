@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 42
+- Completed: 43
 - In progress: 0
 
 ## Tasks
@@ -194,7 +194,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: Page lists programs with name, athlete count, duration, type
 
-- [ ] **Task 7.2**: Create program builder types in `lib/programs/types.ts`
+- [x] **Task 7.2**: Create program builder types in `lib/programs/types.ts`
   - Spec: specs/04-program-builder.md
   - Acceptance: TypeScript interfaces for program editing state compile without errors
 
