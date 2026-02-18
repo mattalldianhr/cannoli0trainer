@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 98
+- Completed: 99
 - In progress: 0
-- Remaining: 81 (7 original + 97 new from spec review)
+- Remaining: 80 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -553,7 +553,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: TrainingLog with `mode: 'athlete'` (no athlete selector). All existing functionality works with authenticated athlete session.
 
-- [ ] **Task 18.9**: Build athlete calendar view at `/athlete/calendar`
+- [x] **Task 18.9**: Build athlete calendar view at `/athlete/calendar`
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Weekly calendar with workout indicators, completion %, month toggle. Past from WorkoutSession, future from ProgramAssignment.
 
