@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 41
+- Completed: 42
 - In progress: 0
 
 ## Tasks
@@ -190,7 +190,7 @@
 
 ### Priority 7: Core UI - Program Builder
 
-- [ ] **Task 7.1**: Create program listing page at `/programs` showing programs and templates
+- [x] **Task 7.1**: Create program listing page at `/programs` showing programs and templates
   - Spec: specs/04-program-builder.md
   - Acceptance: Page lists programs with name, athlete count, duration, type
 
