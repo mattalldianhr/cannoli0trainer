@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 20
+- Completed: 21
 - In progress: 0
 
 ## Tasks
@@ -98,7 +98,7 @@
   - Spec: (none — infrastructure)
   - Acceptance: `npx vitest run` executes with zero tests. `vitest.config.ts` configures path aliases (`@/*`), TypeScript, and test file patterns. `package.json` has `"test": "vitest run"` script. AGENTS.md updated with test command.
 
-- [ ] **Task 3.2**: Unit test TeamBuildr data transformer against known export data
+- [x] **Task 3.2**: Unit test TeamBuildr data transformer against known export data
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: Tests verify: prescribed (placeholder) vs actual (value) extraction, superset grouping mapping, exercise type code mapping (L→Lift, S→SAQ+C, etc.), workingMax/generatedMax→MaxSnapshot conversion, RPE extraction from additionalInformation. Uses real sample data from export.
 
