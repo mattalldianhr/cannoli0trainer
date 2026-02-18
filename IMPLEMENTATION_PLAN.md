@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 103
+- Completed: 104
 - In progress: 0
-- Remaining: 77 (7 original + 97 new from spec review)
+- Remaining: 76 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -573,7 +573,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `public/manifest.json`, meta tags, apple-touch-icon. Chrome DevTools shows valid manifest.
 
-- [ ] **Task 18.14**: Seed test athlete with email for auth testing
+- [x] **Task 18.14**: Seed test athlete with email for auth testing
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: At least one athlete seeded with real email. Linked to User if exists.
 

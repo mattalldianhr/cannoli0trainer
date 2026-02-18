@@ -538,6 +538,67 @@ async function seedWorkoutHistory() {
   console.log(`    MaxSnapshots: ${dbMaxSnapshots}`);
 }
 
+// ============================================================
+// Test Athlete Auth Seeding
+// ============================================================
+
+async function seedTestAthleteAuth() {
+  const testEmail = process.env.SEED_ATHLETE_EMAIL;
+  if (!testEmail) {
+    console.log('\nSkipping test athlete auth setup (SEED_ATHLETE_EMAIL not set).');
+    console.log('  Set SEED_ATHLETE_EMAIL in .env to link an athlete for auth testing.');
+    return;
+  }
+
+  console.log(`\nSetting up test athlete auth for: ${testEmail}`);
+
+  // Find the first athlete (Matt Alldian) to use as test athlete
+  const coach = await prisma.coach.findFirst({ where: { email: 'joe@cannolistrength.com' } });
+  if (!coach) {
+    console.log('  Coach not found. Skipping.');
+    return;
+  }
+
+  const athlete = await prisma.athlete.findFirst({
+    where: { coachId: coach.id },
+    orderBy: { createdAt: 'asc' },
+  });
+  if (!athlete) {
+    console.log('  No athletes found. Skipping.');
+    return;
+  }
+
+  // Set email on the athlete record
+  await prisma.athlete.update({
+    where: { id: athlete.id },
+    data: { email: testEmail },
+  });
+  console.log(`  Set email on athlete: ${athlete.name} -> ${testEmail}`);
+
+  // Upsert a User record for NextAuth and link to athlete
+  const user = await prisma.user.upsert({
+    where: { email: testEmail },
+    update: { name: athlete.name },
+    create: {
+      email: testEmail,
+      name: athlete.name,
+      emailVerified: new Date(),
+    },
+  });
+  console.log(`  User record: ${user.id} (${user.email})`);
+
+  // Link athlete to user if not already linked
+  if (athlete.userId !== user.id) {
+    await prisma.athlete.update({
+      where: { id: athlete.id },
+      data: { userId: user.id },
+    });
+    console.log(`  Linked athlete ${athlete.name} -> User ${user.id}`);
+  } else {
+    console.log(`  Already linked.`);
+  }
+}
+
 async function main() {
   console.log('Starting seed...\n');
 
@@ -545,6 +606,7 @@ async function main() {
   await seedTeambuildrExercises();
   await seedCoachAndAthletes();
   await seedWorkoutHistory();
+  await seedTestAthleteAuth();
 
   // Print tag summary
   const taggedCount = await prisma.exercise.count({
