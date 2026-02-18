@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 33
+- Completed: 34
 - In progress: 0
 
 ## Tasks
@@ -152,7 +152,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: POST assigns program to athlete(s), creates ProgramAssignment records
 
-- [ ] **Task 4.9**: Create analytics data API (`/api/analytics/[athleteId]`)
+- [x] **Task 4.9**: Create analytics data API (`/api/analytics/[athleteId]`)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: GET returns aggregated data (1RM trends, volume, compliance) for date range
 
