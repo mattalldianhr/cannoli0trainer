@@ -28,6 +28,27 @@ export interface VelocityProfileRow {
   sampleCount: number;
 }
 
+/** A set with both weight and velocity for load-bracket grouping */
+export interface WeightedVelocitySet {
+  weight: number;
+  velocity: number;
+  date: string;
+}
+
+/** A single week's average velocity at a load bracket */
+export interface WeeklyVelocityPoint {
+  week: string; // ISO week start date (YYYY-MM-DD, Monday)
+  meanVelocity: number;
+  setCount: number;
+}
+
+/** Cross-session velocity trend result for one exercise */
+export interface VelocityTrendResult {
+  weeklyPoints: WeeklyVelocityPoint[];
+  latestWeekOverWeekChange: number | null; // % change, negative = decline
+  alert: boolean; // true when >5% drop
+}
+
 /** Preparedness comparison: today's velocity vs rolling baseline */
 export interface PreparednessResult {
   currentVelocity: number;

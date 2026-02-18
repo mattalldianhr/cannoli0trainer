@@ -9,10 +9,12 @@ import { BaseBarChart } from '@/components/charts/BaseBarChart';
 import { LoadVelocityChart } from '@/components/charts/LoadVelocityChart';
 import { VelocityProfileTable } from '@/components/charts/VelocityProfileTable';
 import { PreparednessIndicator } from '@/components/charts/PreparednessIndicator';
+import { VelocityTrendChart } from '@/components/charts/VelocityTrendChart';
 import {
   buildVelocityProfile,
   calculatePreparedness,
   calculateVelocityDrop,
+  calculateVelocityTrend,
 } from '@/lib/vbt';
 import {
   TrendingUp,
@@ -260,11 +262,15 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
     const latestSession = sessions.length > 0 ? sessions[sessions.length - 1] : null;
     const velocityDrop = latestSession ? calculateVelocityDrop(latestSession.velocities) : null;
 
+    // Cross-session velocity trend (requires e1RM and 3+ weeks of data)
+    const velocityTrend = e1rm ? calculateVelocityTrend(dataPoints, e1rm) : null;
+
     return {
       exerciseData,
       velocityProfile,
       preparedness,
       velocityDrop,
+      velocityTrend,
       latestSessionDate: latestSession?.date ?? null,
     };
   }, [data, vbtExerciseId]);
@@ -695,6 +701,20 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
                             </div>
                           )}
                         </div>
+                      </div>
+
+                      {/* Cross-Session Velocity Trend */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Velocity Trend (Week-over-Week)</h4>
+                        {vbtComputed.velocityTrend ? (
+                          <VelocityTrendChart trend={vbtComputed.velocityTrend} />
+                        ) : (
+                          <div className="flex items-center justify-center py-8 text-muted-foreground text-sm">
+                            {!vbtComputed.exerciseData.estimated1RM
+                              ? 'Need estimated 1RM for velocity trend analysis.'
+                              : 'Need 3+ weeks of velocity data at ~80% 1RM for trend analysis.'}
+                          </div>
+                        )}
                       </div>
 
                       {/* Velocity Profile Table */}

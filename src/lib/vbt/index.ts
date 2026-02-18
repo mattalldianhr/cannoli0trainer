@@ -4,6 +4,7 @@ export {
   estimateVelocityAt1RMPercent,
   calculatePreparedness,
   calculateVelocityDrop,
+  calculateVelocityTrend,
 } from './velocity-profile';
 export type {
   VelocityDataPoint,
@@ -11,4 +12,7 @@ export type {
   RegressionLinePoint,
   VelocityProfileRow,
   PreparednessResult,
+  WeightedVelocitySet,
+  WeeklyVelocityPoint,
+  VelocityTrendResult,
 } from './types';

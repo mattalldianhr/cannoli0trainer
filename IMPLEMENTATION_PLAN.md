@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 124
+- Completed: 125
 - In progress: 0
-- Remaining: 55
+- Remaining: 54
 
 ## Tasks
 
@@ -668,7 +668,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Velocity drop % from set 1 to final set. Flag when >20%. "N/A" for <2 velocity sets.
 
-- [ ] **Task 25.2**: Build cross-session velocity trend chart (week-over-week fatigue)
+- [x] **Task 25.2**: Build cross-session velocity trend chart (week-over-week fatigue)
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Line chart of mean velocity at ~80% 1RM over weeks. Alert on >5% week-over-week drop. Requires 3+ weeks of data.
 

@@ -1,4 +1,10 @@
-import type { VelocityDataPoint, VelocityProfileRow, PreparednessResult } from './types';
+import type {
+  VelocityDataPoint,
+  VelocityProfileRow,
+  PreparednessResult,
+  WeightedVelocitySet,
+  VelocityTrendResult,
+} from './types';
 import { linearRegression } from './regression';
 
 /** Standard %1RM buckets for velocity profile table */
@@ -146,4 +152,81 @@ export function calculateVelocityDrop(velocities: number[]): number | null {
   if (first === 0) return null;
 
   return Math.round(((first - last) / first) * 1000) / 10;
+}
+
+/**
+ * Get ISO week start date (Monday) for a given date string.
+ */
+function getWeekStart(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  const day = d.getUTCDay();
+  const diff = day === 0 ? 6 : day - 1; // Monday = 0 offset
+  d.setUTCDate(d.getUTCDate() - diff);
+  return d.toISOString().split('T')[0];
+}
+
+/**
+ * Calculate cross-session velocity trend at ~80% 1RM over weeks.
+ *
+ * Groups sets into the 75-85% 1RM load bracket, averages velocity per ISO week,
+ * then computes week-over-week change. Alerts when the latest change exceeds -5%.
+ *
+ * Requires an estimated 1RM to determine load brackets.
+ * Returns null if fewer than 3 weeks of data.
+ */
+export function calculateVelocityTrend(
+  sets: WeightedVelocitySet[],
+  estimated1RM: number
+): VelocityTrendResult | null {
+  if (sets.length === 0 || estimated1RM <= 0) return null;
+
+  // Filter to ~80% 1RM bracket (75-85%)
+  const lowerWeight = estimated1RM * 0.75;
+  const upperWeight = estimated1RM * 0.85;
+
+  const inBracket = sets.filter(
+    (s) => s.weight >= lowerWeight && s.weight <= upperWeight
+  );
+
+  if (inBracket.length === 0) return null;
+
+  // Group by ISO week
+  const weekMap: Record<string, { totalVelocity: number; count: number }> = {};
+  for (const s of inBracket) {
+    const week = getWeekStart(s.date);
+    if (!weekMap[week]) {
+      weekMap[week] = { totalVelocity: 0, count: 0 };
+    }
+    weekMap[week].totalVelocity += s.velocity;
+    weekMap[week].count += 1;
+  }
+
+  const weeklyPoints = Object.entries(weekMap)
+    .map(([week, data]) => ({
+      week,
+      meanVelocity: Math.round((data.totalVelocity / data.count) * 1000) / 1000,
+      setCount: data.count,
+    }))
+    .sort((a, b) => a.week.localeCompare(b.week));
+
+  if (weeklyPoints.length < 3) return null;
+
+  // Week-over-week change: compare last 2 weeks' rolling average to prior 2 weeks
+  const len = weeklyPoints.length;
+  const recentAvg =
+    (weeklyPoints[len - 1].meanVelocity + weeklyPoints[len - 2].meanVelocity) / 2;
+  const priorAvg =
+    (weeklyPoints[len - 3].meanVelocity +
+      (len >= 4 ? weeklyPoints[len - 4].meanVelocity : weeklyPoints[len - 3].meanVelocity)) / 2;
+
+  const latestWeekOverWeekChange =
+    priorAvg !== 0
+      ? Math.round(((recentAvg - priorAvg) / priorAvg) * 1000) / 10
+      : null;
+
+  return {
+    weeklyPoints,
+    latestWeekOverWeekChange,
+    alert: latestWeekOverWeekChange !== null && latestWeekOverWeekChange < -5,
+  };
 }
