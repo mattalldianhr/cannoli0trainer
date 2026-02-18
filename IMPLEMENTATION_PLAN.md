@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 65
+- Completed: 66
 - In progress: 0
 
 ## Tasks
@@ -297,7 +297,7 @@
   - Spec: specs/07-progress-analytics.md
   - Acceptance: recharts installed, basic LineChart and BarChart wrappers created
 
-- [ ] **Task 12.2**: Create analytics page at `/analytics` with date range selector
+- [x] **Task 12.2**: Create analytics page at `/analytics` with date range selector
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Page renders with selectable date ranges (4/8/12 weeks, all time)
 
