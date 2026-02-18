@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 152
+- Completed: 153
 - In progress: 0
-- Remaining: 27
+- Remaining: 26
 
 ## Tasks
 
@@ -781,7 +781,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Every create/update/delete shows success toast. Failed API calls show error toast. No toast on set logging (too frequent).
 
-- [ ] **Task 30.5**: Add inline form validation to all forms
+- [x] **Task 30.5**: Add inline form validation to all forms
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Zod schemas for all forms. Inline error messages on blur/submit. Red borders. User-friendly messages.
 

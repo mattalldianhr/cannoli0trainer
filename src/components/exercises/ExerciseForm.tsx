@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
+import { FormError } from '@/components/ui/form-error';
+import { exerciseFormSchema, validateForm } from '@/lib/validations';
 
 interface ExerciseFormData {
   id?: string;
@@ -88,6 +90,8 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const [name, setName] = useState(exercise?.name ?? '');
   const [category, setCategory] = useState(exercise?.category ?? 'strength');
@@ -107,10 +111,37 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
     );
   };
 
+  function getFormData() {
+    return { name, category, force, level, mechanic, equipment, videoUrl, cues, tags };
+  }
+
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errors = validateForm(exerciseFormSchema, getFormData());
+    setFieldErrors(errors);
+  }
+
+  function fieldError(field: string) {
+    return touched[field] ? fieldErrors[field] : undefined;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!name.trim()) return;
+    const data = getFormData();
+    const errors = validateForm(exerciseFormSchema, data);
+    setFieldErrors(errors);
+
+    const allTouched: Record<string, boolean> = {};
+    for (const key of Object.keys(data)) {
+      allTouched[key] = true;
+    }
+    setTouched(allTouched);
+
+    if (Object.keys(errors).length > 0) return;
+
+    const parsed = exerciseFormSchema.safeParse(data);
+    if (!parsed.success) return;
 
     setSubmitting(true);
     setError(null);
@@ -118,15 +149,7 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
     try {
       const payload = {
         ...(isEditing ? {} : { coachId }),
-        name: name.trim(),
-        category,
-        force: force || null,
-        level: level || null,
-        mechanic: mechanic || null,
-        equipment: equipment.trim() || null,
-        videoUrl: videoUrl.trim() || null,
-        cues: cues.trim() || null,
-        tags,
+        ...parsed.data,
       };
 
       const url = isEditing ? `/api/exercises/${exercise.id}` : '/api/exercises';
@@ -139,8 +162,8 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || `Failed to ${isEditing ? 'update' : 'create'} exercise`);
+        const resData = await res.json();
+        throw new Error(resData.error || `Failed to ${isEditing ? 'update' : 'create'} exercise`);
       }
 
       showSuccess(isEditing ? 'Exercise updated' : 'Exercise created');
@@ -154,8 +177,10 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
     }
   }
 
+  const hasErrors = Object.keys(fieldErrors).length > 0;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/exercises">
@@ -184,9 +209,11 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={() => handleBlur('name')}
               placeholder="e.g. Larsen Press"
-              required
+              className={fieldError('name') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('name')} />
           </div>
 
           <div className="space-y-2">
@@ -297,8 +324,11 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
               id="videoUrl"
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
+              onBlur={() => handleBlur('videoUrl')}
               placeholder="https://www.youtube.com/watch?v=..."
+              className={fieldError('videoUrl') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('videoUrl')} />
           </div>
 
           {videoUrl && embedUrl && (
@@ -342,7 +372,7 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
         <Button type="button" variant="outline" asChild>
           <Link href="/exercises">Cancel</Link>
         </Button>
-        <Button type="submit" disabled={submitting || !name.trim()}>
+        <Button type="submit" disabled={submitting || hasErrors}>
           {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
           {submitting
             ? isEditing ? 'Saving...' : 'Creating...'

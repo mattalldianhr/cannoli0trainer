@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FormError } from '@/components/ui/form-error';
+import { meetFormSchema, validateForm } from '@/lib/validations';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,8 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
@@ -38,12 +42,41 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
     setFederation('');
     setLocation('');
     setError(null);
+    setFieldErrors({});
+    setTouched({});
+  }
+
+  function getFormData() {
+    return { name, date, federation, location };
+  }
+
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errors = validateForm(meetFormSchema, getFormData());
+    setFieldErrors(errors);
+  }
+
+  function fieldError(field: string) {
+    return touched[field] ? fieldErrors[field] : undefined;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!name.trim() || !date) return;
+    const data = getFormData();
+    const errors = validateForm(meetFormSchema, data);
+    setFieldErrors(errors);
+
+    const allTouched: Record<string, boolean> = {};
+    for (const key of Object.keys(data)) {
+      allTouched[key] = true;
+    }
+    setTouched(allTouched);
+
+    if (Object.keys(errors).length > 0) return;
+
+    const parsed = meetFormSchema.safeParse(data);
+    if (!parsed.success) return;
 
     setSubmitting(true);
     setError(null);
@@ -54,16 +87,13 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           coachId,
-          name: name.trim(),
-          date,
-          federation: federation.trim() || null,
-          location: location.trim() || null,
+          ...parsed.data,
         }),
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to create meet');
+        const resData = await res.json();
+        throw new Error(resData.error || 'Failed to create meet');
       }
 
       showSuccess('Meet created');
@@ -79,13 +109,15 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
     }
   }
 
+  const hasErrors = Object.keys(fieldErrors).length > 0;
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => {
       if (!isOpen) resetForm();
       onOpenChange(isOpen);
     }}>
       <DialogContent>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <DialogHeader>
             <DialogTitle>New Meet</DialogTitle>
             <DialogDescription>
@@ -106,9 +138,11 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
                 id="meet-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onBlur={() => handleBlur('name')}
                 placeholder="2026 North Brooklyn Classic"
-                required
+                className={fieldError('name') ? 'border-destructive' : ''}
               />
+              <FormError message={fieldError('name')} />
             </div>
 
             <div className="space-y-2">
@@ -118,8 +152,10 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                required
+                onBlur={() => handleBlur('date')}
+                className={fieldError('date') ? 'border-destructive' : ''}
               />
+              <FormError message={fieldError('date')} />
             </div>
 
             <div className="space-y-2">
@@ -154,7 +190,7 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting || !name.trim() || !date}>
+            <Button type="submit" disabled={submitting || hasErrors}>
               {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {submitting ? 'Creating...' : 'Create Meet'}
             </Button>

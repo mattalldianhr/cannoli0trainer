@@ -5,11 +5,14 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
+import { FormError } from '@/components/ui/form-error';
+import { athleteFormSchema, validateForm } from '@/lib/validations';
 
 interface AddAthleteFormProps {
   coachId: string;
@@ -25,6 +28,8 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -36,12 +41,48 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
   const [federation, setFederation] = useState('');
   const [notes, setNotes] = useState('');
 
-  const nameError = name.trim() === '' ? 'Name is required' : null;
+  function getFormData() {
+    return {
+      name,
+      email,
+      bodyweight,
+      weightClass,
+      experienceLevel,
+      isRemote,
+      isCompetitor,
+      federation,
+      notes,
+    };
+  }
+
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errors = validateForm(athleteFormSchema, getFormData());
+    setFieldErrors(errors);
+  }
+
+  function fieldError(field: string) {
+    return touched[field] ? fieldErrors[field] : undefined;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (nameError) return;
+    const data = getFormData();
+    const errors = validateForm(athleteFormSchema, data);
+    setFieldErrors(errors);
+
+    // Mark all fields as touched on submit
+    const allTouched: Record<string, boolean> = {};
+    for (const key of Object.keys(data)) {
+      allTouched[key] = true;
+    }
+    setTouched(allTouched);
+
+    if (Object.keys(errors).length > 0) return;
+
+    const parsed = athleteFormSchema.safeParse(data);
+    if (!parsed.success) return;
 
     setSubmitting(true);
     setError(null);
@@ -52,33 +93,30 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           coachId,
-          name: name.trim(),
-          email: email.trim() || null,
-          bodyweight: bodyweight ? parseFloat(bodyweight) : null,
-          weightClass: weightClass.trim() || null,
-          experienceLevel,
-          isRemote,
-          isCompetitor,
-          federation: federation.trim() || null,
-          notes: notes.trim() || null,
+          ...parsed.data,
         }),
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to create athlete');
+        const resData = await res.json();
+        throw new Error(resData.error || 'Failed to create athlete');
       }
 
+      showSuccess('Athlete created successfully');
       router.push('/athletes');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      showError(message);
       setSubmitting(false);
     }
   }
 
+  const hasErrors = Object.keys(fieldErrors).length > 0;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/athletes">
@@ -105,9 +143,11 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={() => handleBlur('name')}
               placeholder="Athlete name"
-              required
+              className={fieldError('name') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('name')} />
           </div>
 
           <div className="space-y-2">
@@ -117,8 +157,11 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => handleBlur('email')}
               placeholder="athlete@example.com"
+              className={fieldError('email') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('email')} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -131,8 +174,11 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
                 min="0"
                 value={bodyweight}
                 onChange={(e) => setBodyweight(e.target.value)}
+                onBlur={() => handleBlur('bodyweight')}
                 placeholder="82.5"
+                className={fieldError('bodyweight') ? 'border-destructive' : ''}
               />
+              <FormError message={fieldError('bodyweight')} />
             </div>
 
             <div className="space-y-2">
@@ -225,7 +271,7 @@ export function AddAthleteForm({ coachId }: AddAthleteFormProps) {
         <Button type="button" variant="outline" asChild>
           <Link href="/athletes">Cancel</Link>
         </Button>
-        <Button type="submit" disabled={submitting || !name.trim()}>
+        <Button type="submit" disabled={submitting || hasErrors}>
           {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
           {submitting ? 'Creating...' : 'Create Athlete'}
         </Button>

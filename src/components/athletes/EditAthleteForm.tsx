@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
+import { FormError } from '@/components/ui/form-error';
+import { athleteFormSchema, validateForm } from '@/lib/validations';
 
 interface EditAthleteFormProps {
   athlete: {
@@ -36,6 +39,8 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const [name, setName] = useState(athlete.name);
   const [email, setEmail] = useState(athlete.email ?? '');
@@ -47,10 +52,47 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
   const [federation, setFederation] = useState(athlete.federation ?? '');
   const [notes, setNotes] = useState(athlete.notes ?? '');
 
+  function getFormData() {
+    return {
+      name,
+      email,
+      bodyweight,
+      weightClass,
+      experienceLevel,
+      isRemote,
+      isCompetitor,
+      federation,
+      notes,
+    };
+  }
+
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errors = validateForm(athleteFormSchema, getFormData());
+    setFieldErrors(errors);
+  }
+
+  function fieldError(field: string) {
+    return touched[field] ? fieldErrors[field] : undefined;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!name.trim()) return;
+    const data = getFormData();
+    const errors = validateForm(athleteFormSchema, data);
+    setFieldErrors(errors);
+
+    const allTouched: Record<string, boolean> = {};
+    for (const key of Object.keys(data)) {
+      allTouched[key] = true;
+    }
+    setTouched(allTouched);
+
+    if (Object.keys(errors).length > 0) return;
+
+    const parsed = athleteFormSchema.safeParse(data);
+    if (!parsed.success) return;
 
     setSubmitting(true);
     setError(null);
@@ -59,34 +101,29 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
       const res = await fetch(`/api/athletes/${athlete.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim() || null,
-          bodyweight: bodyweight ? parseFloat(bodyweight) : null,
-          weightClass: weightClass.trim() || null,
-          experienceLevel,
-          isRemote,
-          isCompetitor,
-          federation: federation.trim() || null,
-          notes: notes.trim() || null,
-        }),
+        body: JSON.stringify(parsed.data),
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to update athlete');
+        const resData = await res.json();
+        throw new Error(resData.error || 'Failed to update athlete');
       }
 
+      showSuccess('Athlete updated successfully');
       router.refresh();
       onCancel();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      showError(message);
       setSubmitting(false);
     }
   }
 
+  const hasErrors = Object.keys(fieldErrors).length > 0;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       {error && (
         <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
           {error}
@@ -103,9 +140,11 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
               id="edit-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={() => handleBlur('name')}
               placeholder="Athlete name"
-              required
+              className={fieldError('name') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('name')} />
           </div>
 
           <div className="space-y-2">
@@ -115,8 +154,11 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => handleBlur('email')}
               placeholder="athlete@example.com"
+              className={fieldError('email') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('email')} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -129,8 +171,11 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
                 min="0"
                 value={bodyweight}
                 onChange={(e) => setBodyweight(e.target.value)}
+                onBlur={() => handleBlur('bodyweight')}
                 placeholder="82.5"
+                className={fieldError('bodyweight') ? 'border-destructive' : ''}
               />
+              <FormError message={fieldError('bodyweight')} />
             </div>
 
             <div className="space-y-2">
@@ -223,7 +268,7 @@ export function EditAthleteForm({ athlete, onCancel }: EditAthleteFormProps) {
         <Button type="button" variant="outline" onClick={onCancel} disabled={submitting}>
           Cancel
         </Button>
-        <Button type="submit" disabled={submitting || !name.trim()}>
+        <Button type="submit" disabled={submitting || hasErrors}>
           {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
           {submitting ? 'Saving...' : 'Save Changes'}
         </Button>

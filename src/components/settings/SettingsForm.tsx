@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { FormError } from '@/components/ui/form-error';
+import { settingsFormSchema, validateForm } from '@/lib/validations';
 
 interface CoachSettings {
   id: string;
@@ -44,8 +46,32 @@ export function SettingsForm({ initialData }: { initialData: CoachSettings }) {
   const [formData, setFormData] = useState(initialData);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errors = validateForm(settingsFormSchema, formData);
+    setFieldErrors(errors);
+  }
+
+  function fieldError(field: string) {
+    return touched[field] ? fieldErrors[field] : undefined;
+  }
 
   async function handleSave() {
+    const errors = validateForm(settingsFormSchema, formData);
+    setFieldErrors(errors);
+
+    // Mark all fields as touched
+    const allTouched: Record<string, boolean> = {};
+    for (const key of Object.keys(formData)) {
+      allTouched[key] = true;
+    }
+    setTouched(allTouched);
+
+    if (Object.keys(errors).length > 0) return;
+
     setSaving(true);
     setMessage(null);
 
@@ -66,6 +92,7 @@ export function SettingsForm({ initialData }: { initialData: CoachSettings }) {
 
       const updated = await res.json();
       setFormData(updated);
+      setFieldErrors({});
       setMessage({ type: 'success', text: 'Settings saved successfully.' });
       showSuccess('Settings saved');
     } catch {
@@ -86,21 +113,27 @@ export function SettingsForm({ initialData }: { initialData: CoachSettings }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Name *</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onBlur={() => handleBlur('name')}
+              className={fieldError('name') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('name')} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email *</Label>
             <Input
               id="email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onBlur={() => handleBlur('email')}
+              className={fieldError('email') ? 'border-destructive' : ''}
             />
+            <FormError message={fieldError('email')} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="brandName">Brand Name</Label>
@@ -153,7 +186,7 @@ export function SettingsForm({ initialData }: { initialData: CoachSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="defaultRestTimerSeconds">Default Rest Timer (seconds)</Label>
+            <Label htmlFor="defaultRestTimerSeconds">Default Rest Timer (seconds) *</Label>
             <Input
               id="defaultRestTimerSeconds"
               type="number"
@@ -166,10 +199,15 @@ export function SettingsForm({ initialData }: { initialData: CoachSettings }) {
                   defaultRestTimerSeconds: parseInt(e.target.value) || 0,
                 })
               }
+              onBlur={() => handleBlur('defaultRestTimerSeconds')}
+              className={fieldError('defaultRestTimerSeconds') ? 'border-destructive' : ''}
             />
-            <p className="text-xs text-muted-foreground">
-              Default rest period between sets (0-600 seconds).
-            </p>
+            <FormError message={fieldError('defaultRestTimerSeconds')} />
+            {!fieldError('defaultRestTimerSeconds') && (
+              <p className="text-xs text-muted-foreground">
+                Default rest period between sets (0-600 seconds).
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

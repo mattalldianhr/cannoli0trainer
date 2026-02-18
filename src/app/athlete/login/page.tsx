@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { FormError } from "@/components/ui/form-error"
+import { athleteLoginSchema, validateForm } from "@/lib/validations"
 import { Dumbbell, Loader2, AlertCircle } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { Suspense } from "react"
@@ -13,6 +15,8 @@ function LoginForm() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
   const searchParams = useSearchParams()
   const urlError = searchParams.get("error")
 
@@ -22,14 +26,25 @@ function LoginForm() {
       ? "Something went wrong. Please try again."
       : null)
 
+  function handleBlur(field: string) {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    const errors = validateForm(athleteLoginSchema, { email })
+    setFieldErrors(errors)
+  }
+
+  function fieldError(field: string) {
+    return touched[field] ? fieldErrors[field] : undefined
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
 
-    if (!email.trim()) {
-      setError("Please enter your email address.")
-      return
-    }
+    const errors = validateForm(athleteLoginSchema, { email })
+    setFieldErrors(errors)
+    setTouched({ email: true })
+
+    if (Object.keys(errors).length > 0) return
 
     setIsLoading(true)
 
@@ -80,7 +95,7 @@ function LoginForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {errorMessage && (
                 <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
@@ -96,12 +111,13 @@ function LoginForm() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => handleBlur("email")}
                   disabled={isLoading}
-                  required
                   autoComplete="email"
                   autoFocus
-                  className="h-12 text-base"
+                  className={`h-12 text-base ${fieldError("email") ? "border-destructive" : ""}`}
                 />
+                <FormError message={fieldError("email")} />
               </div>
 
               <Button
