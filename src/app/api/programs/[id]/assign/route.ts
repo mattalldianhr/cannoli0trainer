@@ -57,10 +57,10 @@ export async function POST(
       );
     }
 
-    // Verify all athletes exist (include email+name for notifications)
+    // Verify all athletes exist (include email+name+prefs for notifications)
     const athletes = await prisma.athlete.findMany({
       where: { id: { in: resolvedAthleteIds } },
-      select: { id: true, email: true, name: true },
+      select: { id: true, email: true, name: true, notificationPreferences: true },
     });
     const foundIds = new Set(athletes.map((a) => a.id));
     const missingIds = resolvedAthleteIds.filter((id: string) => !foundIds.has(id));
@@ -211,6 +211,7 @@ export async function POST(
         athleteName: athlete.name,
         programName: program.name,
         startDate: startDate ?? null,
+        notificationPreferences: athlete.notificationPreferences,
       }).catch(() => {}); // already logged internally
     }
 

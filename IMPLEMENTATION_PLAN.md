@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 133
+- Completed: 134
 - In progress: 0
-- Remaining: 46
+- Remaining: 45
 
 ## Tasks
 
@@ -713,7 +713,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/14-notifications.md
   - Acceptance: ProgramAssignment creates PROGRAM_ASSIGNED notification + email. WorkoutSession FULLY_COMPLETED creates WORKOUT_COMPLETED notification + email. Fire-and-forget.
 
-- [ ] **Task 28.4**: Add notification preferences to Coach and Athlete models
+- [x] **Task 28.4**: Add notification preferences to Coach and Athlete models
   - Spec: specs/14-notifications.md
   - Acceptance: Json preference fields on Coach and Athlete models. Triggers check preferences before sending email.
 

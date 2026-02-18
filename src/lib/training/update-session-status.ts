@@ -92,7 +92,7 @@ export async function updateSessionStatus(workoutExerciseId: string, athleteId: 
   if (status === 'FULLY_COMPLETED' && previousStatus !== 'FULLY_COMPLETED') {
     const athlete = await prisma.athlete.findUnique({
       where: { id: athleteId },
-      select: { name: true, coachId: true, coach: { select: { id: true, email: true } } },
+      select: { name: true, coachId: true, coach: { select: { id: true, email: true, notificationPreferences: true } } },
     });
 
     if (athlete?.coachId) {
@@ -105,6 +105,7 @@ export async function updateSessionStatus(workoutExerciseId: string, athleteId: 
         workoutName: session.title || workout.name,
         completionPercent: completionPercentage,
         date: session.date?.toISOString() || new Date().toISOString(),
+        notificationPreferences: athlete.coach?.notificationPreferences,
       }).catch(() => {
         // Silently ignore — notifyWorkoutCompletion already logs errors internally
       });

@@ -1,8 +1,66 @@
 import { sendEmail, brandedEmailHtml, emailCtaButton, APP_URL } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
 
+// ---------------------------------------------------------------------------
+// Notification preference types & helpers
+// ---------------------------------------------------------------------------
+
+export interface CoachNotificationPreferences {
+  emailOnWorkoutComplete: boolean;
+  emailOnCheckIn: boolean;
+}
+
+export interface AthleteNotificationPreferences {
+  emailOnProgramAssigned: boolean;
+}
+
+const DEFAULT_COACH_PREFS: CoachNotificationPreferences = {
+  emailOnWorkoutComplete: true,
+  emailOnCheckIn: true,
+};
+
+const DEFAULT_ATHLETE_PREFS: AthleteNotificationPreferences = {
+  emailOnProgramAssigned: true,
+};
+
+/** Parse a Json field into typed coach preferences, falling back to defaults. */
+export function parseCoachPreferences(raw: unknown): CoachNotificationPreferences {
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    const obj = raw as Record<string, unknown>;
+    return {
+      emailOnWorkoutComplete:
+        typeof obj.emailOnWorkoutComplete === 'boolean'
+          ? obj.emailOnWorkoutComplete
+          : DEFAULT_COACH_PREFS.emailOnWorkoutComplete,
+      emailOnCheckIn:
+        typeof obj.emailOnCheckIn === 'boolean'
+          ? obj.emailOnCheckIn
+          : DEFAULT_COACH_PREFS.emailOnCheckIn,
+    };
+  }
+  return { ...DEFAULT_COACH_PREFS };
+}
+
+/** Parse a Json field into typed athlete preferences, falling back to defaults. */
+export function parseAthletePreferences(raw: unknown): AthleteNotificationPreferences {
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    const obj = raw as Record<string, unknown>;
+    return {
+      emailOnProgramAssigned:
+        typeof obj.emailOnProgramAssigned === 'boolean'
+          ? obj.emailOnProgramAssigned
+          : DEFAULT_ATHLETE_PREFS.emailOnProgramAssigned,
+    };
+  }
+  return { ...DEFAULT_ATHLETE_PREFS };
+}
+
+// ---------------------------------------------------------------------------
+// PROGRAM_ASSIGNED notification (coach -> athlete)
+// ---------------------------------------------------------------------------
+
 /**
- * Send email notification and create Notification DB record when a program is assigned.
+ * Create Notification DB record and optionally send email when a program is assigned.
  * Fire-and-forget — errors are logged but never thrown.
  */
 export async function notifyProgramAssignment({
@@ -11,12 +69,14 @@ export async function notifyProgramAssignment({
   athleteName,
   programName,
   startDate,
+  notificationPreferences,
 }: {
   athleteId: string;
   athleteEmail: string;
   athleteName: string;
   programName: string;
   startDate?: string | null;
+  notificationPreferences?: unknown;
 }) {
   const title = `New program assigned: ${programName}`;
   const startDateText = startDate
@@ -37,6 +97,13 @@ export async function notifyProgramAssignment({
     });
   } catch (error) {
     console.error('[notifications] Failed to create PROGRAM_ASSIGNED notification record:', error);
+  }
+
+  // Check athlete email preference
+  const prefs = parseAthletePreferences(notificationPreferences);
+  if (!prefs.emailOnProgramAssigned) {
+    console.log('[notifications] Athlete opted out of program assignment emails, skipping');
+    return;
   }
 
   // Send email (skip if no email address)
@@ -65,8 +132,12 @@ export async function notifyProgramAssignment({
   });
 }
 
+// ---------------------------------------------------------------------------
+// WORKOUT_COMPLETED notification (athlete -> coach)
+// ---------------------------------------------------------------------------
+
 /**
- * Send email notification and create Notification DB record when a workout is completed.
+ * Create Notification DB record and optionally send email when a workout is completed.
  * Fire-and-forget — errors are logged but never thrown.
  */
 export async function notifyWorkoutCompletion({
@@ -77,6 +148,7 @@ export async function notifyWorkoutCompletion({
   workoutName,
   completionPercent,
   date,
+  notificationPreferences,
 }: {
   coachId: string;
   coachEmail: string;
@@ -85,6 +157,7 @@ export async function notifyWorkoutCompletion({
   workoutName: string;
   completionPercent: number;
   date: string;
+  notificationPreferences?: unknown;
 }) {
   const title = `${athleteName} completed ${workoutName}`;
   const dateText = new Date(date).toLocaleDateString('en-US', {
@@ -107,6 +180,13 @@ export async function notifyWorkoutCompletion({
     });
   } catch (error) {
     console.error('[notifications] Failed to create WORKOUT_COMPLETED notification record:', error);
+  }
+
+  // Check coach email preference
+  const prefs = parseCoachPreferences(notificationPreferences);
+  if (!prefs.emailOnWorkoutComplete) {
+    console.log('[notifications] Coach opted out of workout completion emails, skipping');
+    return;
   }
 
   // Send email (skip if no email address)

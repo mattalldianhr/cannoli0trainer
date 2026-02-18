@@ -130,12 +130,13 @@ model Submission {
 // --- Coaching Platform Models ---
 
 model Coach {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  brandName String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                      String   @id @default(uuid())
+  name                    String
+  email                   String   @unique
+  brandName               String?
+  notificationPreferences Json     @default("{\"emailOnWorkoutComplete\":true,\"emailOnCheckIn\":true}")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
   athletes  Athlete[]
   programs  Program[]
@@ -144,21 +145,22 @@ model Coach {
 }
 
 model Athlete {
-  id              String          @id @default(uuid())
-  coachId         String
-  name            String
-  email           String?
-  bodyweight      Float?
-  weightClass     String?
-  experienceLevel ExperienceLevel @default(intermediate)
-  isRemote        Boolean         @default(true)
-  isCompetitor    Boolean         @default(false)
-  federation      String?
-  notes           String?         @db.Text
-  metadata        Json?
-  userId          String?         @unique
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id                      String          @id @default(uuid())
+  coachId                 String
+  name                    String
+  email                   String?
+  bodyweight              Float?
+  weightClass             String?
+  experienceLevel         ExperienceLevel @default(intermediate)
+  isRemote                Boolean         @default(true)
+  isCompetitor            Boolean         @default(false)
+  federation              String?
+  notes                   String?         @db.Text
+  metadata                Json?
+  notificationPreferences Json            @default("{\"emailOnProgramAssigned\":true}")
+  userId                  String?         @unique
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
 
   coach Coach @relation(fields: [coachId], references: [id])
   user  User?  @relation(fields: [userId], references: [id])
