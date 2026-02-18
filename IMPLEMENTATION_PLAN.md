@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 49
+- Completed: 50
 - In progress: 0
 
 ## Tasks
@@ -222,7 +222,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: Saving program persists all weeks/days/exercises to database
 
-- [ ] **Task 7.9**: Add "Assign to Athlete" flow on program page
+- [x] **Task 7.9**: Add "Assign to Athlete" flow on program page
   - Spec: specs/04-program-builder.md
   - Acceptance: Select athletes from list, assign creates ProgramAssignment records
 
