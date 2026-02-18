@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 70
-- Completed: 8
+- Completed: 9
 - In progress: 0
 
 ## Tasks
@@ -37,7 +37,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, indexes defined on FK columns
 
-- [ ] **Task 1.8**: Run Prisma migration to create all tables
+- [x] **Task 1.8**: Run Prisma migration to create all tables
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma migrate dev --name init-platform-models` succeeds
 
@@ -124,230 +124,230 @@
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: POST creates coach, GET returns coach profile
 
-- [ ] **Task 3.2**: Create CRUD API routes for Athletes (`/api/athletes`, `/api/athletes/[id]`)
+- [ ] **Task 4.2**: Create CRUD API routes for Athletes (`/api/athletes`, `/api/athletes/[id]`)
   - Spec: specs/03-athlete-management.md
   - Acceptance: POST/GET/PUT/DELETE work, GET supports search query param
 
-- [ ] **Task 3.3**: Create CRUD API routes for Programs (`/api/programs`, `/api/programs/[id]`)
+- [ ] **Task 4.3**: Create CRUD API routes for Programs (`/api/programs`, `/api/programs/[id]`)
   - Spec: specs/04-program-builder.md
   - Acceptance: POST/GET/PUT/DELETE work, includes nested workout/exercise data
 
-- [ ] **Task 3.4**: Create CRUD API routes for Exercises (`/api/exercises`)
+- [ ] **Task 4.4**: Create CRUD API routes for Exercises (`/api/exercises`)
   - Spec: specs/05-exercise-library.md
   - Acceptance: POST/GET/PUT/DELETE work, GET supports search and category filter
 
-- [ ] **Task 3.5**: Create API routes for SetLog entries (`/api/sets`)
+- [ ] **Task 4.5**: Create API routes for SetLog entries (`/api/sets`)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: POST creates set log, GET returns sets for athlete+exercise
 
-- [ ] **Task 3.6**: Create API routes for BodyweightLog (`/api/bodyweight`)
+- [ ] **Task 4.6**: Create API routes for BodyweightLog (`/api/bodyweight`)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: POST creates log, GET returns history for athlete
 
-- [ ] **Task 3.7**: Create API routes for Meets (`/api/meets`, `/api/meets/[id]`)
+- [ ] **Task 4.7**: Create API routes for Meets (`/api/meets`, `/api/meets/[id]`)
   - Spec: specs/09-competition-prep.md
   - Acceptance: POST/GET/PUT work, includes meet entries with athlete data
 
-- [ ] **Task 3.8**: Create program assignment API (`/api/programs/[id]/assign`)
+- [ ] **Task 4.8**: Create program assignment API (`/api/programs/[id]/assign`)
   - Spec: specs/04-program-builder.md
   - Acceptance: POST assigns program to athlete(s), creates ProgramAssignment records
 
-- [ ] **Task 3.9**: Create analytics data API (`/api/analytics/[athleteId]`)
+- [ ] **Task 4.9**: Create analytics data API (`/api/analytics/[athleteId]`)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: GET returns aggregated data (1RM trends, volume, compliance) for date range
 
-### Priority 4: Core UI - Athlete Management
+### Priority 5: Core UI - Athlete Management
 
-- [ ] **Task 4.1**: Create athlete listing page at `/athletes` with search and filter
+- [ ] **Task 5.1**: Create athlete listing page at `/athletes` with search and filter
   - Spec: specs/03-athlete-management.md
   - Acceptance: Page renders athlete list, search filters by name, filter chips work
 
-- [ ] **Task 4.2**: Create "Add Athlete" form with validation
+- [ ] **Task 5.2**: Create "Add Athlete" form with validation
   - Spec: specs/03-athlete-management.md
   - Acceptance: Form creates athlete via API, validates required fields
 
-- [ ] **Task 4.3**: Create athlete profile page at `/athletes/[id]` with tabs for info, training, analytics
+- [ ] **Task 5.3**: Create athlete profile page at `/athletes/[id]` with tabs for info, training, analytics
   - Spec: specs/03-athlete-management.md
   - Acceptance: Profile shows athlete data, current program, recent training
 
-- [ ] **Task 4.4**: Add edit and delete functionality to athlete profile
+- [ ] **Task 5.4**: Add edit and delete functionality to athlete profile
   - Spec: specs/03-athlete-management.md
   - Acceptance: Edit saves changes, delete shows confirmation then removes
 
-### Priority 5: Core UI - Exercise Library
+### Priority 6: Core UI - Exercise Library
 
-- [ ] **Task 5.1**: Create exercise library page at `/exercises` with search and category filter
+- [ ] **Task 6.1**: Create exercise library page at `/exercises` with search and category filter
   - Spec: specs/05-exercise-library.md
   - Acceptance: Page lists exercises, search and filter work
 
-- [ ] **Task 5.2**: Create "Add Exercise" form with name, category, video URL, cues, tags
+- [ ] **Task 6.2**: Create "Add Exercise" form with name, category, video URL, cues, tags
   - Spec: specs/05-exercise-library.md
   - Acceptance: Form creates exercise, video URL renders embed preview
 
-- [ ] **Task 5.3**: Create reusable ExercisePicker component for program builder
+- [ ] **Task 6.3**: Create reusable ExercisePicker component for program builder
   - Spec: specs/05-exercise-library.md
   - Acceptance: Modal/popover with search, selecting exercise returns exercise data
 
-### Priority 6: Core UI - Program Builder
+### Priority 7: Core UI - Program Builder
 
-- [ ] **Task 6.1**: Create program listing page at `/programs` showing programs and templates
+- [ ] **Task 7.1**: Create program listing page at `/programs` showing programs and templates
   - Spec: specs/04-program-builder.md
   - Acceptance: Page lists programs with name, athlete count, duration, type
 
-- [ ] **Task 6.2**: Create program builder types in `lib/programs/types.ts`
+- [ ] **Task 7.2**: Create program builder types in `lib/programs/types.ts`
   - Spec: specs/04-program-builder.md
   - Acceptance: TypeScript interfaces for program editing state compile without errors
 
-- [ ] **Task 6.3**: Create program builder page at `/programs/new` with week/day structure
+- [ ] **Task 7.3**: Create program builder page at `/programs/new` with week/day structure
   - Spec: specs/04-program-builder.md
   - Acceptance: Can create program, add weeks, add days within weeks
 
-- [ ] **Task 6.4**: Add exercise addition to program builder with prescription type selector
+- [ ] **Task 7.4**: Add exercise addition to program builder with prescription type selector
   - Spec: specs/04-program-builder.md
   - Acceptance: Can add exercise from library, select prescription type, enter prescription values
 
-- [ ] **Task 6.5**: Implement prescription type conditional fields (RPE, %1RM, RIR, velocity, auto, fixed)
+- [ ] **Task 7.5**: Implement prescription type conditional fields (RPE, %1RM, RIR, velocity, auto, fixed)
   - Spec: specs/04-program-builder.md, specs/12-rpe-rir-support.md
   - Acceptance: All 6 prescription types show correct input fields
 
-- [ ] **Task 6.6**: Add week/day/exercise duplication in program builder
+- [ ] **Task 7.6**: Add week/day/exercise duplication in program builder
   - Spec: specs/04-program-builder.md
   - Acceptance: Duplicate week copies all days/exercises, duplicate day copies exercises
 
-- [ ] **Task 6.7**: Add exercise reordering within a day
+- [ ] **Task 7.7**: Add exercise reordering within a day
   - Spec: specs/04-program-builder.md
   - Acceptance: Move up/down buttons change exercise order
 
-- [ ] **Task 6.8**: Implement program save (create/update) to database via API
+- [ ] **Task 7.8**: Implement program save (create/update) to database via API
   - Spec: specs/04-program-builder.md
   - Acceptance: Saving program persists all weeks/days/exercises to database
 
-- [ ] **Task 6.9**: Add "Assign to Athlete" flow on program page
+- [ ] **Task 7.9**: Add "Assign to Athlete" flow on program page
   - Spec: specs/04-program-builder.md
   - Acceptance: Select athletes from list, assign creates ProgramAssignment records
 
-### Priority 7: Template System
+### Priority 8: Template System
 
-- [ ] **Task 7.1**: Add "Save as Template" button to program builder
+- [ ] **Task 8.1**: Add "Save as Template" button to program builder
   - Spec: specs/11-template-system.md
   - Acceptance: Creates template copy of program (isTemplate=true, no athlete loads)
 
-- [ ] **Task 7.2**: Create template listing page at `/programs/templates`
+- [ ] **Task 8.2**: Create template listing page at `/programs/templates`
   - Spec: specs/11-template-system.md
   - Acceptance: Lists templates with metadata, search, and filter by periodization type
 
-- [ ] **Task 7.3**: Add "Create from Template" flow
+- [ ] **Task 8.3**: Add "Create from Template" flow
   - Spec: specs/11-template-system.md
   - Acceptance: Creates new program from template structure without athlete-specific loads
 
-### Priority 8: RPE/RIR Support Components
+### Priority 9: RPE/RIR Support Components
 
-- [ ] **Task 8.1**: Create RPESelector component with 1-10 scale (0.5 increments)
+- [ ] **Task 9.1**: Create RPESelector component with 1-10 scale (0.5 increments)
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Component renders scale, supports selection, shows RPE descriptions
 
-- [ ] **Task 8.2**: Create RPE reference chart popover component
+- [ ] **Task 9.2**: Create RPE reference chart popover component
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Info icon opens popover showing RPE 1-10 with descriptions
 
-### Priority 9: Athlete Training Log
+### Priority 10: Athlete Training Log
 
-- [ ] **Task 9.1**: Create training log page at `/train` showing today's workout
+- [ ] **Task 10.1**: Create training log page at `/train` showing today's workout
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Displays assigned exercises with prescriptions, mobile-optimized
 
-- [ ] **Task 9.2**: Implement set logging interface with reps, weight, RPE, velocity inputs
+- [ ] **Task 10.2**: Implement set logging interface with reps, weight, RPE, velocity inputs
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Each set has input fields, completing set saves to database
 
-- [ ] **Task 9.3**: Add previous performance reference per exercise
+- [ ] **Task 10.3**: Add previous performance reference per exercise
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Shows "Last: X lbs x Y reps" from most recent session
 
-- [ ] **Task 9.4**: Add workout completion summary card
+- [ ] **Task 10.4**: Add workout completion summary card
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: After all exercises, shows total volume, sets, top RPE
 
-### Priority 10: Coach Dashboard
+### Priority 11: Coach Dashboard
 
-- [ ] **Task 10.1**: Create dashboard page at `/dashboard` with overview stat cards
+- [ ] **Task 11.1**: Create dashboard page at `/dashboard` with overview stat cards
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows total athletes, active programs, workouts this week
 
-- [ ] **Task 10.2**: Add recent activity feed to dashboard
+- [ ] **Task 11.2**: Add recent activity feed to dashboard
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows last 7 days of athlete training logs grouped by day
 
-- [ ] **Task 10.3**: Add "Needs Attention" section flagging inactive athletes
+- [ ] **Task 11.3**: Add "Needs Attention" section flagging inactive athletes
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows athletes with no logs in 3+ days
 
-- [ ] **Task 10.4**: Add upcoming meets section to dashboard
+- [ ] **Task 11.4**: Add upcoming meets section to dashboard
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows meets in next 30 days with athlete count
 
-- [ ] **Task 10.5**: Update Header nav to include Dashboard, Athletes, Programs, Exercises links
+- [ ] **Task 11.5**: Update Header nav to include Dashboard, Athletes, Programs, Exercises links
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Nav links route to correct pages, active state shown
   - Note: Current Header has research hub links (Home, Research, Interview, Submissions, Findings, PRD). Must replace or restructure for coaching platform nav.
 
-### Priority 11: Progress Analytics
+### Priority 12: Progress Analytics
 
-- [ ] **Task 11.1**: Install charting library (recharts) and create base chart components
+- [ ] **Task 12.1**: Install charting library (recharts) and create base chart components
   - Spec: specs/07-progress-analytics.md
   - Acceptance: recharts installed, basic LineChart and BarChart wrappers created
 
-- [ ] **Task 11.2**: Create analytics page at `/analytics` with date range selector
+- [ ] **Task 12.2**: Create analytics page at `/analytics` with date range selector
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Page renders with selectable date ranges (4/8/12 weeks, all time)
 
-- [ ] **Task 11.3**: Implement 1RM trend chart and volume tracking chart
+- [ ] **Task 12.3**: Implement 1RM trend chart and volume tracking chart
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Line chart shows estimated 1RM over time, bar chart shows weekly volume
 
-- [ ] **Task 11.4**: Implement compliance rate and bodyweight trend charts
+- [ ] **Task 12.4**: Implement compliance rate and bodyweight trend charts
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Compliance shows %, bodyweight shows trend line
 
-- [ ] **Task 11.5**: Add CSV export for athlete training data
+- [ ] **Task 12.5**: Add CSV export for athlete training data
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Download button generates CSV with date, exercise, sets, reps, weight, RPE
 
-### Priority 12: VBT Analytics
+### Priority 13: VBT Analytics
 
-- [ ] **Task 12.1**: Create load-velocity scatter chart component
+- [ ] **Task 13.1**: Create load-velocity scatter chart component
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Scatter plot of (weight, velocity) with linear regression trend line
 
-- [ ] **Task 12.2**: Create velocity profile table and preparedness indicator
+- [ ] **Task 13.2**: Create velocity profile table and preparedness indicator
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Table shows avg velocity at different %1RM, indicator compares to baseline
 
-- [ ] **Task 12.3**: Add VBT section to analytics page
+- [ ] **Task 13.3**: Add VBT section to analytics page
   - Spec: specs/08-vbt-integration.md
   - Acceptance: VBT charts render when velocity data exists, empty state otherwise
 
-### Priority 13: Competition Prep
+### Priority 14: Competition Prep
 
-- [ ] **Task 13.1**: Create meet listing and creation pages at `/meets`
+- [ ] **Task 14.1**: Create meet listing and creation pages at `/meets`
   - Spec: specs/09-competition-prep.md
   - Acceptance: List meets, create new meet with name/date/location/federation
 
-- [ ] **Task 13.2**: Create meet detail page with athlete entries and attempt planning
+- [ ] **Task 14.2**: Create meet detail page with athlete entries and attempt planning
   - Spec: specs/09-competition-prep.md
   - Acceptance: Add athletes, set planned attempts for SBD
 
-- [ ] **Task 13.3**: Build warm-up timing calculator and countdown timer
+- [ ] **Task 14.3**: Build warm-up timing calculator and countdown timer
   - Spec: specs/09-competition-prep.md
   - Acceptance: Input flight start time, generates warm-up schedule with countdown
 
-- [ ] **Task 13.4**: Create multi-athlete flight tracking view
+- [ ] **Task 14.4**: Create multi-athlete flight tracking view
   - Spec: specs/09-competition-prep.md
   - Acceptance: Grid shows all athletes' warm-up progress in a single view
 
-### Priority 14: Production Export (COMPLETED)
+### Priority 15: Production Export (COMPLETED)
 
-- [x] **Task 14.1**: Create production TeamBuildr export script with rate limiting and resume
+- [x] **Task 15.1**: Create production TeamBuildr export script with rate limiting and resume
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: `npx tsx scripts/teambuildr-export.ts --help` prints usage, supports --token, --account, --output, --resume flags
   - **Completed**: Full implementation exists at `scripts/teambuildr-export.ts` with supporting libraries in `scripts/lib/` (teambuildr-client, rate-limiter, retry, checkpoint, logger). Supports --token, --account, --output, --resume, --athletes, --concurrency, --rate flags.
@@ -355,6 +355,9 @@
 ## Discoveries
 
 _Updated by Ralph during planning review (2026-02-17)_
+
+### DATABASE_URL Fix (2026-02-18)
+The `.env` file had `DATABASE_URL="postgresql://localhost:5432/cannoli_trainer"` (missing username). Fixed to `postgresql://mattalldian@localhost:5432/cannoli_trainer`. The `cannoli_trainer` database was auto-created by `prisma migrate dev`.
 
 ### Codebase Baseline (2026-02-17)
 
