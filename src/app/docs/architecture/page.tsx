@@ -4,61 +4,53 @@ import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownRenderer } from "@/components/research/MarkdownRenderer";
 import { TableOfContents } from "@/components/research/TableOfContents";
-import { getImplementationPlan } from "@/lib/specs";
+import { getArchitecture } from "@/lib/specs";
 import { extractHeadings } from "@/lib/markdown";
 
 export const metadata = {
-  title: "Implementation Plan | S&C Research Hub",
+  title: "Architecture | Cannoli Trainer Docs",
   description:
-    "Full implementation plan with 60 atomic tasks across 12 priority tiers for the Cannoli Strength coaching platform.",
+    "Full architectural overview of the Cannoli Trainer coaching platform — stack, database schema, API layer, data flow, and infrastructure.",
 };
 
-export default function PlanPage() {
-  const plan = getImplementationPlan();
+export default function ArchitecturePage() {
+  const arch = getArchitecture();
 
-  if (!plan) {
+  if (!arch) {
     return (
       <Container className="py-12">
         <p className="text-muted-foreground">
-          No implementation plan found. Generate one first.
+          No architecture document found.
         </p>
       </Container>
     );
   }
 
-  const headings = extractHeadings(plan.content);
+  const headings = extractHeadings(arch.content);
 
   return (
     <Container className="py-12">
       {/* Back link */}
       <Link
-        href="/prd"
+        href="/docs"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
       >
         <ChevronLeft className="h-4 w-4" />
-        Back to PRD
+        Back to Docs
       </Link>
 
       {/* Header */}
       <div className="mb-8">
         <Badge variant="secondary" className="mb-3">
-          Implementation
+          Architecture
         </Badge>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Implementation Plan
+          Architecture Overview
         </h1>
-        <p className="mt-3 text-muted-foreground max-w-3xl">
-          {plan.completedTasks} of {plan.totalTasks} tasks completed across 12
-          priority tiers.
+        <p className="mt-3 text-sm text-muted-foreground">
+          {arch.wordCount.toLocaleString()} words &middot; {arch.readingTime}{" "}
+          min read
         </p>
-        <div className="mt-4 h-3 rounded-full bg-muted overflow-hidden max-w-md">
-          <div
-            className="h-full bg-primary rounded-full transition-all"
-            style={{
-              width: `${plan.totalTasks > 0 ? (plan.completedTasks / plan.totalTasks) * 100 : 0}%`,
-            }}
-          />
-        </div>
       </div>
 
       {/* Mobile TOC */}
@@ -71,7 +63,7 @@ export default function PlanPage() {
       {/* Two-column layout */}
       <div className="flex gap-10">
         <article className="min-w-0 flex-1">
-          <MarkdownRenderer content={plan.content} />
+          <MarkdownRenderer content={arch.content} />
         </article>
 
         {headings.length > 0 && (

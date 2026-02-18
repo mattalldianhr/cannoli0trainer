@@ -13,6 +13,7 @@ const navItems = [
   { href: "/schedule", label: "Schedule" },
   { href: "/exercises", label: "Exercises" },
   { href: "/meets", label: "Meets" },
+  { href: "/docs", label: "Docs" },
 ];
 
 export function Header() {

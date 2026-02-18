@@ -15,7 +15,7 @@ export interface Heading {
   id: string;
 }
 
-const summariesDir = path.join(process.cwd(), "summaries");
+const summariesDir = path.join(process.cwd(), "docs", "research");
 
 function slugFromFilename(filename: string): string {
   return filename.replace(/\.md$/, "");

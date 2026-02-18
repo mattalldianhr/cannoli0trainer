@@ -36,11 +36,11 @@ export default function SurveyPRDPage() {
     <Container className="py-12">
       {/* Back link */}
       <Link
-        href="/prd"
+        href="/docs"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
       >
         <ChevronLeft className="h-4 w-4" />
-        Back to PRD
+        Back to Docs
       </Link>
 
       {/* Header */}

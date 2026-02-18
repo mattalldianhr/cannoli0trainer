@@ -12,7 +12,7 @@ export interface SpecDoc {
 }
 
 const specsDir = path.join(process.cwd(), "specs");
-const planPath = path.join(process.cwd(), "IMPLEMENTATION_PLAN.md");
+const planPath = path.join(process.cwd(), "docs", "IMPLEMENTATION_PLAN.md");
 
 function extractTitle(content: string): string {
   const match = content.match(/^#\s+(?:Spec:\s*)?(.+)$/m);
@@ -81,10 +81,21 @@ export function getImplementationPlan(): { content: string; totalTasks: number; 
 }
 
 export function getPRD(): { content: string; wordCount: number; readingTime: number } | undefined {
-  const prdMdPath = path.join(process.cwd(), "PRD.md");
+  const prdMdPath = path.join(process.cwd(), "docs", "PRD.md");
   if (!fs.existsSync(prdMdPath)) return undefined;
 
   const content = fs.readFileSync(prdMdPath, "utf-8");
+  const wordCount = content.split(/\s+/).filter(Boolean).length;
+  const readingTime = Math.max(1, Math.round(wordCount / 250));
+
+  return { content, wordCount, readingTime };
+}
+
+export function getArchitecture(): { content: string; wordCount: number; readingTime: number } | undefined {
+  const archPath = path.join(process.cwd(), "docs", "ARCHITECTURE.md");
+  if (!fs.existsSync(archPath)) return undefined;
+
+  const content = fs.readFileSync(archPath, "utf-8");
   const wordCount = content.split(/\s+/).filter(Boolean).length;
   const readingTime = Math.max(1, Math.round(wordCount / 250));
 

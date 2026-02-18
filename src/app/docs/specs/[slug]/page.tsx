@@ -47,11 +47,11 @@ export default async function SpecPage({
     <Container className="py-12">
       {/* Back link */}
       <Link
-        href="/prd"
+        href="/docs"
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
       >
         <ChevronLeft className="h-4 w-4" />
-        Back to PRD
+        Back to Docs
       </Link>
 
       {/* Header */}
@@ -94,7 +94,7 @@ export default async function SpecPage({
       <nav className="mt-12 flex items-center justify-between border-t border-border pt-6">
         {prev ? (
           <Link
-            href={`/prd/specs/${prev.slug}`}
+            href={`/docs/specs/${prev.slug}`}
             className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -110,7 +110,7 @@ export default async function SpecPage({
         )}
         {next ? (
           <Link
-            href={`/prd/specs/${next.slug}`}
+            href={`/docs/specs/${next.slug}`}
             className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground text-right"
           >
             <div>

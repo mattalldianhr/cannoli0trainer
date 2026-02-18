@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { MarkdownRenderer } from "@/components/research/MarkdownRenderer";
 import { TableOfContents } from "@/components/research/TableOfContents";
 import { extractHeadings } from "@/lib/markdown";
-import { getAllSpecs, getImplementationPlan, getPRD } from "@/lib/specs";
+import { getAllSpecs, getImplementationPlan, getPRD, getArchitecture } from "@/lib/specs";
 import {
   FileText,
   ListChecks,
@@ -21,18 +21,20 @@ import {
   ArrowRight,
   CheckCircle2,
   Layers,
+  LayoutDashboard,
 } from "lucide-react";
 
 export const metadata = {
-  title: "PRD | S&C Research Hub",
+  title: "Docs | Cannoli Trainer",
   description:
-    "Product requirements document, implementation plan, and technical specs for the Cannoli Strength coaching platform.",
+    "Product requirements document, architecture overview, implementation plan, and technical specs for the Cannoli Trainer coaching platform.",
 };
 
-export default function PRDPage() {
+export default function DocsPage() {
   const specs = getAllSpecs();
   const plan = getImplementationPlan();
   const prd = getPRD();
+  const arch = getArchitecture();
 
   const headings = prd ? extractHeadings(prd.content) : [];
 
@@ -82,6 +84,58 @@ export default function PRDPage() {
       <section className="border-t border-border bg-muted/30">
         <Container className="py-12 space-y-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Architecture Card */}
+            {arch && (
+              <Card className="flex flex-col">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <LayoutDashboard className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle>Architecture Overview</CardTitle>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        {arch.wordCount.toLocaleString()} words &middot;{" "}
+                        {arch.readingTime} min read
+                      </p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <p className="text-sm text-muted-foreground">
+                    Full technical architecture: stack, database schema, API
+                    layer, authentication, data flow, scheduling engine, VBT
+                    module, and infrastructure.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-4">
+                    <Badge variant="secondary" className="text-xs">
+                      Next.js 16
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      PostgreSQL
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Prisma
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      15 models
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      30+ API routes
+                    </Badge>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/docs/architecture" className="gap-1">
+                      View architecture
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            )}
+
             {/* Implementation Plan Card */}
             {plan && (
               <Card className="flex flex-col">
@@ -143,7 +197,7 @@ export default function PRDPage() {
                 </CardContent>
                 <CardFooter>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/prd/plan" className="gap-1">
+                    <Link href="/docs/plan" className="gap-1">
                       View full plan
                       <ArrowRight className="h-4 w-4" />
                     </Link>
@@ -188,7 +242,7 @@ export default function PRDPage() {
               </CardContent>
               <CardFooter>
                 <Button variant="outline" size="sm" asChild>
-                  <Link href="/prd/survey" className="gap-1">
+                  <Link href="/docs/survey" className="gap-1">
                     View survey data
                     <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -239,7 +293,7 @@ export default function PRDPage() {
                   <CardFooter>
                     <Button variant="ghost" size="sm" asChild>
                       <Link
-                        href={`/prd/specs/${spec.slug}`}
+                        href={`/docs/specs/${spec.slug}`}
                         className="gap-1"
                       >
                         <FileText className="h-4 w-4" />
