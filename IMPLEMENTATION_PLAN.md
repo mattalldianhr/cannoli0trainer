@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 39
+- Completed: 40
 - In progress: 0
 
 ## Tasks
@@ -180,7 +180,7 @@
   - Spec: specs/05-exercise-library.md
   - Acceptance: Page lists exercises, search and filter work
 
-- [ ] **Task 6.2**: Create "Add Exercise" form with name, category, video URL, cues, tags
+- [x] **Task 6.2**: Create "Add Exercise" form with name, category, video URL, cues, tags
   - Spec: specs/05-exercise-library.md
   - Acceptance: Form creates exercise, video URL renders embed preview
 
