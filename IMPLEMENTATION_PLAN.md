@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 95
+- Completed: 96
 - In progress: 0
-- Remaining: 84 (7 original + 97 new from spec review)
+- Remaining: 83 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -541,7 +541,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `src/middleware.ts` protects all `/athlete/*` routes except login and check-email. Unauthenticated requests redirect to `/athlete/login`. Coach routes unaffected.
 
-- [ ] **Task 18.6**: Create athlete layout with mobile bottom navigation
+- [x] **Task 18.6**: Create athlete layout with mobile bottom navigation
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Bottom nav with 4 tabs (Dashboard, Train, Calendar, History), SessionProvider, Cannoli branding, 44px tap targets.
 

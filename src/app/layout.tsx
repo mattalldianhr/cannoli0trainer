@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { ConditionalCoachChrome } from "@/components/layout/ConditionalCoachChrome";
 
 export const metadata: Metadata = {
-  title: "S&C Platform Research Hub",
+  title: "Cannoli Trainer",
   description:
-    "Research hub and trainer interview tool for strength & conditioning platform development",
+    "Powerlifting coaching platform for Cannoli Strength",
 };
 
 export default function RootLayout({
@@ -17,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ConditionalCoachChrome>
+          {children}
+        </ConditionalCoachChrome>
       </body>
     </html>
   );
