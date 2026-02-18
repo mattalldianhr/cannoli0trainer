@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 35
+- Completed: 36
 - In progress: 0
 
 ## Tasks
@@ -162,7 +162,7 @@
   - Spec: specs/03-athlete-management.md
   - Acceptance: Page renders athlete list, search filters by name, filter chips work
 
-- [ ] **Task 5.2**: Create "Add Athlete" form with validation
+- [x] **Task 5.2**: Create "Add Athlete" form with validation
   - Spec: specs/03-athlete-management.md
   - Acceptance: Form creates athlete via API, validates required fields
 
