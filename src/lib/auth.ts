@@ -29,8 +29,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       apiKey: process.env.AUTH_RESEND_KEY,
       from: process.env.EMAIL_FROM || "Cannoli Trainer <noreply@cannoli.mattalldian.com>",
     }),
-    // Dev-only bypass: sign in as first athlete without email verification
-    ...(process.env.NODE_ENV !== "production"
+    // Dev bypass: sign in as first athlete without email verification
+    ...(process.env.ENABLE_DEV_LOGIN === "true"
       ? [
           Credentials({
             id: "dev-login",

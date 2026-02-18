@@ -142,8 +142,8 @@ function LoginForm() {
           Don&apos;t have an account? Contact your coach to get started.
         </p>
 
-        {/* Dev bypass — only rendered in non-production */}
-        {process.env.NODE_ENV !== "production" && <DevLoginButton />}
+        {/* Dev bypass — controlled by ENABLE_DEV_LOGIN env var */}
+        {process.env.NEXT_PUBLIC_ENABLE_DEV_LOGIN === "true" && <DevLoginButton />}
       </div>
     </div>
   )
