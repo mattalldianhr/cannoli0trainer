@@ -303,6 +303,193 @@ export interface WorkoutExerciseSavePayload {
   notes?: string;
 }
 
+// ============================================================
+// Conversion helpers (form state <-> API payload)
+// ============================================================
+
+/** Convert client-side ProgramFormState into the API save payload */
+export function programFormToPayload(
+  form: ProgramFormState,
+  coachId: string
+): ProgramSavePayload {
+  return {
+    name: form.name,
+    description: form.description || undefined,
+    type: form.type,
+    periodizationType: form.periodizationType,
+    isTemplate: form.isTemplate,
+    coachId,
+    workouts: form.weeks.flatMap((week) =>
+      week.days.map((day) => ({
+        id: day.workoutId,
+        name: day.name,
+        dayNumber: day.dayNumber,
+        weekNumber: week.weekNumber,
+        notes: day.notes || undefined,
+        exercises: day.exercises.map((ex) => {
+          const base: WorkoutExerciseSavePayload = {
+            id: ex.workoutExerciseId,
+            exerciseId: ex.exerciseId,
+            order: ex.order,
+            prescriptionType: ex.prescriptionType,
+            prescribedSets: ex.prescription.sets || undefined,
+            prescribedReps: ex.prescription.reps || undefined,
+            supersetGroup: ex.supersetGroup ?? undefined,
+            supersetColor: ex.supersetColor ?? undefined,
+            isUnilateral: ex.isUnilateral,
+            restTimeSeconds: ex.restTimeSeconds ?? undefined,
+            tempo: ex.tempo ?? undefined,
+            notes: ex.notes || undefined,
+          };
+
+          // Map type-specific prescription fields
+          switch (ex.prescription.type) {
+            case 'percentage':
+              base.percentageOf1RM = ex.prescription.percentage ?? undefined;
+              break;
+            case 'rpe':
+              base.prescribedRPE = ex.prescription.rpe ?? undefined;
+              base.prescribedLoad = ex.prescription.load || undefined;
+              break;
+            case 'rir':
+              base.prescribedRIR = ex.prescription.rir ?? undefined;
+              base.prescribedLoad = ex.prescription.load || undefined;
+              break;
+            case 'velocity':
+              base.velocityTarget = ex.prescription.velocityTarget ?? undefined;
+              base.prescribedLoad = ex.prescription.load || undefined;
+              break;
+            case 'autoregulated':
+              base.prescribedRPE = ex.prescription.rpe ?? undefined;
+              base.prescribedLoad = ex.prescription.instructions || undefined;
+              break;
+            case 'fixed':
+              base.prescribedLoad = ex.prescription.load
+                ? `${ex.prescription.load} ${ex.prescription.unit}`
+                : undefined;
+              break;
+          }
+
+          return base;
+        }),
+      }))
+    ),
+  };
+}
+
+/** Convert API response data back into ProgramFormState for editing */
+export function programResponseToForm(data: ProgramWithDetails): ProgramFormState {
+  // Group workouts by weekNumber
+  const weekMap = new Map<number, WorkoutWithExercises[]>();
+  for (const workout of data.workouts) {
+    const existing = weekMap.get(workout.weekNumber) ?? [];
+    existing.push(workout);
+    weekMap.set(workout.weekNumber, existing);
+  }
+
+  const weeks: WeekState[] = Array.from(weekMap.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([weekNumber, workouts]) => ({
+      id: crypto.randomUUID(),
+      weekNumber,
+      days: workouts
+        .sort((a, b) => a.dayNumber - b.dayNumber)
+        .map((workout) => ({
+          id: crypto.randomUUID(),
+          workoutId: workout.id,
+          dayNumber: workout.dayNumber,
+          name: workout.name,
+          notes: workout.notes ?? '',
+          exercises: workout.exercises.map((ex) => ({
+            id: crypto.randomUUID(),
+            workoutExerciseId: ex.id,
+            exerciseId: ex.exerciseId,
+            exerciseName: ex.exercise.name,
+            order: ex.order,
+            prescriptionType: ex.prescriptionType,
+            prescription: exerciseDataToPrescription(ex),
+            supersetGroup: ex.supersetGroup,
+            supersetColor: ex.supersetColor,
+            isUnilateral: ex.isUnilateral,
+            restTimeSeconds: ex.restTimeSeconds,
+            tempo: ex.tempo,
+            notes: ex.notes ?? '',
+          })),
+        })),
+    }));
+
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description ?? '',
+    type: data.type,
+    periodizationType: data.periodizationType,
+    isTemplate: data.isTemplate,
+    weeks,
+  };
+}
+
+/** Convert WorkoutExerciseData fields into the correct PrescriptionValues union */
+function exerciseDataToPrescription(ex: WorkoutExerciseData): PrescriptionValues {
+  switch (ex.prescriptionType) {
+    case 'percentage':
+      return {
+        type: 'percentage',
+        sets: ex.prescribedSets ?? '3',
+        reps: ex.prescribedReps ?? '5',
+        percentage: ex.percentageOf1RM,
+      };
+    case 'rpe':
+      return {
+        type: 'rpe',
+        sets: ex.prescribedSets ?? '3',
+        reps: ex.prescribedReps ?? '5',
+        rpe: ex.prescribedRPE,
+        rpeMax: null,
+        load: ex.prescribedLoad ?? '',
+      };
+    case 'rir':
+      return {
+        type: 'rir',
+        sets: ex.prescribedSets ?? '3',
+        reps: ex.prescribedReps ?? '8',
+        rir: ex.prescribedRIR,
+        load: ex.prescribedLoad ?? '',
+      };
+    case 'velocity':
+      return {
+        type: 'velocity',
+        sets: ex.prescribedSets ?? '5',
+        reps: ex.prescribedReps ?? '3',
+        velocityTarget: ex.velocityTarget,
+        load: ex.prescribedLoad ?? '',
+      };
+    case 'autoregulated':
+      return {
+        type: 'autoregulated',
+        sets: ex.prescribedSets ?? '1',
+        reps: ex.prescribedReps ?? '1',
+        rpe: ex.prescribedRPE,
+        rpeMax: null,
+        backoffPercent: null,
+        backoffSets: null,
+        instructions: ex.prescribedLoad ?? '',
+      };
+    case 'fixed':
+    default: {
+      // Parse "185 lbs" or "100 kg" from prescribedLoad
+      const loadMatch = ex.prescribedLoad?.match(/^([\d.]+)\s*(lbs|kg)$/i);
+      return {
+        type: 'fixed',
+        sets: ex.prescribedSets ?? '3',
+        reps: ex.prescribedReps ?? '5',
+        load: loadMatch ? loadMatch[1] : ex.prescribedLoad ?? '',
+        unit: (loadMatch?.[2]?.toLowerCase() as 'lbs' | 'kg') ?? 'lbs',
+      };
+    }
+  }
+}
+
 /** Shape of program data returned from GET /api/programs/[id] */
 export interface ProgramWithDetails {
   id: string;
@@ -365,7 +552,6 @@ export interface ProgramAssignmentData {
   endDate: string | null;
   athlete: {
     id: string;
-    firstName: string;
-    lastName: string;
+    name: string;
   };
 }

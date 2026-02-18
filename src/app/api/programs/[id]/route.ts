@@ -80,7 +80,98 @@ export async function PUT(
       );
     }
 
-    // Update program fields
+    // If workouts are provided, do a full replace inside a transaction
+    if (body.workouts) {
+      const program = await prisma.$transaction(async (tx) => {
+        // Delete all existing workouts (cascades to WorkoutExercise)
+        await tx.workout.deleteMany({ where: { programId: id } });
+
+        // Update program fields + create new workouts
+        return tx.program.update({
+          where: { id },
+          data: {
+            ...(body.name !== undefined && { name: body.name }),
+            ...(body.description !== undefined && { description: body.description }),
+            ...(body.type !== undefined && { type: body.type }),
+            ...(body.periodizationType !== undefined && { periodizationType: body.periodizationType }),
+            ...(body.startDate !== undefined && { startDate: body.startDate ? new Date(body.startDate) : null }),
+            ...(body.endDate !== undefined && { endDate: body.endDate ? new Date(body.endDate) : null }),
+            ...(body.isTemplate !== undefined && { isTemplate: body.isTemplate }),
+            workouts: {
+              create: body.workouts.map(
+                (w: {
+                  name: string;
+                  dayNumber: number;
+                  weekNumber: number;
+                  notes?: string;
+                  exercises?: {
+                    exerciseId: string;
+                    order: number;
+                    prescriptionType?: string;
+                    prescribedSets?: string;
+                    prescribedReps?: string;
+                    prescribedLoad?: string;
+                    prescribedRPE?: number;
+                    prescribedRIR?: number;
+                    velocityTarget?: number;
+                    percentageOf1RM?: number;
+                    supersetGroup?: string;
+                    supersetColor?: string;
+                    isUnilateral?: boolean;
+                    restTimeSeconds?: number;
+                    tempo?: string;
+                    notes?: string;
+                  }[];
+                }) => ({
+                  name: w.name,
+                  dayNumber: w.dayNumber,
+                  weekNumber: w.weekNumber,
+                  notes: w.notes ?? null,
+                  exercises: w.exercises
+                    ? {
+                        create: w.exercises.map((e) => ({
+                          exerciseId: e.exerciseId,
+                          order: e.order,
+                          prescriptionType: e.prescriptionType ?? 'fixed',
+                          prescribedSets: e.prescribedSets ?? null,
+                          prescribedReps: e.prescribedReps ?? null,
+                          prescribedLoad: e.prescribedLoad ?? null,
+                          prescribedRPE: e.prescribedRPE ?? null,
+                          prescribedRIR: e.prescribedRIR ?? null,
+                          velocityTarget: e.velocityTarget ?? null,
+                          percentageOf1RM: e.percentageOf1RM ?? null,
+                          supersetGroup: e.supersetGroup ?? null,
+                          supersetColor: e.supersetColor ?? null,
+                          isUnilateral: e.isUnilateral ?? false,
+                          restTimeSeconds: e.restTimeSeconds ?? null,
+                          tempo: e.tempo ?? null,
+                          notes: e.notes ?? null,
+                        })),
+                      }
+                    : undefined,
+                })
+              ),
+            },
+          },
+          include: {
+            workouts: {
+              include: {
+                exercises: {
+                  include: { exercise: true },
+                  orderBy: { order: 'asc' },
+                },
+              },
+              orderBy: [{ weekNumber: 'asc' }, { dayNumber: 'asc' }],
+            },
+            _count: { select: { assignments: true } },
+          },
+        });
+      });
+
+      return NextResponse.json(program);
+    }
+
+    // Partial update — program fields only (no workouts)
     const program = await prisma.program.update({
       where: { id },
       data: {

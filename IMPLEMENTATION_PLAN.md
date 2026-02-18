@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 48
+- Completed: 49
 - In progress: 0
 
 ## Tasks
@@ -218,7 +218,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: Move up/down buttons change exercise order
 
-- [ ] **Task 7.8**: Implement program save (create/update) to database via API
+- [x] **Task 7.8**: Implement program save (create/update) to database via API
   - Spec: specs/04-program-builder.md
   - Acceptance: Saving program persists all weeks/days/exercises to database
 

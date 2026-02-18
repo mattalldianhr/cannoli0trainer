@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   ArrowUp,
@@ -13,6 +14,8 @@ import {
   ChevronRight,
   Dumbbell,
   Settings2,
+  Save,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +33,7 @@ import {
   type PrescriptionValues,
   type ProgramType,
   type PeriodizationType,
+  type ProgramWithDetails,
   PERIODIZATION_TYPE_LABELS,
   PROGRAM_TYPE_LABELS,
   PRESCRIPTION_TYPE_LABELS,
@@ -38,6 +42,8 @@ import {
   createDefaultDay,
   createDefaultExerciseEntry,
   createDefaultPrescription,
+  programFormToPayload,
+  programResponseToForm,
 } from '@/lib/programs/types';
 import { ExercisePicker } from './ExercisePicker';
 
@@ -46,10 +52,21 @@ const SELECT_CLASS =
 
 interface ProgramBuilderProps {
   coachId: string;
+  /** If provided, the builder starts in edit mode with this program loaded */
+  initialProgram?: ProgramWithDetails;
 }
 
-export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
-  const [program, setProgram] = useState<ProgramFormState>(createDefaultProgramForm);
+export function ProgramBuilder({ coachId, initialProgram }: ProgramBuilderProps) {
+  const router = useRouter();
+  const isEditMode = !!initialProgram;
+
+  const [program, setProgram] = useState<ProgramFormState>(() =>
+    initialProgram ? programResponseToForm(initialProgram) : createDefaultProgramForm()
+  );
+
+  // Save state
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Track which weeks/days are collapsed
   const [collapsedWeeks, setCollapsedWeeks] = useState<Set<string>>(new Set());
@@ -347,6 +364,47 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
   );
 
   // ============================================================
+  // Save
+  // ============================================================
+
+  const handleSave = useCallback(async () => {
+    if (!program.name.trim()) {
+      setSaveError('Program name is required');
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      const payload = programFormToPayload(program, coachId);
+
+      const url = isEditMode
+        ? `/api/programs/${program.id}`
+        : '/api/programs';
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Failed to save program (${res.status})`);
+      }
+
+      const saved = await res.json();
+      router.push(`/programs/${saved.id}`);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save program');
+    } finally {
+      setSaving(false);
+    }
+  }, [program, coachId, isEditMode, router]);
+
+  // ============================================================
   // Summary stats
   // ============================================================
 
@@ -371,7 +429,22 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
             Back
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">New Program</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {isEditMode ? 'Edit Program' : 'New Program'}
+        </h1>
+        <div className="ml-auto flex items-center gap-3">
+          {saveError && (
+            <span className="text-sm text-destructive">{saveError}</span>
+          )}
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {saving ? 'Saving...' : isEditMode ? 'Save Changes' : 'Save Program'}
+          </Button>
+        </div>
       </div>
 
       {/* Program Info */}
@@ -495,6 +568,23 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
               onUpdateExercise={updateExercise}
             />
           ))}
+        </div>
+      )}
+
+      {/* Bottom Save */}
+      {(totalWeeks > 0 || program.name) && (
+        <div className="flex justify-end gap-3 pt-2">
+          {saveError && (
+            <span className="text-sm text-destructive self-center">{saveError}</span>
+          )}
+          <Button onClick={handleSave} disabled={saving} size="lg">
+            {saving ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {saving ? 'Saving...' : isEditMode ? 'Save Changes' : 'Save Program'}
+          </Button>
         </div>
       )}
 
