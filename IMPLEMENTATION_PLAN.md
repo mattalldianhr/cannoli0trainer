@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 13
+- Completed: 14
 - In progress: 0
 
 ## Tasks
@@ -63,7 +63,7 @@
   - Acceptance: Exercises tagged with powerlifting categories (competition_lift, competition_variation, accessory, gpp). TeamBuildr's 136 exercise names mapped to free-exercise-db entries where possible, unmatched exercises created as new entries.
   - Data source: TeamBuildr export (136 unique exercises) + free-exercise-db
 
-- [ ] **Task 2.3**: Build TeamBuildr data transformer (TeamBuildr schema -> Cannoli schema)
+- [x] **Task 2.3**: Build TeamBuildr data transformer (TeamBuildr schema -> Cannoli schema)
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: Transforms all exercise types (L, S, C, N, W), handles prescribed (placeholder) vs actual (value) pattern, maps superset grouping (groupingLetter/groupingColorCode), extracts RPE from additionalInformation, maps workingMax/generatedMax to MaxSnapshot
   - Note: Moved from old Priority 13 (Task 13.4). Must run before import.
@@ -381,6 +381,9 @@
 ## Discoveries
 
 _Updated by Ralph during planning review (2026-02-17)_
+
+### TeamBuildr Data Transformer (2026-02-18)
+Transformer module at `src/lib/teambuildr/transformer.ts` with types at `src/lib/teambuildr/types.ts`. Validated against full 5-athlete export (37 MB). Key metrics: 2,033 dates → 2,033 sessions, 12,437 workout items → 12,283 exercises (97 non-exercises skipped, 57 empty items skipped), 31,660 sets with actual data, 16,681 raw max snapshots → 5,316 after deduplication. Prescription type distribution: RPE-based (8,206), fixed (3,974), percentage-based (103). 413 exercises in supersets. Data patterns: `value` = actual (what athlete logged), `placeholder` = prescribed (what coach programmed), `percentage` = %1RM. RPE extracted from `additionalInformation` free text with range support (e.g., "RPE 6-7" → 7). Michael Odermatt's last name had trailing whitespace in source data — transformer trims names.
 
 ### Exercise Tagging and TeamBuildr Name Mapping (2026-02-18)
 Of 136 TeamBuildr exercise names: 6 are non-exercises (notes/surveys), 11 match free-exercise-db exactly (or case-insensitive), 53 map to existing free-exercise-db exercises via name normalization (e.g., "Back Squat" → "Barbell Squat", "Comp bench" → "Barbell Bench Press - Medium Grip"), and 66 are powerlifting-specific exercises created as new entries (Spoto Press, Larsen Press, paused/tempo variations, etc.). 165 total exercises now have powerlifting tags across 4 categories: competition_lift (7), competition_variation (51), accessory (74), gpp (33). Mapping module at `prisma/seed-data/exercise-tags.ts` exports: `freeExerciseDbTags`, `teambuildrToFreeExerciseDb`, `teambuildrNewExercises`, `teambuildrNonExercises`, and `resolveTeambuildrExerciseName()`. Total exercise count: 939 (873 free-exercise-db + 66 new).
