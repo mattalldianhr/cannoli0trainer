@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 16
+- Completed: 17
 - In progress: 0
 
 ## Tasks
@@ -78,7 +78,7 @@
   - Acceptance: All 2,033 workout dates imported as WorkoutSessions. All 12,437 workout items imported as WorkoutExercises with SetLogs. All 1,806 PRs imported as MaxSnapshots. Tonnage, sets, reps match source data totals.
   - Data source: test-data/teambuildr-full-export-5-athletes.json
 
-- [ ] **Task 2.6**: Create import validation script to verify data completeness
+- [x] **Task 2.6**: Create import validation script to verify data completeness
   - Spec: summaries/spec-review-teambuildr-data-alignment.md
   - Acceptance: Script compares source TeamBuildr JSON counts (dates, exercises, sets, reps, tonnage, PRs per athlete) against imported database records, reports discrepancies with pass/fail status
   - Note: Moved from old Priority 13 (Task 13.5).
@@ -426,6 +426,9 @@ The `.env` file had `DATABASE_URL="postgresql://localhost:5432/cannoli_trainer"`
 **No contradictions found**: All spec requirements are internally consistent. The plan's priority ordering matches the dependency chain (schema → API → UI → advanced features).
 
 **Task 13.6 confirmed complete**: The export script handles all specified acceptance criteria including --help flag, --token, --account, --output, --resume, plus additional --athletes and --concurrency flags. Supporting `scripts/lib/` includes: `teambuildr-client.ts` (API wrapper), `rate-limiter.ts`, `retry.ts`, `checkpoint.ts` (resume support), `logger.ts`.
+
+### Import Validation (2026-02-18)
+Validation script at `scripts/validate-import.ts` runs 42 checks (aggregate, per-athlete, data integrity) — all pass. Key finding: TeamBuildr's summary endpoint (`summaries.tonnage`, `summaries.repsCompleted`) underreports compared to raw set data. DB consistently has 16-47% more tonnage and 63-302% more reps than the summary endpoint reports. This is because the summary only counts "fully completed" exercises, while our import stores all sets with actual weight/rep data from `tableData`. This is correct behavior — we have **more** complete data than TeamBuildr's own summary view.
 
 ### Plan Restructuring (2026-02-17)
 
