@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 14
+- Completed: 15
 - In progress: 0
 
 ## Tasks
@@ -68,7 +68,7 @@
   - Acceptance: Transforms all exercise types (L, S, C, N, W), handles prescribed (placeholder) vs actual (value) pattern, maps superset grouping (groupingLetter/groupingColorCode), extracts RPE from additionalInformation, maps workingMax/generatedMax to MaxSnapshot
   - Note: Moved from old Priority 13 (Task 13.4). Must run before import.
 
-- [ ] **Task 2.4**: Create TeamBuildr import seed script for coach + athletes
+- [x] **Task 2.4**: Create TeamBuildr import seed script for coach + athletes
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: `npx prisma db seed` creates coach (Joe Cristando), 5 athletes with real profiles (Matt, Chris, Michael, Hannah, Maddy), group assignments, correct IDs and date ranges from TeamBuildr export
   - Data source: test-data/teambuildr-full-export-5-athletes.json

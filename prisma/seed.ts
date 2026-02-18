@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import {
   freeExerciseDbTags,
   teambuildrNewExercises,
 } from './seed-data/exercise-tags';
+import type { TeamBuildrExport } from '../src/lib/teambuildr/types';
 
 const prisma = new PrismaClient();
 
@@ -142,11 +143,102 @@ async function seedTeambuildrExercises() {
   console.log(`  Total exercises in database: ${total}`);
 }
 
+// ============================================================
+// Coach & Athletes from TeamBuildr export
+// ============================================================
+
+function loadTeamBuildrExport(): TeamBuildrExport | null {
+  const exportPath = join(__dirname, '..', 'test-data', 'teambuildr-full-export-5-athletes.json');
+  if (!existsSync(exportPath)) {
+    console.log('\n⚠ TeamBuildr export not found at test-data/teambuildr-full-export-5-athletes.json');
+    console.log('  Skipping coach & athlete seeding. Run the export script first.');
+    return null;
+  }
+  const raw = readFileSync(exportPath, 'utf-8');
+  return JSON.parse(raw) as TeamBuildrExport;
+}
+
+async function seedCoachAndAthletes() {
+  const data = loadTeamBuildrExport();
+  if (!data) return;
+
+  console.log('\nSeeding coach and athletes from TeamBuildr export...');
+
+  // Upsert coach: Joe Cristando (Cannoli Strength)
+  const coach = await prisma.coach.upsert({
+    where: { email: 'joe@cannolistrength.com' },
+    update: { name: 'Joe Cristando', brandName: 'Cannoli Strength' },
+    create: {
+      name: 'Joe Cristando',
+      email: 'joe@cannolistrength.com',
+      brandName: 'Cannoli Strength',
+    },
+  });
+  console.log(`  Coach: ${coach.name} (${coach.id})`);
+
+  // Create athletes from export profiles
+  let created = 0;
+  let updated = 0;
+
+  for (const [, athleteData] of Object.entries(data.athletes)) {
+    const profile = athleteData.profile;
+    const firstName = profile.first.trim();
+    const lastName = profile.last.trim();
+    const fullName = `${firstName} ${lastName}`;
+    const groups = (profile.groupAssignments || []).map(g => g.name);
+    // Deduplicate groups (Hannah has "Joe's Athletes" twice)
+    const uniqueGroups = [...new Set(groups)];
+
+    const dateRange = athleteData.dateRange;
+
+    // Use upsert keyed on coachId + name to be idempotent
+    const existing = await prisma.athlete.findFirst({
+      where: { coachId: coach.id, name: fullName },
+    });
+
+    const athleteFields = {
+      coachId: coach.id,
+      name: fullName,
+      isRemote: true,
+      isCompetitor: true,
+      metadata: {
+        teambuildrId: profile.id,
+        teambuildrGroups: uniqueGroups,
+        dateRange: {
+          first: dateRange.first,
+          last: dateRange.last,
+          totalDates: dateRange.totalDates,
+        },
+      },
+    };
+
+    if (existing) {
+      await prisma.athlete.update({
+        where: { id: existing.id },
+        data: athleteFields,
+      });
+      updated++;
+      console.log(`  Updated: ${fullName} (TB#${profile.id}, ${dateRange.totalDates} dates: ${dateRange.first} → ${dateRange.last})`);
+    } else {
+      const athlete = await prisma.athlete.create({ data: athleteFields });
+      created++;
+      console.log(`  Created: ${fullName} (TB#${profile.id}, ${dateRange.totalDates} dates: ${dateRange.first} → ${dateRange.last}) → ${athlete.id}`);
+    }
+  }
+
+  console.log(`  Athletes created: ${created}, updated: ${updated}`);
+
+  // Summary
+  const totalAthletes = await prisma.athlete.count({ where: { coachId: coach.id } });
+  console.log(`  Total athletes for ${coach.name}: ${totalAthletes}`);
+}
+
 async function main() {
   console.log('Starting seed...\n');
 
   await seedExercises();
   await seedTeambuildrExercises();
+  await seedCoachAndAthletes();
 
   // Print tag summary
   const taggedCount = await prisma.exercise.count({
