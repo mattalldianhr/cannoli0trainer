@@ -12,11 +12,15 @@ import {
   Weight,
   MapPin,
   Mail,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { EditAthleteForm } from './EditAthleteForm';
+import { DeleteAthleteDialog } from './DeleteAthleteDialog';
 
 type TabKey = 'info' | 'training' | 'analytics';
 
@@ -115,10 +119,27 @@ function bestAttempt(...attempts: (number | null)[]): number | null {
 
 export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
   const [activeTab, setActiveTab] = useState<TabKey>('info');
+  const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const currentProgram = athlete.programAssignments[0] ?? null;
   const lastSession = athlete.workoutSessions[0] ?? null;
   const lastSessionDays = lastSession ? daysSince(lastSession.date) : null;
+
+  if (isEditing) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 mb-2">
+          <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to Profile
+          </Button>
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight">Edit {athlete.name}</h1>
+        <EditAthleteForm athlete={athlete} onCancel={() => setIsEditing(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -145,7 +166,24 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
             )}
           </div>
         </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+            <Pencil className="h-4 w-4 mr-1" />
+            Edit
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowDeleteDialog(true)}>
+            <Trash2 className="h-4 w-4 mr-1" />
+            Delete
+          </Button>
+        </div>
       </div>
+
+      <DeleteAthleteDialog
+        athleteId={athlete.id}
+        athleteName={athlete.name}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+      />
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

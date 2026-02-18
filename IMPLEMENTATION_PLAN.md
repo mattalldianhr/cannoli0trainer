@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 37
+- Completed: 38
 - In progress: 0
 
 ## Tasks
@@ -170,7 +170,7 @@
   - Spec: specs/03-athlete-management.md
   - Acceptance: Profile shows athlete data, current program, recent training
 
-- [ ] **Task 5.4**: Add edit and delete functionality to athlete profile
+- [x] **Task 5.4**: Add edit and delete functionality to athlete profile
   - Spec: specs/03-athlete-management.md
   - Acceptance: Edit saves changes, delete shows confirmation then removes
 
