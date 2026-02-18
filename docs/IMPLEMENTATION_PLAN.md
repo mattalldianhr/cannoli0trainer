@@ -390,6 +390,12 @@
 
 _Updated by Ralph during planning review (2026-02-17)_
 
+### Dev Login Bypass for Athlete Portal (2026-02-18)
+Added a Credentials provider (`dev-login`) to NextAuth that auto-signs in as the first athlete with an email (Matt Alldian). Controlled by `ENABLE_DEV_LOGIN=true` env var (server-side auth provider) and `NEXT_PUBLIC_ENABLE_DEV_LOGIN=true` (client-side button visibility). Both vars set on Railway. Shows a dashed yellow "Dev Login (Matt Alldian)" button on `/athlete/login`. Creates a real NextAuth JWT session so middleware, API routes, and `useSession()` all work identically to a normal magic link login. To disable, remove the env vars from Railway — no code changes needed.
+
+### Documentation Consolidation (2026-02-18)
+All pre-app documentation moved under `/docs` directory: research summaries (`docs/research/`), PRD, IMPLEMENTATION_PLAN, AGENTS. Website routes moved from `/prd/*` to `/docs/*` with a new "Docs" link in the header nav. Added comprehensive architecture overview at `docs/ARCHITECTURE.md` rendered at `/docs/architecture` — covers full stack, 15 database models, 30+ API endpoints, auth flow, data pipelines, VBT module, scheduling engine, offline support, and infrastructure.
+
 ### Athlete Gender Field Missing (2026-02-18)
 Spec 09 and Task 26.2 require gender for DOTS/Wilks scoring but the Athlete model has no `gender` field. Task 26.2 implemented a per-athlete M/F toggle in the UI as a workaround (defaults to male). P2 — consider adding `gender String?` to Athlete model in a future schema migration (could be part of Task 28 infrastructure tasks).
 
