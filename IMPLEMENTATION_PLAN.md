@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 78
+- Completed: 79
 - In progress: 0
-- Remaining: 101 (7 original + 97 new from spec review)
+- Remaining: 100 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -471,7 +471,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Pure function `generateSchedule(workouts, startDate, trainingDays)` returns an array of `{ date, workoutId, weekNumber, dayNumber, title }` objects. Maps abstract Week/Day pairs to concrete calendar dates using training day config. Handles programs where days-per-week exceeds training days (spillover). Handles programs where days-per-week is less than training days (rest gaps). Unit tested with at least 5 test cases covering 3-day, 4-day, 5-day, and spillover scenarios.
 
-- [ ] **Task 17.3**: Implement schedule persistence — create WorkoutSessions from generated schedule
+- [x] **Task 17.3**: Implement schedule persistence — create WorkoutSessions from generated schedule
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: `persistSchedule(athleteId, programId, programAssignmentId, schedule)` creates WorkoutSession records in a transaction. Links each session to the source Workout via `workoutId` and to the assignment via `programAssignmentId`. Idempotent — skips dates where a session already exists. Returns count of created/skipped sessions.
 
