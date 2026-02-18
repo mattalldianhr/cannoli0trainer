@@ -25,6 +25,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { showSuccess, showError } from '@/lib/toast';
 
 interface TemplateData {
   id: string;
@@ -104,10 +105,11 @@ export function TemplateList({ templates }: TemplateListProps) {
         throw new Error('Failed to archive template');
       }
 
+      showSuccess('Template archived');
       setArchiveTarget(null);
       router.refresh();
     } catch (err) {
-      console.error('Failed to archive template:', err);
+      showError(err instanceof Error ? err.message : 'Failed to archive template');
     } finally {
       setArchiving(false);
     }

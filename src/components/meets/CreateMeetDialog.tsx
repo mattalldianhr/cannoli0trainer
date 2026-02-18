@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -65,11 +66,14 @@ export function CreateMeetDialog({ open, onOpenChange, coachId }: CreateMeetDial
         throw new Error(data.error || 'Failed to create meet');
       }
 
+      showSuccess('Meet created');
       resetForm();
       onOpenChange(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      showError(message);
     } finally {
       setSubmitting(false);
     }

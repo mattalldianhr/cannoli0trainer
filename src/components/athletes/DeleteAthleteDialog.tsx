@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import {
   Dialog,
   DialogContent,
@@ -44,10 +45,13 @@ export function ArchiveAthleteDialog({
         throw new Error(data.error || 'Failed to archive athlete');
       }
 
+      showSuccess('Athlete archived');
       router.push('/athletes');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      showError(message);
       setArchiving(false);
     }
   }

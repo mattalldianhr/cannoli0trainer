@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,15 +58,19 @@ export function SettingsForm({ initialData }: { initialData: CoachSettings }) {
 
       if (!res.ok) {
         const data = await res.json();
-        setMessage({ type: 'error', text: data.error || 'Failed to save settings.' });
+        const errMsg = data.error || 'Failed to save settings.';
+        setMessage({ type: 'error', text: errMsg });
+        showError(errMsg);
         return;
       }
 
       const updated = await res.json();
       setFormData(updated);
       setMessage({ type: 'success', text: 'Settings saved successfully.' });
+      showSuccess('Settings saved');
     } catch {
       setMessage({ type: 'error', text: 'Network error. Please try again.' });
+      showError('Network error. Please try again.');
     } finally {
       setSaving(false);
     }

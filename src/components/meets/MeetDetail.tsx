@@ -21,6 +21,7 @@ import { WarmupCalculator } from '@/components/meets/WarmupCalculator';
 import { FlightTracker } from '@/components/meets/FlightTracker';
 import { MeetResultsSummary } from '@/components/meets/MeetResultsSummary';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -258,12 +259,15 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
         throw new Error(data.error || 'Failed to add athlete');
       }
 
+      showSuccess('Athlete added to meet');
       setSelectedAthleteId('');
       setAddWeightClass('');
       setAddDialogOpen(false);
       router.refresh();
     } catch (err) {
-      setAddError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setAddError(message);
+      showError(message);
     } finally {
       setAdding(false);
     }
@@ -318,9 +322,10 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
         throw new Error('Failed to save attempts');
       }
 
+      showSuccess('Attempts saved');
       router.refresh();
     } catch (err) {
-      console.error('Save error:', err);
+      showError(err instanceof Error ? err.message : 'Failed to save attempts');
     } finally {
       setSavingEntries((prev) => ({ ...prev, [entryId]: false }));
     }
@@ -339,9 +344,10 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
         throw new Error('Failed to remove athlete');
       }
 
+      showSuccess('Athlete removed from meet');
       router.refresh();
     } catch (err) {
-      console.error('Delete error:', err);
+      showError(err instanceof Error ? err.message : 'Failed to remove athlete');
     } finally {
       setDeletingEntry(null);
     }

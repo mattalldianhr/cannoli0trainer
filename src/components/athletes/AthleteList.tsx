@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
+import { showSuccess, showError } from '@/lib/toast';
 import { BulkAssignDialog } from './BulkAssignDialog';
 
 type FilterType = 'all' | 'competitors' | 'remote' | 'needs_attention' | 'archived';
@@ -129,8 +130,13 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
         body: JSON.stringify({ isActive: true }),
       });
       if (res.ok) {
+        showSuccess('Athlete reactivated');
         router.refresh();
+      } else {
+        showError('Failed to reactivate athlete');
       }
+    } catch {
+      showError('Failed to reactivate athlete');
     } finally {
       setReactivating(null);
     }

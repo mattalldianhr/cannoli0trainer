@@ -16,6 +16,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { showSuccess, showError } from '@/lib/toast';
 
 interface Athlete {
   id: string;
@@ -131,10 +132,13 @@ export function AssignAthletes({ programId, assignedAthleteIds }: AssignAthletes
         const data = await res.json();
         throw new Error(data.error || data.message || 'Failed to assign athletes');
       }
+      showSuccess(`${newSelections.length} athlete${newSelections.length !== 1 ? 's' : ''} assigned`);
       setOpen(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to assign athletes');
+      const message = err instanceof Error ? err.message : 'Failed to assign athletes';
+      setError(message);
+      showError(message);
     } finally {
       setSaving(false);
     }

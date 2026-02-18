@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Play } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -142,10 +143,13 @@ export function ExerciseForm({ coachId, exercise }: ExerciseFormProps) {
         throw new Error(data.error || `Failed to ${isEditing ? 'update' : 'create'} exercise`);
       }
 
+      showSuccess(isEditing ? 'Exercise updated' : 'Exercise created');
       router.push('/exercises');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      showError(message);
       setSubmitting(false);
     }
   }

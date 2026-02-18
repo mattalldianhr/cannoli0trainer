@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 151
+- Completed: 152
 - In progress: 0
-- Remaining: 28
+- Remaining: 27
 
 ## Tasks
 
@@ -777,7 +777,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: `sonner` installed. `<Toaster />` in root layout. `src/lib/toast.ts` exports `showSuccess`, `showError`, `showLoading`. Bottom-right desktop, bottom-center mobile.
 
-- [ ] **Task 30.4**: Add success and error toasts to all mutation actions
+- [x] **Task 30.4**: Add success and error toasts to all mutation actions
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Every create/update/delete shows success toast. Failed API calls show error toast. No toast on set logging (too frequent).
 

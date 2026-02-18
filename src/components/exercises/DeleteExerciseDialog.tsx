@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import {
   Dialog,
   DialogContent,
@@ -44,7 +45,9 @@ export function DeleteExerciseDialog({
       if (res.status === 409) {
         const data = await res.json();
         setUsageCount(data.usageCount ?? 0);
-        setError(data.error || 'Cannot delete exercise that is used in workouts');
+        const msg = data.error || 'Cannot delete exercise that is used in workouts';
+        setError(msg);
+        showError(msg);
         setDeleting(false);
         return;
       }
@@ -54,10 +57,13 @@ export function DeleteExerciseDialog({
         throw new Error(data.error || 'Failed to delete exercise');
       }
 
+      showSuccess('Exercise deleted');
       router.push('/exercises');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      showError(message);
       setDeleting(false);
     }
   }

@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
+import { showSuccess, showError } from '@/lib/toast';
 
 interface SessionData {
   id: string;
@@ -200,14 +201,14 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || 'Failed to move workout');
+        showError(data.error || 'Failed to move workout');
         return;
       }
 
-      // Refresh the page data
+      showSuccess('Workout moved');
       router.refresh();
     } catch {
-      alert('Failed to move workout');
+      showError('Failed to move workout');
     } finally {
       setMoveState(null);
       setIsMoving(false);
@@ -226,13 +227,14 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || 'Failed to update skip status');
+        showError(data.error || 'Failed to update skip status');
         return;
       }
 
+      showSuccess(currentlySkipped ? 'Workout unskipped' : 'Workout skipped');
       router.refresh();
     } catch {
-      alert('Failed to update skip status');
+      showError('Failed to update skip status');
     } finally {
       setSkippingSessionId(null);
     }

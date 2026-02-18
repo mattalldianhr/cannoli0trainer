@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { showSuccess, showError } from '@/lib/toast';
 
 interface Program {
   id: string;
@@ -126,11 +127,14 @@ export function BulkAssignDialog({
         const data = await res.json();
         throw new Error(data.error || data.message || 'Failed to assign program');
       }
+      showSuccess(`Program assigned to ${selectedAthleteIds.length} athlete${selectedAthleteIds.length !== 1 ? 's' : ''}`);
       onOpenChange(false);
       onSuccess();
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to assign program');
+      const message = err instanceof Error ? err.message : 'Failed to assign program';
+      setError(message);
+      showError(message);
     } finally {
       setSaving(false);
     }

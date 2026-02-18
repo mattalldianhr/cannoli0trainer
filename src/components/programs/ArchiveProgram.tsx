@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Archive, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import {
   Dialog,
   DialogContent,
@@ -39,11 +40,14 @@ export function ArchiveProgram({ programId, programName }: ArchiveProgramProps) 
         throw new Error(data.error || 'Failed to archive program');
       }
 
+      showSuccess('Program archived');
       setOpen(false);
       router.push('/programs');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to archive program');
+      const message = err instanceof Error ? err.message : 'Failed to archive program';
+      setError(message);
+      showError(message);
     } finally {
       setArchiving(false);
     }

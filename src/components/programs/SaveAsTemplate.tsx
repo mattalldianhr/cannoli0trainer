@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Copy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { showSuccess, showError } from '@/lib/toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -69,10 +70,13 @@ export function SaveAsTemplate({
       }
 
       const template = await res.json();
+      showSuccess('Template saved');
       setOpen(false);
       router.push(`/programs/${template.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save template');
+      const message = err instanceof Error ? err.message : 'Failed to save template';
+      setError(message);
+      showError(message);
     } finally {
       setSaving(false);
     }
