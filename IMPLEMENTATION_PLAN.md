@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 66
-- Completed: 2
+- Completed: 3
 - In progress: 0
 
 ## Tasks
@@ -13,7 +13,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes with all enums defined
 
-- [ ] **Task 1.2**: Create Coach model in Prisma schema with id, name, email, brandName, timestamps
+- [x] **Task 1.2**: Create Coach model in Prisma schema with id, name, email, brandName, timestamps
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, Coach model present
 
