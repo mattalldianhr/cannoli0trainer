@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 24
+- Completed: 25
 - In progress: 0
 
 ## Tasks
@@ -114,7 +114,7 @@
   - Spec: specs/02-coach-dashboard.md, specs/03-athlete-management.md
   - Acceptance: Tests hit API routes against seeded database: GET `/api/athletes` returns 5 athletes, GET `/api/athletes/[id]` returns correct profile, GET `/api/exercises` returns 800+ exercises with search filtering, POST/PUT/DELETE operations work and persist. Uses Next.js test server or direct route handler calls.
 
-- [ ] **Task 3.6**: Install Playwright and create E2E smoke tests for core pages
+- [x] **Task 3.6**: Install Playwright and create E2E smoke tests for core pages
   - Spec: (none — infrastructure)
   - Acceptance: `npx playwright test` runs headless Chrome. Smoke tests verify: homepage loads, `/athletes` lists 5 athletes, `/exercises` shows exercise library with search, `/dashboard` displays stat cards with non-zero values, `/analytics` renders charts. All assertions against real seeded data.
 

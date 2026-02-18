@@ -15,6 +15,11 @@ npm run dev
 npm run test
 ```
 
+## E2E Tests (Playwright)
+```bash
+npm run test:e2e
+```
+
 ## Typecheck
 ```bash
 npx tsc --noEmit

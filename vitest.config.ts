@@ -4,7 +4,7 @@ import path from 'path'
 export default defineConfig({
   test: {
     include: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
-    exclude: ['node_modules', '.next', 'prisma'],
+    exclude: ['node_modules', '.next', 'prisma', 'e2e'],
     globals: true,
     passWithNoTests: true,
   },
