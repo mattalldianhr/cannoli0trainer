@@ -22,6 +22,8 @@ import {
   Repeat,
   TrendingUp,
   MessageSquare,
+  WifiOff,
+  CloudOff,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,6 +34,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { RPESelector } from '@/components/shared/RPESelector';
 import { RestTimer } from '@/components/training/RestTimer';
 import { cn } from '@/lib/utils';
+import { enqueue, type SetLogPayload } from '@/lib/offline-queue';
+import { useOfflineSync } from '@/hooks/useOfflineSync';
 
 interface SetLogData {
   id: string;
@@ -419,10 +423,12 @@ function ExerciseCard({
   exercise,
   athleteId,
   onSetChange,
+  onEnqueue,
 }: {
   exercise: ExerciseData;
   athleteId: string;
   onSetChange: () => void;
+  onEnqueue?: () => void;
 }) {
   const completedSets = exercise.setLogs.length;
   const totalSets = exercise.prescribedSets ? parseInt(exercise.prescribedSets, 10) : 0;
@@ -490,7 +496,7 @@ function ExerciseCard({
 
     setSaving(true);
     try {
-      const body: Record<string, unknown> = {
+      const payload: SetLogPayload = {
         workoutExerciseId: exercise.id,
         athleteId,
         setNumber: nextSetNumber,
@@ -498,22 +504,34 @@ function ExerciseCard({
         weight: w,
         unit: 'lbs',
       };
-      if (rpe != null) body.rpe = rpe;
+      if (rpe != null) payload.rpe = rpe;
       const v = velocity ? parseFloat(velocity) : null;
-      if (v != null && !isNaN(v)) body.velocity = v;
+      if (v != null && !isNaN(v)) payload.velocity = v;
 
-      const res = await fetch('/api/sets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      try {
+        const res = await fetch('/api/sets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
 
-      if (res.ok) {
-        onSetChange();
-        // Show rest timer after logging a set (unless exercise is now complete)
-        const willBeComplete = totalSets > 0 && (completedSets + 1) >= totalSets;
-        if (!willBeComplete) {
-          setShowRestTimer(true);
+        if (res.ok) {
+          onSetChange();
+          const willBeComplete = totalSets > 0 && (completedSets + 1) >= totalSets;
+          if (!willBeComplete) {
+            setShowRestTimer(true);
+          }
+        }
+      } catch {
+        // Network failure — queue for later sync
+        const queued = enqueue(payload);
+        if (queued) {
+          onEnqueue?.();
+          // Still show rest timer so athlete continues their workout
+          const willBeComplete = totalSets > 0 && (completedSets + 1) >= totalSets;
+          if (!willBeComplete) {
+            setShowRestTimer(true);
+          }
         }
       }
     } finally {
@@ -881,6 +899,12 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
     }
   }, [athleteId, date]);
 
+  const { pendingCount, refreshCount } = useOfflineSync(fetchWorkout);
+
+  const handleEnqueue = useCallback(() => {
+    refreshCount();
+  }, [refreshCount]);
+
   useEffect(() => {
     fetchWorkout();
   }, [fetchWorkout]);
@@ -949,6 +973,21 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
           )}
         </div>
       </div>
+
+      {/* Pending sync badge */}
+      {pendingCount > 0 && (
+        <div className="flex items-center gap-2 rounded-md border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-800 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300">
+          <CloudOff className="h-4 w-4 flex-shrink-0" />
+          <span>
+            {pendingCount} set{pendingCount !== 1 ? 's' : ''} pending sync
+          </span>
+          {typeof navigator !== 'undefined' && !navigator.onLine && (
+            <span className="ml-auto flex items-center gap-1 text-xs opacity-75">
+              <WifiOff className="h-3 w-3" /> Offline
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Loading state */}
       {loading && (
@@ -1041,6 +1080,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
                 exercise={ex}
                 athleteId={athleteId}
                 onSetChange={fetchWorkout}
+                onEnqueue={handleEnqueue}
               />
             ))}
           </div>

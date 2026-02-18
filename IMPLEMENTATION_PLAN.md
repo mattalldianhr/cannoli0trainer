@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 114
+- Completed: 115
 - In progress: 0
-- Remaining: 65
+- Remaining: 64
 
 ## Tasks
 
@@ -620,7 +620,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Design doc describing localStorage queue strategy, background sync, pending indicator.
 
-- [ ] **Task 21.4**: Implement offline queue for set logs with localStorage
+- [x] **Task 21.4**: Implement offline queue for set logs with localStorage
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Failed POSTs saved to localStorage. Replayed on connectivity. "N sets pending sync" badge. 100 entry limit.
 
