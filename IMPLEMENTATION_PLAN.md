@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 81
+- Completed: 82
 - In progress: 0
-- Remaining: 98 (7 original + 97 new from spec review)
+- Remaining: 97 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -483,7 +483,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Before generating sessions, check for existing WorkoutSessions on the target dates for the athlete. If conflicts found, return them in the API response. Coach can choose to proceed (overwrite) or cancel.
 
-- [ ] **Task 17.6**: Implement reassignment cleanup — delete future NOT_STARTED sessions on assignment removal
+- [x] **Task 17.6**: Implement reassignment cleanup — delete future NOT_STARTED sessions on assignment removal
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: When a ProgramAssignment is deleted (or `isActive` set to false), delete all WorkoutSessions where `programAssignmentId` matches AND `status = NOT_STARTED` AND `date >= today`. Preserve sessions with status `PARTIALLY_COMPLETED` or `FULLY_COMPLETED`.
 

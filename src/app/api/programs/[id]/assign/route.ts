@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { generateSchedule, type WorkoutInput } from '@/lib/scheduling/generate-schedule';
 import { persistSchedule } from '@/lib/scheduling/persist-schedule';
 import { detectConflicts, type ConflictingSession } from '@/lib/scheduling/detect-conflicts';
+import { deactivateAssignment, deleteAssignment } from '@/lib/scheduling/cleanup-assignment';
 
 export async function POST(
   request: Request,
@@ -214,6 +215,82 @@ export async function POST(
     console.error('Failed to assign program:', error);
     return NextResponse.json(
       { error: 'Failed to assign program' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/programs/[id]/assign
+ *
+ * Remove a program assignment for an athlete. Deletes future NOT_STARTED
+ * WorkoutSessions. Preserves PARTIALLY_COMPLETED and FULLY_COMPLETED sessions.
+ *
+ * Body: { athleteId: string, mode?: 'deactivate' | 'delete' }
+ * - mode 'deactivate' (default): sets isActive=false, keeps the assignment record
+ * - mode 'delete': removes the assignment record entirely
+ */
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: programId } = await params;
+    const body = await request.json();
+    const { athleteId, mode = 'deactivate' } = body;
+
+    if (!athleteId) {
+      return NextResponse.json(
+        { error: 'athleteId is required' },
+        { status: 400 }
+      );
+    }
+
+    // Find the assignment
+    const assignment = await prisma.programAssignment.findUnique({
+      where: {
+        programId_athleteId: { programId, athleteId },
+      },
+      include: {
+        athlete: { select: { id: true, name: true } },
+        program: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!assignment) {
+      return NextResponse.json(
+        { error: 'Assignment not found for this program and athlete' },
+        { status: 404 }
+      );
+    }
+
+    if (mode === 'delete') {
+      const cleanup = await deleteAssignment(assignment.id);
+      return NextResponse.json({
+        programId,
+        athleteId,
+        athleteName: assignment.athlete.name,
+        programName: assignment.program.name,
+        mode: 'delete',
+        cleanup,
+      });
+    }
+
+    // Default: deactivate
+    const result = await deactivateAssignment(assignment.id);
+    return NextResponse.json({
+      programId,
+      athleteId,
+      athleteName: result.assignment.athlete.name,
+      programName: result.assignment.program.name,
+      mode: 'deactivate',
+      assignment: result.assignment,
+      cleanup: result.cleanup,
+    });
+  } catch (error) {
+    console.error('Failed to unassign program:', error);
+    return NextResponse.json(
+      { error: 'Failed to unassign program' },
       { status: 500 }
     );
   }
