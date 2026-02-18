@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 38
+- Completed: 39
 - In progress: 0
 
 ## Tasks
@@ -176,7 +176,7 @@
 
 ### Priority 6: Core UI - Exercise Library
 
-- [ ] **Task 6.1**: Create exercise library page at `/exercises` with search and category filter
+- [x] **Task 6.1**: Create exercise library page at `/exercises` with search and category filter
   - Spec: specs/05-exercise-library.md
   - Acceptance: Page lists exercises, search and filter work
 
