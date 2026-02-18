@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 29
+- Completed: 30
 - In progress: 0
 
 ## Tasks
@@ -136,7 +136,7 @@
   - Spec: specs/05-exercise-library.md
   - Acceptance: POST/GET/PUT/DELETE work, GET supports search and category filter
 
-- [ ] **Task 4.5**: Create API routes for SetLog entries (`/api/sets`)
+- [x] **Task 4.5**: Create API routes for SetLog entries (`/api/sets`)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: POST creates set log, GET returns sets for athlete+exercise
 
