@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 45
+- Completed: 46
 - In progress: 0
 
 ## Tasks
@@ -206,7 +206,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: Can add exercise from library, select prescription type, enter prescription values
 
-- [ ] **Task 7.5**: Implement prescription type conditional fields (RPE, %1RM, RIR, velocity, auto, fixed)
+- [x] **Task 7.5**: Implement prescription type conditional fields (RPE, %1RM, RIR, velocity, auto, fixed)
   - Spec: specs/04-program-builder.md, specs/12-rpe-rir-support.md
   - Acceptance: All 6 prescription types show correct input fields
 

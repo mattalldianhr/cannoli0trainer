@@ -860,121 +860,175 @@ function PrescriptionFields({ prescription, onUpdate }: PrescriptionFieldsProps)
   switch (prescription.type) {
     case 'percentage':
       return (
-        <div className="grid grid-cols-1 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">% of 1RM</Label>
-            <Input
-              type="number"
-              value={prescription.percentage ?? ''}
-              onChange={(e) =>
-                onUpdate({ percentage: e.target.value ? Number(e.target.value) : null })
-              }
-              placeholder="80"
-              min={0}
-              max={120}
-              step={2.5}
-              className="h-8 text-xs"
-            />
+        <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">% of 1RM</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  value={prescription.percentage ?? ''}
+                  onChange={(e) =>
+                    onUpdate({ percentage: e.target.value ? Number(e.target.value) : null })
+                  }
+                  placeholder="80"
+                  min={0}
+                  max={120}
+                  step={2.5}
+                  className="h-8 text-xs"
+                />
+                <span className="text-xs text-muted-foreground shrink-0">%</span>
+              </div>
+            </div>
           </div>
+          {prescription.percentage != null && (
+            <p className="text-xs text-muted-foreground">
+              Athlete works at {prescription.percentage}% of their current 1RM
+            </p>
+          )}
         </div>
       );
 
     case 'rpe':
       return (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Target RPE</Label>
-            <Input
-              type="number"
-              value={prescription.rpe ?? ''}
-              onChange={(e) =>
-                onUpdate({ rpe: e.target.value ? Number(e.target.value) : null })
-              }
-              placeholder="8"
-              min={1}
-              max={10}
-              step={0.5}
-              className="h-8 text-xs"
-            />
+        <div className="space-y-2">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">RPE (min)</Label>
+              <Input
+                type="number"
+                value={prescription.rpe ?? ''}
+                onChange={(e) =>
+                  onUpdate({ rpe: e.target.value ? Number(e.target.value) : null })
+                }
+                placeholder="7"
+                min={1}
+                max={10}
+                step={0.5}
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">RPE (max, optional)</Label>
+              <Input
+                type="number"
+                value={prescription.rpeMax ?? ''}
+                onChange={(e) =>
+                  onUpdate({ rpeMax: e.target.value ? Number(e.target.value) : null })
+                }
+                placeholder="8"
+                min={1}
+                max={10}
+                step={0.5}
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Load (optional)</Label>
+              <Input
+                value={prescription.load}
+                onChange={(e) => onUpdate({ load: e.target.value })}
+                placeholder="e.g. 315 lbs"
+                className="h-8 text-xs"
+              />
+            </div>
           </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Load (optional)</Label>
-            <Input
-              value={prescription.load}
-              onChange={(e) => onUpdate({ load: e.target.value })}
-              placeholder="e.g. 315 lbs"
-              className="h-8 text-xs"
-            />
-          </div>
+          <RPEHint rpe={prescription.rpe} rpeMax={prescription.rpeMax} />
         </div>
       );
 
     case 'rir':
       return (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Reps in Reserve</Label>
-            <Input
-              type="number"
-              value={prescription.rir ?? ''}
-              onChange={(e) =>
-                onUpdate({ rir: e.target.value ? Number(e.target.value) : null })
-              }
-              placeholder="2"
-              min={0}
-              max={10}
-              step={1}
-              className="h-8 text-xs"
-            />
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Reps in Reserve</Label>
+              <Input
+                type="number"
+                value={prescription.rir ?? ''}
+                onChange={(e) =>
+                  onUpdate({ rir: e.target.value ? Number(e.target.value) : null })
+                }
+                placeholder="2"
+                min={0}
+                max={10}
+                step={1}
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Load (optional)</Label>
+              <Input
+                value={prescription.load}
+                onChange={(e) => onUpdate({ load: e.target.value })}
+                placeholder="e.g. 225 lbs"
+                className="h-8 text-xs"
+              />
+            </div>
           </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Load (optional)</Label>
-            <Input
-              value={prescription.load}
-              onChange={(e) => onUpdate({ load: e.target.value })}
-              placeholder="e.g. 225 lbs"
-              className="h-8 text-xs"
-            />
-          </div>
+          {prescription.rir != null && (
+            <p className="text-xs text-muted-foreground">
+              {prescription.rir} RIR = RPE {10 - prescription.rir}
+              {prescription.rir === 0 && ' (max effort)'}
+              {prescription.rir === 1 && ' (could do 1 more)'}
+              {prescription.rir === 2 && ' (could do 2 more)'}
+              {prescription.rir === 3 && ' (moderate effort)'}
+              {prescription.rir >= 4 && ' (light effort)'}
+            </p>
+          )}
         </div>
       );
 
     case 'velocity':
       return (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Velocity Target (m/s)</Label>
-            <Input
-              type="number"
-              value={prescription.velocityTarget ?? ''}
-              onChange={(e) =>
-                onUpdate({
-                  velocityTarget: e.target.value ? Number(e.target.value) : null,
-                })
-              }
-              placeholder="0.8"
-              min={0}
-              max={3}
-              step={0.05}
-              className="h-8 text-xs"
-            />
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Velocity Target (m/s)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  value={prescription.velocityTarget ?? ''}
+                  onChange={(e) =>
+                    onUpdate({
+                      velocityTarget: e.target.value ? Number(e.target.value) : null,
+                    })
+                  }
+                  placeholder="0.8"
+                  min={0}
+                  max={3}
+                  step={0.05}
+                  className="h-8 text-xs"
+                />
+                <span className="text-xs text-muted-foreground shrink-0">m/s</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Load (optional)</Label>
+              <Input
+                value={prescription.load}
+                onChange={(e) => onUpdate({ load: e.target.value })}
+                placeholder="e.g. 275 lbs"
+                className="h-8 text-xs"
+              />
+            </div>
           </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Load (optional)</Label>
-            <Input
-              value={prescription.load}
-              onChange={(e) => onUpdate({ load: e.target.value })}
-              placeholder="e.g. 275 lbs"
-              className="h-8 text-xs"
-            />
-          </div>
+          {prescription.velocityTarget != null && (
+            <p className="text-xs text-muted-foreground">
+              {prescription.velocityTarget >= 1.0 && 'Speed/power zone'}
+              {prescription.velocityTarget >= 0.75 && prescription.velocityTarget < 1.0 && 'Strength-speed zone'}
+              {prescription.velocityTarget >= 0.5 && prescription.velocityTarget < 0.75 && 'Strength zone'}
+              {prescription.velocityTarget > 0 && prescription.velocityTarget < 0.5 && 'Max strength/grinding zone'}
+              {' '}— stop set if velocity drops below {prescription.velocityTarget} m/s
+            </p>
+          )}
         </div>
       );
 
     case 'autoregulated':
       return (
         <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Target RPE</Label>
               <Input
@@ -991,21 +1045,40 @@ function PrescriptionFields({ prescription, onUpdate }: PrescriptionFieldsProps)
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Backoff %</Label>
+              <Label className="text-xs text-muted-foreground">RPE max (opt.)</Label>
               <Input
                 type="number"
-                value={prescription.backoffPercent ?? ''}
+                value={prescription.rpeMax ?? ''}
                 onChange={(e) =>
-                  onUpdate({
-                    backoffPercent: e.target.value ? Number(e.target.value) : null,
-                  })
+                  onUpdate({ rpeMax: e.target.value ? Number(e.target.value) : null })
                 }
-                placeholder="10"
-                min={0}
-                max={50}
-                step={5}
+                placeholder=""
+                min={1}
+                max={10}
+                step={0.5}
                 className="h-8 text-xs"
               />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Backoff %</Label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground">-</span>
+                <Input
+                  type="number"
+                  value={prescription.backoffPercent ?? ''}
+                  onChange={(e) =>
+                    onUpdate({
+                      backoffPercent: e.target.value ? Number(e.target.value) : null,
+                    })
+                  }
+                  placeholder="10"
+                  min={0}
+                  max={50}
+                  step={5}
+                  className="h-8 text-xs"
+                />
+                <span className="text-xs text-muted-foreground">%</span>
+              </div>
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Backoff Sets</Label>
@@ -1025,12 +1098,22 @@ function PrescriptionFields({ prescription, onUpdate }: PrescriptionFieldsProps)
               />
             </div>
           </div>
+          {prescription.rpe != null && (
+            <p className="text-xs text-muted-foreground font-medium">
+              Work up to RPE {prescription.rpe}{prescription.rpeMax != null ? `-${prescription.rpeMax}` : ''}
+              {prescription.backoffPercent != null && prescription.backoffSets != null
+                ? `, then -${prescription.backoffPercent}% for ${prescription.backoffSets}x${prescription.reps}`
+                : prescription.backoffPercent != null
+                  ? `, then -${prescription.backoffPercent}%`
+                  : ''}
+            </p>
+          )}
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Instructions</Label>
+            <Label className="text-xs text-muted-foreground">Additional Instructions</Label>
             <Input
               value={prescription.instructions}
               onChange={(e) => onUpdate({ instructions: e.target.value })}
-              placeholder="e.g. Work up to RPE 8, then -10% for 3x3"
+              placeholder="e.g. Work up in triples, then backoff volume"
               className="h-8 text-xs"
             />
           </div>
@@ -1039,30 +1122,61 @@ function PrescriptionFields({ prescription, onUpdate }: PrescriptionFieldsProps)
 
     case 'fixed':
       return (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Load</Label>
-            <Input
-              value={prescription.load}
-              onChange={(e) => onUpdate({ load: e.target.value })}
-              placeholder="185"
-              className="h-8 text-xs"
-            />
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Load</Label>
+              <Input
+                value={prescription.load}
+                onChange={(e) => onUpdate({ load: e.target.value })}
+                placeholder="185"
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Unit</Label>
+              <select
+                value={prescription.unit}
+                onChange={(e) => onUpdate({ unit: e.target.value as 'lbs' | 'kg' })}
+                className={cn(SELECT_CLASS, 'h-8 text-xs')}
+              >
+                <option value="lbs">lbs</option>
+                <option value="kg">kg</option>
+              </select>
+            </div>
           </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Unit</Label>
-            <select
-              value={prescription.unit}
-              onChange={(e) => onUpdate({ unit: e.target.value as 'lbs' | 'kg' })}
-              className={cn(SELECT_CLASS, 'h-8 text-xs')}
-            >
-              <option value="lbs">lbs</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
+          {prescription.load && (
+            <p className="text-xs text-muted-foreground">
+              Fixed at {prescription.load} {prescription.unit} for all sets
+            </p>
+          )}
         </div>
       );
   }
+}
+
+/** RPE hint text showing description for the selected RPE value/range */
+function RPEHint({ rpe, rpeMax }: { rpe: number | null; rpeMax: number | null }) {
+  if (rpe == null) return null;
+
+  const rpeDescription = (value: number): string => {
+    if (value >= 10) return 'max effort, no reps left';
+    if (value >= 9.5) return 'could maybe do 1 more';
+    if (value >= 9) return 'could do 1 more';
+    if (value >= 8.5) return 'could definitely do 1, maybe 2';
+    if (value >= 8) return 'could do 2 more';
+    if (value >= 7.5) return 'could do 2-3 more';
+    if (value >= 7) return 'could do 3 more';
+    if (value >= 6.5) return 'could do 3-4 more';
+    if (value >= 6) return 'could do 4 more';
+    return 'light effort';
+  };
+
+  const display = rpeMax != null
+    ? `RPE ${rpe}-${rpeMax}: ${rpeDescription(rpe)} to ${rpeDescription(rpeMax)}`
+    : `RPE ${rpe}: ${rpeDescription(rpe)}`;
+
+  return <p className="text-xs text-muted-foreground">{display}</p>;
 }
 
 // ============================================================
@@ -1076,14 +1190,24 @@ function formatPrescription(exercise: ExerciseEntry): string {
   switch (p.type) {
     case 'percentage':
       return p.percentage ? `${setsReps} @ ${p.percentage}%` : setsReps;
-    case 'rpe':
-      return p.rpe ? `${setsReps} @ RPE ${p.rpe}` : setsReps;
+    case 'rpe': {
+      if (p.rpe == null) return setsReps;
+      const rpeStr = p.rpeMax != null ? `RPE ${p.rpe}-${p.rpeMax}` : `RPE ${p.rpe}`;
+      return `${setsReps} @ ${rpeStr}`;
+    }
     case 'rir':
       return p.rir != null ? `${setsReps} @ ${p.rir} RIR` : setsReps;
     case 'velocity':
       return p.velocityTarget ? `${setsReps} @ ${p.velocityTarget} m/s` : setsReps;
-    case 'autoregulated':
-      return p.instructions || setsReps;
+    case 'autoregulated': {
+      if (p.rpe == null) return p.instructions || setsReps;
+      const rpeLabel = p.rpeMax != null ? `RPE ${p.rpe}-${p.rpeMax}` : `RPE ${p.rpe}`;
+      let result = `Work up to ${rpeLabel}`;
+      if (p.backoffPercent != null && p.backoffSets != null) {
+        result += `, -${p.backoffPercent}% x${p.backoffSets}`;
+      }
+      return result;
+    }
     case 'fixed':
       return p.load ? `${setsReps} @ ${p.load} ${p.unit}` : setsReps;
   }

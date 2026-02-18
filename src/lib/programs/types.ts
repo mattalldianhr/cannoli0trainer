@@ -96,12 +96,13 @@ export interface PercentagePrescription {
   percentage: number | null;
 }
 
-/** RPE-based — e.g. "3x5 @ RPE 8" */
+/** RPE-based — e.g. "3x5 @ RPE 8" or "3x5 @ RPE 7-8" */
 export interface RPEPrescription {
   type: 'rpe';
   sets: string;
   reps: string;
   rpe: number | null;
+  rpeMax: number | null;
   load: string;
 }
 
@@ -129,6 +130,7 @@ export interface AutoregulatedPrescription {
   sets: string;
   reps: string;
   rpe: number | null;
+  rpeMax: number | null;
   backoffPercent: number | null;
   backoffSets: number | null;
   instructions: string;
@@ -179,7 +181,7 @@ export function createDefaultPrescription(type: PrescriptionType): PrescriptionV
     case 'percentage':
       return { type: 'percentage', sets: '3', reps: '5', percentage: null };
     case 'rpe':
-      return { type: 'rpe', sets: '3', reps: '5', rpe: null, load: '' };
+      return { type: 'rpe', sets: '3', reps: '5', rpe: null, rpeMax: null, load: '' };
     case 'rir':
       return { type: 'rir', sets: '3', reps: '8', rir: null, load: '' };
     case 'velocity':
@@ -190,6 +192,7 @@ export function createDefaultPrescription(type: PrescriptionType): PrescriptionV
         sets: '1',
         reps: '1',
         rpe: null,
+        rpeMax: null,
         backoffPercent: null,
         backoffSets: null,
         instructions: '',
