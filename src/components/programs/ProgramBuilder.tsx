@@ -277,6 +277,31 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
     }));
   }, []);
 
+  const duplicateExercise = useCallback((dayId: string, exerciseId: string) => {
+    setProgram((prev) => ({
+      ...prev,
+      weeks: prev.weeks.map((w) => ({
+        ...w,
+        days: w.days.map((d) => {
+          if (d.id !== dayId) return d;
+          const sourceIdx = d.exercises.findIndex((ex) => ex.id === exerciseId);
+          if (sourceIdx === -1) return d;
+          const source = d.exercises[sourceIdx];
+          const newExercise: ExerciseEntry = {
+            ...source,
+            id: crypto.randomUUID(),
+            workoutExerciseId: undefined,
+            order: d.exercises.length + 1,
+          };
+          return {
+            ...d,
+            exercises: [...d.exercises, newExercise],
+          };
+        }),
+      })),
+    }));
+  }, []);
+
   const updateExercise = useCallback(
     (dayId: string, exerciseId: string, updates: Partial<ExerciseEntry>) => {
       setProgram((prev) => ({
@@ -442,6 +467,7 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
               onUpdateDayNotes={(dayId, notes) => updateDayNotes(week.id, dayId, notes)}
               onAddExercise={openExercisePicker}
               onRemoveExercise={removeExercise}
+              onDuplicateExercise={duplicateExercise}
               onUpdateExercise={updateExercise}
             />
           ))}
@@ -477,6 +503,7 @@ interface WeekCardProps {
   onUpdateDayNotes: (dayId: string, notes: string) => void;
   onAddExercise: (dayId: string) => void;
   onRemoveExercise: (dayId: string, exerciseId: string) => void;
+  onDuplicateExercise: (dayId: string, exerciseId: string) => void;
   onUpdateExercise: (dayId: string, exerciseId: string, updates: Partial<ExerciseEntry>) => void;
 }
 
@@ -495,6 +522,7 @@ function WeekCard({
   onUpdateDayNotes,
   onAddExercise,
   onRemoveExercise,
+  onDuplicateExercise,
   onUpdateExercise,
 }: WeekCardProps) {
   const exerciseCount = week.days.reduce((sum, d) => sum + d.exercises.length, 0);
@@ -577,6 +605,7 @@ function WeekCard({
                   onUpdateNotes={(notes) => onUpdateDayNotes(day.id, notes)}
                   onAddExercise={() => onAddExercise(day.id)}
                   onRemoveExercise={(exId) => onRemoveExercise(day.id, exId)}
+                  onDuplicateExercise={(exId) => onDuplicateExercise(day.id, exId)}
                   onUpdateExercise={(exId, updates) => onUpdateExercise(day.id, exId, updates)}
                 />
               ))
@@ -603,6 +632,7 @@ interface DayCardProps {
   onUpdateNotes: (notes: string) => void;
   onAddExercise: () => void;
   onRemoveExercise: (exerciseId: string) => void;
+  onDuplicateExercise: (exerciseId: string) => void;
   onUpdateExercise: (exerciseId: string, updates: Partial<ExerciseEntry>) => void;
 }
 
@@ -617,6 +647,7 @@ function DayCard({
   onUpdateNotes,
   onAddExercise,
   onRemoveExercise,
+  onDuplicateExercise,
   onUpdateExercise,
 }: DayCardProps) {
   const [showNotes, setShowNotes] = useState(day.notes.length > 0);
@@ -710,6 +741,7 @@ function DayCard({
                   key={exercise.id}
                   exercise={exercise}
                   onRemove={() => onRemoveExercise(exercise.id)}
+                  onDuplicate={() => onDuplicateExercise(exercise.id)}
                   onUpdate={(updates) => onUpdateExercise(exercise.id, updates)}
                 />
               ))}
@@ -728,10 +760,11 @@ function DayCard({
 interface ExerciseRowProps {
   exercise: ExerciseEntry;
   onRemove: () => void;
+  onDuplicate: () => void;
   onUpdate: (updates: Partial<ExerciseEntry>) => void;
 }
 
-function ExerciseRow({ exercise, onRemove, onUpdate }: ExerciseRowProps) {
+function ExerciseRow({ exercise, onRemove, onDuplicate, onUpdate }: ExerciseRowProps) {
   const [expanded, setExpanded] = useState(false);
   const prescriptionSummary = formatPrescription(exercise);
 
@@ -773,6 +806,15 @@ function ExerciseRow({ exercise, onRemove, onUpdate }: ExerciseRowProps) {
           title="Edit prescription"
         >
           <Settings2 className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDuplicate}
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+          title="Duplicate exercise"
+        >
+          <Copy className="h-3.5 w-3.5" />
         </Button>
         <Button
           variant="ghost"

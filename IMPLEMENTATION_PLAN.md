@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 46
+- Completed: 47
 - In progress: 0
 
 ## Tasks
@@ -210,7 +210,7 @@
   - Spec: specs/04-program-builder.md, specs/12-rpe-rir-support.md
   - Acceptance: All 6 prescription types show correct input fields
 
-- [ ] **Task 7.6**: Add week/day/exercise duplication in program builder
+- [x] **Task 7.6**: Add week/day/exercise duplication in program builder
   - Spec: specs/04-program-builder.md
   - Acceptance: Duplicate week copies all days/exercises, duplicate day copies exercises
 
