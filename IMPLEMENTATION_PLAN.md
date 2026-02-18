@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 104
+- Completed: 105
 - In progress: 0
-- Remaining: 76 (7 original + 97 new from spec review)
+- Remaining: 75 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -357,7 +357,7 @@
 
 ### Priority 16: Railway Deployment & Live Testing
 
-- [ ] **Task 16.1**: Configure Railway PostgreSQL plugin and environment variables
+- [x] **Task 16.1**: Configure Railway PostgreSQL plugin and environment variables
   - Spec: (none — infrastructure)
   - Acceptance: Railway project has PostgreSQL plugin provisioned. `DATABASE_URL`, `DIRECT_URL` (if needed) environment variables set in Railway dashboard. `.env.example` documents all required env vars. Railway build succeeds with `npx prisma generate` in build step.
 
