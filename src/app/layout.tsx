@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ConditionalCoachChrome } from "@/components/layout/ConditionalCoachChrome";
 import { Toaster } from "sonner";
+import { Agentation } from "agentation";
 
 export const metadata: Metadata = {
   title: "Cannoli Trainer",
@@ -48,6 +49,7 @@ export default function RootLayout({
             className: "text-sm",
           }}
         />
+        {process.env.NODE_ENV === "development" && <Agentation />}
       </body>
     </html>
   );

@@ -1,10 +1,10 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 180
+- Total tasks: 185
 - Completed: 155
 - In progress: 0
-- Remaining: 25
+- Remaining: 30
 
 ## Tasks
 
@@ -599,6 +599,26 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Set `SEED_ATHLETE_EMAIL` env var on Railway, re-run seed to link an athlete to a User record. Dev login (`ENABLE_DEV_LOGIN=true`) succeeds on production — clicking "Dev Login (Matt Alldian)" on `/athlete/login` creates a session and redirects to `/athlete`. Verify `/api/athlete/dashboard` returns 200 (not 401).
   - Note: Blocker for dev login bypass. The `authorize()` function needs at least one athlete with a non-null email linked to a User record. Without this, `CredentialsSignin` error occurs.
+
+- [ ] **Task 18.16**: Configure Resend API key and verify magic link sign-in on production
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: `AUTH_RESEND_KEY` set on Railway. `AUTH_URL` set to `https://cannoli.mattalldian.com`. `AUTH_SECRET` set. Real magic link email sent to a test athlete email, link opens and creates a valid session. Verify the full flow: enter email → receive email → click link → land on `/athlete` with valid session.
+  - Note: The Resend provider, login page, check-email page, and middleware are all implemented. This task is purely Railway env var configuration and end-to-end verification.
+
+- [ ] **Task 18.17**: Wire branded email template into NextAuth magic link emails
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Magic link emails use the branded template from `src/lib/email.ts` (Cannoli orange header, footer, CTA button) instead of NextAuth's default plain email. Configure Resend provider's `sendVerificationRequest` option to use `brandedEmailHtml()`. Verify email renders correctly in Gmail and Apple Mail.
+  - Note: `brandedEmailHtml()` and `emailCtaButton()` helpers already exist in `src/lib/email.ts` but are unused — NextAuth's Resend provider sends its own default email.
+
+- [ ] **Task 18.18**: Add service worker for PWA offline support
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: `public/sw.js` service worker caches app shell (HTML, JS, CSS bundles). Client-side registration in app layout. Athlete can "Add to Home Screen" on iOS/Android and app launches in standalone mode. Offline fallback page shown when network unavailable. Chrome DevTools > Application > Service Workers shows registered worker. Lighthouse PWA audit passes.
+  - Note: Manifest, icons, and meta tags are complete (Task 18.13). Missing service worker is the last gap — without it, PWA won't pass installability checks and won't work offline. The offline queue for set logs (`src/lib/offline-queue.ts`) already handles data persistence; this task adds the caching layer for pages and assets.
+
+- [ ] **Task 18.19**: Cache athlete workout data for offline training sessions
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Service worker caches `/api/train` response so athletes can view today's workout without network. Cache-first strategy for static assets, network-first for API data with stale fallback. Previously loaded workout history available offline. "Offline" indicator badge shown when disconnected. Syncs with offline queue on reconnect.
+  - Note: Extends Task 18.18. The offline queue (`src/lib/offline-queue.ts` + `useOfflineSync` hook) already handles queueing set log POSTs when offline. This task adds the read side — caching GET responses so athletes can see their prescribed workout and log sets even without connectivity.
 
 ### Priority 19: Athlete Management Enhancements
 
