@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 75
+- Completed: 76
 - In progress: 0
-- Remaining: 104 (7 original + 97 new from spec review)
+- Remaining: 103 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -344,7 +344,7 @@
   - Spec: specs/09-competition-prep.md
   - Acceptance: Input flight start time, generates warm-up schedule with countdown
 
-- [ ] **Task 14.4**: Create multi-athlete flight tracking view
+- [x] **Task 14.4**: Create multi-athlete flight tracking view
   - Spec: specs/09-competition-prep.md
   - Acceptance: Grid shows all athletes' warm-up progress in a single view
 

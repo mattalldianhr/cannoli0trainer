@@ -15,6 +15,7 @@ import {
   Save,
 } from 'lucide-react';
 import { WarmupCalculator } from '@/components/meets/WarmupCalculator';
+import { FlightTracker } from '@/components/meets/FlightTracker';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -308,6 +309,22 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
             )}
           </CardContent>
         </Card>
+      )}
+
+      {/* Multi-Athlete Flight Tracker */}
+      {meet.entries.length >= 2 && (
+        <FlightTracker
+          entries={meet.entries.map((entry) => ({
+            id: entry.id,
+            athleteId: entry.athleteId,
+            athleteName: entry.athleteName,
+            plannedOpeners: {
+              squat: entry.squat1 ?? undefined,
+              bench: entry.bench1 ?? undefined,
+              deadlift: entry.deadlift1 ?? undefined,
+            },
+          }))}
+        />
       )}
 
       {/* Athlete Entry Cards */}

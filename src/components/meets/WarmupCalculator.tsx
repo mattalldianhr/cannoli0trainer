@@ -18,11 +18,11 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 // Standard warm-up percentages of opener weight
-const DEFAULT_WARMUP_PERCENTAGES = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+export const DEFAULT_WARMUP_PERCENTAGES = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
 // Default time between warm-up attempts in minutes
-const DEFAULT_INTERVAL_MINUTES = 3;
+export const DEFAULT_INTERVAL_MINUTES = 3;
 
-interface WarmupSet {
+export interface WarmupSet {
   setNumber: number;
   percentage: number;
   weight: number;
@@ -30,7 +30,7 @@ interface WarmupSet {
   label: string;
 }
 
-interface WarmupSchedule {
+export interface WarmupSchedule {
   lift: string;
   opener: number;
   flightStartTime: Date;
@@ -38,11 +38,11 @@ interface WarmupSchedule {
   sets: WarmupSet[];
 }
 
-function roundToNearest(weight: number, increment: number = 2.5): number {
+export function roundToNearest(weight: number, increment: number = 2.5): number {
   return Math.round(weight / increment) * increment;
 }
 
-function generateWarmupSchedule(
+export function generateWarmupSchedule(
   lift: string,
   opener: number,
   flightStartTime: Date,
@@ -88,7 +88,7 @@ function generateWarmupSchedule(
   };
 }
 
-function formatTime(date: Date): string {
+export function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
@@ -96,7 +96,7 @@ function formatTime(date: Date): string {
   });
 }
 
-function formatCountdown(ms: number): string {
+export function formatCountdown(ms: number): string {
   if (ms <= 0) return '0:00';
   const totalSeconds = Math.ceil(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -104,7 +104,7 @@ function formatCountdown(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function getSetStatus(
+export function getSetStatus(
   set: WarmupSet,
   now: Date
 ): 'upcoming' | 'current' | 'past' {
