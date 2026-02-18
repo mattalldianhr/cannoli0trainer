@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 116
+- Completed: 117
 - In progress: 0
-- Remaining: 63
+- Remaining: 62
 
 ## Tasks
 
@@ -630,7 +630,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: CTA buttons/FAB with links to key pages. Visible on mobile.
 
-- [ ] **Task 22.2**: Add skeleton loading states for all dashboard sections
+- [x] **Task 22.2**: Add skeleton loading states for all dashboard sections
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Pulse-animated placeholders in Suspense boundaries. No layout shift.
 
