@@ -68,6 +68,7 @@ model Coach {
   athletes  Athlete[]
   programs  Program[]
   exercises Exercise[]
+  meets     CompetitionMeet[]
 }
 
 model Athlete {
@@ -90,6 +91,8 @@ model Athlete {
 
   programAssignments ProgramAssignment[]
   setLogs            SetLog[]
+  bodyweightLogs     BodyweightLog[]
+  meetEntries        MeetEntry[]
 }
 
 model Program {
@@ -187,4 +190,50 @@ model SetLog {
 
   workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   athlete         Athlete         @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+}
+
+model BodyweightLog {
+  id        String     @id @default(uuid())
+  athleteId String
+  weight    Float
+  unit      WeightUnit @default(lbs)
+  loggedAt  DateTime   @default(now())
+
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+}
+
+model CompetitionMeet {
+  id         String   @id @default(uuid())
+  coachId    String
+  name       String
+  federation String?
+  date       DateTime
+  location   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  coach   Coach       @relation(fields: [coachId], references: [id])
+  entries MeetEntry[]
+}
+
+model MeetEntry {
+  id          String  @id @default(uuid())
+  meetId      String
+  athleteId   String
+  weightClass String?
+  squat1      Float?
+  squat2      Float?
+  squat3      Float?
+  bench1      Float?
+  bench2      Float?
+  bench3      Float?
+  deadlift1   Float?
+  deadlift2   Float?
+  deadlift3   Float?
+  openers     Json?
+  warmupPlan  Json?
+  notes       String? @db.Text
+
+  meet    CompetitionMeet @relation(fields: [meetId], references: [id], onDelete: Cascade)
+  athlete Athlete         @relation(fields: [athleteId], references: [id], onDelete: Cascade)
 }
