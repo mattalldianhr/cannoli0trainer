@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 73
+- Completed: 74
 - In progress: 0
 
 ## Tasks
@@ -335,7 +335,7 @@
   - Spec: specs/09-competition-prep.md
   - Acceptance: List meets, create new meet with name/date/location/federation
 
-- [ ] **Task 14.2**: Create meet detail page with athlete entries and attempt planning
+- [x] **Task 14.2**: Create meet detail page with athlete entries and attempt planning
   - Spec: specs/09-competition-prep.md
   - Acceptance: Add athletes, set planned attempts for SBD
 
