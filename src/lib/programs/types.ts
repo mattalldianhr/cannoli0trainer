@@ -429,6 +429,35 @@ export function programResponseToForm(data: ProgramWithDetails): ProgramFormStat
   };
 }
 
+/**
+ * Convert a template's API data into a new program form state.
+ * Copies the structure (weeks, days, exercises, prescriptions) but strips
+ * all database IDs so it saves as a brand-new program.
+ * Loads are preserved from the template (templates already have loads nulled).
+ */
+export function templateToNewProgramForm(data: ProgramWithDetails): ProgramFormState {
+  const form = programResponseToForm(data);
+  return {
+    ...form,
+    id: undefined,
+    name: '',
+    description: '',
+    type: 'individual',
+    isTemplate: false,
+    weeks: form.weeks.map((week) => ({
+      ...week,
+      days: week.days.map((day) => ({
+        ...day,
+        workoutId: undefined,
+        exercises: day.exercises.map((ex) => ({
+          ...ex,
+          workoutExerciseId: undefined,
+        })),
+      })),
+    })),
+  };
+}
+
 /** Convert WorkoutExerciseData fields into the correct PrescriptionValues union */
 function exerciseDataToPrescription(ex: WorkoutExerciseData): PrescriptionValues {
   switch (ex.prescriptionType) {

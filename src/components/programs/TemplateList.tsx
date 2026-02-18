@@ -206,6 +206,12 @@ export function TemplateList({ templates }: TemplateListProps) {
 
                     {/* Right: actions */}
                     <div className="flex items-center gap-2 shrink-0">
+                      <Button size="sm" asChild>
+                        <Link href={`/programs/new?templateId=${template.id}`}>
+                          <Plus className="h-4 w-4 mr-1" />
+                          Use
+                        </Link>
+                      </Button>
                       <Button variant="ghost" size="sm" asChild>
                         <Link href={`/programs/${template.id}`}>
                           <Copy className="h-4 w-4" />

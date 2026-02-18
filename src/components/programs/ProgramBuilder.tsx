@@ -44,6 +44,7 @@ import {
   createDefaultPrescription,
   programFormToPayload,
   programResponseToForm,
+  templateToNewProgramForm,
 } from '@/lib/programs/types';
 import { ExercisePicker } from './ExercisePicker';
 
@@ -54,15 +55,19 @@ interface ProgramBuilderProps {
   coachId: string;
   /** If provided, the builder starts in edit mode with this program loaded */
   initialProgram?: ProgramWithDetails;
+  /** If provided, the builder pre-populates from this template as a new program */
+  templateProgram?: ProgramWithDetails;
 }
 
-export function ProgramBuilder({ coachId, initialProgram }: ProgramBuilderProps) {
+export function ProgramBuilder({ coachId, initialProgram, templateProgram }: ProgramBuilderProps) {
   const router = useRouter();
   const isEditMode = !!initialProgram;
 
-  const [program, setProgram] = useState<ProgramFormState>(() =>
-    initialProgram ? programResponseToForm(initialProgram) : createDefaultProgramForm()
-  );
+  const [program, setProgram] = useState<ProgramFormState>(() => {
+    if (initialProgram) return programResponseToForm(initialProgram);
+    if (templateProgram) return templateToNewProgramForm(templateProgram);
+    return createDefaultProgramForm();
+  });
 
   // Save state
   const [saving, setSaving] = useState(false);
@@ -429,9 +434,16 @@ export function ProgramBuilder({ coachId, initialProgram }: ProgramBuilderProps)
             Back
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {isEditMode ? 'Edit Program' : 'New Program'}
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {isEditMode ? 'Edit Program' : 'New Program'}
+          </h1>
+          {templateProgram && (
+            <p className="text-sm text-muted-foreground">
+              From template: {templateProgram.name}
+            </p>
+          )}
+        </div>
         <div className="ml-auto flex items-center gap-3">
           {saveError && (
             <span className="text-sm text-destructive">{saveError}</span>

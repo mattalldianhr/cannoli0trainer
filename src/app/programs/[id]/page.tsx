@@ -5,7 +5,7 @@ import { Container } from '@/components/layout/Container';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Pencil, Dumbbell } from 'lucide-react';
+import { ArrowLeft, Pencil, Dumbbell, Plus } from 'lucide-react';
 import { PRESCRIPTION_TYPE_LABELS } from '@/lib/programs/types';
 import type { PrescriptionType } from '@prisma/client';
 import { AssignAthletes } from '@/components/programs/AssignAthletes';
@@ -83,6 +83,14 @@ export default async function ProgramDetailPage({
             <p className="text-muted-foreground mt-1">{program.description}</p>
           )}
         </div>
+        {program.isTemplate && (
+          <Button asChild>
+            <Link href={`/programs/new?templateId=${program.id}`}>
+              <Plus className="h-4 w-4 mr-2" />
+              Use Template
+            </Link>
+          </Button>
+        )}
         {!program.isTemplate && (
           <>
             <SaveAsTemplate
@@ -96,7 +104,7 @@ export default async function ProgramDetailPage({
             />
           </>
         )}
-        <Button asChild>
+        <Button variant={program.isTemplate ? 'outline' : 'default'} asChild>
           <Link href={`/programs/${program.id}/edit`}>
             <Pencil className="h-4 w-4 mr-2" />
             Edit

@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 52
+- Completed: 53
 - In progress: 0
 
 ## Tasks
@@ -236,7 +236,7 @@
   - Spec: specs/11-template-system.md
   - Acceptance: Lists templates with metadata, search, and filter by periodization type
 
-- [ ] **Task 8.3**: Add "Create from Template" flow
+- [x] **Task 8.3**: Add "Create from Template" flow
   - Spec: specs/11-template-system.md
   - Acceptance: Creates new program from template structure without athlete-specific loads
 
