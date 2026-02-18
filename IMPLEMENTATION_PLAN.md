@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 32
+- Completed: 33
 - In progress: 0
 
 ## Tasks
@@ -148,7 +148,7 @@
   - Spec: specs/09-competition-prep.md
   - Acceptance: POST/GET/PUT work, includes meet entries with athlete data
 
-- [ ] **Task 4.8**: Create program assignment API (`/api/programs/[id]/assign`)
+- [x] **Task 4.8**: Create program assignment API (`/api/programs/[id]/assign`)
   - Spec: specs/04-program-builder.md
   - Acceptance: POST assigns program to athlete(s), creates ProgramAssignment records
 
