@@ -1,0 +1,12 @@
+**Task 1.1 complete.** Added 5 Prisma enums to `prisma/schema.prisma`:
+
+| Enum | Values |
+|------|--------|
+| `ExperienceLevel` | beginner, intermediate, advanced |
+| `PrescriptionType` | percentage, rpe, rir, velocity, autoregulated, fixed |
+| `WeightUnit` | kg, lbs |
+| `ProgramType` | individual, template, group |
+| `PeriodizationType` | block, dup, linear, rpe_based, hybrid |
+
+All validation passed: `prisma validate`, `tsc --noEmit`, and `npm run build`. Committed as `6e82a16`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

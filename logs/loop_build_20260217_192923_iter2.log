@@ -1,0 +1,9 @@
+**Task 1.2 complete.** Added the `Coach` model to `prisma/schema.prisma` with:
+- `id` (UUID PK with `@default(uuid())`)
+- `name` (String)
+- `email` (String, `@unique`)
+- `brandName` (optional String)
+- `createdAt` / `updatedAt` timestamps
+
+All validations pass: `prisma validate`, `prisma generate`, `tsc --noEmit`, and `npm run build`. Committed as `a550a8f`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

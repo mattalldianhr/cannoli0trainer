@@ -1,0 +1,10 @@
+**Task 1.5 complete.** Added the `SetLog` model to the Prisma schema with:
+- `id` (UUID PK), `workoutExerciseId` (FK), `athleteId` (FK)
+- `setNumber`, `reps`, `weight`, `unit` (WeightUnit enum)
+- `rpe` (optional Float), `rir` (optional Int), `velocity` (optional Float)
+- `completedAt`, `notes`
+- Cascade deletes on both FK relations
+- Back-references added to `Athlete` and `WorkoutExercise` models
+
+All validations passed: `prisma validate`, `prisma generate`, `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

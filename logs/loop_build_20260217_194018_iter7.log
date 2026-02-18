@@ -1,0 +1,19 @@
+**Task 1.7 complete.** Added 16 `@@index` directives across all 10 models with foreign keys:
+
+| Model | Indexes Added |
+|---|---|
+| Athlete | `coachId` |
+| Program | `coachId` |
+| ProgramAssignment | `programId`, `athleteId`, `@@unique([programId, athleteId])` |
+| Workout | `programId` |
+| Exercise | `coachId` |
+| WorkoutExercise | `workoutId`, `exerciseId` |
+| SetLog | `workoutExerciseId`, `athleteId`, `[athleteId, completedAt]` (compound) |
+| BodyweightLog | `athleteId` |
+| CompetitionMeet | `coachId` |
+| MeetEntry | `meetId`, `athleteId` |
+
+Bonus: Added a compound unique constraint on `ProgramAssignment(programId, athleteId)` to prevent duplicate assignments, and a compound index on `SetLog(athleteId, completedAt)` for efficient training history queries.
+
+All validations pass: `prisma validate`, `prisma generate`, `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -195,6 +195,11 @@ model WorkoutExercise {
   prescribedRIR    Int?
   velocityTarget   Float?
   percentageOf1RM  Float?
+  supersetGroup    String?
+  supersetColor    String?
+  isUnilateral     Boolean          @default(false)
+  restTimeSeconds  Int?
+  tempo            String?
   notes            String?          @db.Text
 
   workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)

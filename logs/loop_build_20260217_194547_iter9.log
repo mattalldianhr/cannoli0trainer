@@ -1,0 +1,19 @@
+**Task 1.9 complete.** Here's what was added:
+
+**New enums:**
+- `WorkoutSessionStatus` — NOT_STARTED, PARTIALLY_COMPLETED, FULLY_COMPLETED
+- `MaxSnapshotSource` — WORKOUT, MANUAL, IMPORT
+
+**WorkoutSession model** — per-athlete per-date session metadata:
+- Fields: athleteId, date, programId (optional), title, durationSeconds, completionPercentage, completedItems, totalItems, status
+- Unique constraint on `[athleteId, date]` (one session per athlete per day)
+- Indexes on athleteId, [athleteId, date], programId
+- Relations to Athlete (cascade delete) and Program (set null on delete)
+
+**MaxSnapshot model** — point-in-time exercise max records:
+- Fields: athleteId, exerciseId, date, workingMax, generatedMax (optional), isCurrentMax, source
+- Indexes on athleteId, exerciseId, [athleteId, exerciseId], [athleteId, date]
+- Relations to Athlete (cascade delete) and Exercise
+
+All validation passed: `prisma validate`, `prisma generate`, `tsc --noEmit`, `npm run build`. Migration applied successfully.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

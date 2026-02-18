@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 10
+- Completed: 11
 - In progress: 0
 
 ## Tasks
@@ -46,7 +46,7 @@
   - Acceptance: `npx prisma validate` passes, both models have proper relations and indexes
   - Note: Moved from old Priority 13 (Task 13.1). Required before data seeding.
 
-- [ ] **Task 1.10**: Add superset, unilateral, rest, tempo fields to WorkoutExercise model
+- [x] **Task 1.10**: Add superset, unilateral, rest, tempo fields to WorkoutExercise model
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, WorkoutExercise has supersetGroup, supersetColor, isUnilateral, restTimeSeconds, tempo fields
   - Note: Moved from old Priority 13 (Task 13.2). Required before TeamBuildr import.

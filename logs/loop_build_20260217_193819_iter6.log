@@ -1,0 +1,8 @@
+**Task 1.6 complete.** Added three models to the Prisma schema:
+
+- **BodyweightLog** — tracks athlete bodyweight over time (athleteId FK, weight, unit, loggedAt)
+- **CompetitionMeet** — stores meet details (coachId FK, name, federation, date, location)
+- **MeetEntry** — individual athlete entries per meet with 9 attempt fields (squat 1-3, bench 1-3, deadlift 1-3), openers JSON, warmupPlan JSON, notes
+
+All reverse relations added to Coach and Athlete models. Cascade deletes configured on meet→entries and athlete→entries/bodyweightLogs. All validation passed (`prisma validate`, `prisma generate`, `tsc --noEmit`, `npm run build`).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

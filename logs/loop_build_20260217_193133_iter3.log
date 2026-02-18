@@ -1,0 +1,11 @@
+**Task 1.3 complete.** 
+
+Created the `Athlete` model in `prisma/schema.prisma` with:
+- UUID primary key (`@default(uuid())`)
+- `coachId` FK with relation to `Coach`
+- All profile fields: `name`, `email`, `bodyweight`, `weightClass`, `experienceLevel` (enum, defaults to `intermediate`), `isRemote` (defaults `true`), `isCompetitor` (defaults `false`), `federation`, `notes` (text), `metadata` (JSON)
+- `createdAt`/`updatedAt` timestamps
+- Added `athletes Athlete[]` relation on the `Coach` model
+
+All validations pass: `prisma validate`, `tsc --noEmit`, and `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

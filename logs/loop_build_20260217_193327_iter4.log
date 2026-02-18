@@ -1,0 +1,12 @@
+**Task 1.4 complete.** Added five models to the Prisma schema:
+
+| Model | Key Fields | Relations |
+|---|---|---|
+| **Program** | name, type, periodizationType, isTemplate, dates | Coach → many Programs, Program → many Workouts & Assignments |
+| **ProgramAssignment** | assignedAt, startDate, endDate | Links Program ↔ Athlete (cascade delete) |
+| **Workout** | name, dayNumber, weekNumber, notes | Program → many Workouts (cascade), Workout → many WorkoutExercises |
+| **Exercise** | name, category, videoUrl, cues, tags (JSON) | Coach → many Exercises, Exercise → many WorkoutExercises |
+| **WorkoutExercise** | order, prescriptionType, all 6 prescription fields | Links Workout ↔ Exercise, supports RPE/RIR/%1RM/velocity/auto/fixed |
+
+**Validation**: `prisma validate` ✓, `tsc --noEmit` ✓, `npm run build` ✓. Lint has a pre-existing issue with Next.js 16 noted in Discoveries.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
