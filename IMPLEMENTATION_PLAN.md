@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 54
+- Completed: 55
 - In progress: 0
 
 ## Tasks
@@ -246,7 +246,7 @@
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Component renders scale, supports selection, shows RPE descriptions
 
-- [ ] **Task 9.2**: Create RPE reference chart popover component
+- [x] **Task 9.2**: Create RPE reference chart popover component
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Info icon opens popover showing RPE 1-10 with descriptions
 
