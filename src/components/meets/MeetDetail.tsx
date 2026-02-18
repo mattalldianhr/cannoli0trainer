@@ -14,6 +14,7 @@ import {
   Trash2,
   Save,
 } from 'lucide-react';
+import { WarmupCalculator } from '@/components/meets/WarmupCalculator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -451,6 +452,20 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                   {entry.notes}
                 </p>
               )}
+
+              {/* Warm-up Calculator */}
+              <div className="mt-4">
+                <WarmupCalculator
+                  athleteName={entry.athleteName}
+                  entryId={entry.id}
+                  estimatedMaxes={entry.estimatedMaxes}
+                  plannedOpeners={{
+                    squat: entry.squat1 ?? undefined,
+                    bench: entry.bench1 ?? undefined,
+                    deadlift: entry.deadlift1 ?? undefined,
+                  }}
+                />
+              </div>
             </CardContent>
           </Card>
         );

@@ -1,9 +1,10 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 82
-- Completed: 74
+- Total tasks: 179
+- Completed: 75
 - In progress: 0
+- Remaining: 104 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -339,7 +340,7 @@
   - Spec: specs/09-competition-prep.md
   - Acceptance: Add athletes, set planned attempts for SBD
 
-- [ ] **Task 14.3**: Build warm-up timing calculator and countdown timer
+- [x] **Task 14.3**: Build warm-up timing calculator and countdown timer
   - Spec: specs/09-competition-prep.md
   - Acceptance: Input flight start time, generates warm-up schedule with countdown
 
@@ -442,3 +443,442 @@ Validation script at `scripts/validate-import.ts` runs 42 checks (aggregate, per
 - All subsequent priorities renumbered (old P2→P3, old P3→P4, etc.)
 - Two new data sources: (1) TeamBuildr 37 MB export (5 athletes, 2,033 dates) and (2) free-exercise-db (800+ exercises, public domain)
 - Net change: 66 → 70 tasks (added 8 seeding tasks, removed 1 old seed task, consolidated 5 old migration tasks into new structure)
+
+### Spec Review & Deferred Features Expansion (2026-02-18)
+
+Systematic review of all 12 specs, PRD, implementation plan, and 11 research documents revealed 97 additional tasks across 17 new priority groups (17-33). These cover:
+- **Critical gaps**: Workout scheduling (no mechanism to map program days to calendar dates), authentication (no auth exists), messaging (WhatsApp dependency), athlete progress visibility (athletes can't see their own data)
+- **Deferred features**: Every spec had Phase 2 / deferred features that were identified but never tasked
+- **Implied features**: 27 implied features found by cross-referencing specs (empty states, toasts, validation, error boundaries, pagination, confirm dialogs, etc.)
+- **Athlete experience gaps**: Research review found 4 new specs needed; 2 HIGH priority specs written (Athlete Progress Dashboard, Coach-Athlete Messaging)
+
+New specs created: 13 (Scheduling), 14 (Notifications), 15 (Athlete Progress Dashboard), 16 (Coach-Athlete Messaging)
+Updated specs: 02, 03, 04, 05, 06, 07, 08, 09, 10, 12
+
+Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
+
+---
+
+## Phase 2: Extended Features (Priorities 17-33)
+
+### Priority 17: Workout Scheduling & Calendar
+
+- [ ] **Task 17.1**: Add scheduling fields to ProgramAssignment and WorkoutSession in Prisma schema
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: ProgramAssignment gains `trainingDays` (Json, default `[1,2,4,5]`) and `isActive` (Boolean, default true). WorkoutSession gains `workoutId` (FK -> Workout, optional), `programAssignmentId` (FK -> ProgramAssignment, optional), `isManuallyScheduled` (Boolean, default false), `isSkipped` (Boolean, default false), `weekNumber` (Int?), `dayNumber` (Int?). Migration runs successfully. `npx prisma validate` passes.
+
+- [ ] **Task 17.2**: Implement schedule generation service at `src/lib/scheduling/generate-schedule.ts`
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: Pure function `generateSchedule(workouts, startDate, trainingDays)` returns an array of `{ date, workoutId, weekNumber, dayNumber, title }` objects. Maps abstract Week/Day pairs to concrete calendar dates using training day config. Handles programs where days-per-week exceeds training days (spillover). Handles programs where days-per-week is less than training days (rest gaps). Unit tested with at least 5 test cases covering 3-day, 4-day, 5-day, and spillover scenarios.
+
+- [ ] **Task 17.3**: Implement schedule persistence — create WorkoutSessions from generated schedule
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: `persistSchedule(athleteId, programId, programAssignmentId, schedule)` creates WorkoutSession records in a transaction. Links each session to the source Workout via `workoutId` and to the assignment via `programAssignmentId`. Idempotent — skips dates where a session already exists. Returns count of created/skipped sessions.
+
+- [ ] **Task 17.4**: Integrate scheduling into program assignment API (`/api/programs/[id]/assign`)
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: POST to `/api/programs/[id]/assign` with `{ athleteId, startDate, trainingDays? }` creates ProgramAssignment AND generates WorkoutSessions. If `trainingDays` is omitted, defaults to `[1,2,4,5]`. Response includes count of generated sessions. Integration test: assign a 4-week/4-day program and verify 16 WorkoutSessions are created on correct dates.
+
+- [ ] **Task 17.5**: Add conflict detection for overlapping program assignments
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: Before generating sessions, check for existing WorkoutSessions on the target dates for the athlete. If conflicts found, return them in the API response. Coach can choose to proceed (overwrite) or cancel.
+
+- [ ] **Task 17.6**: Implement reassignment cleanup — delete future NOT_STARTED sessions on assignment removal
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: When a ProgramAssignment is deleted (or `isActive` set to false), delete all WorkoutSessions where `programAssignmentId` matches AND `status = NOT_STARTED` AND `date >= today`. Preserve sessions with status `PARTIALLY_COMPLETED` or `FULLY_COMPLETED`.
+
+- [ ] **Task 17.7**: Enhance `/api/train` to return `nextSession` when no workout exists for today
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: When no WorkoutSession exists for the requested date, the response includes `nextSession: { date, title, programName }` by querying the next upcoming NOT_STARTED session.
+
+- [ ] **Task 17.8**: Create coach calendar page at `/schedule` with weekly view
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: Page renders a 7-day week grid. Rows are athletes (filterable). Columns are Monday-Sunday. Each cell shows the WorkoutSession title for that athlete+date, or empty for rest days. Current week shown by default. Forward/backward navigation changes the displayed week.
+
+- [ ] **Task 17.9**: Create schedule API route at `/api/schedule`
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: GET `/api/schedule?startDate=...&endDate=...&athleteId=all` returns athletes with their sessions for the date range. Supports filtering by athleteId.
+
+- [ ] **Task 17.10**: Implement manual workout move on calendar
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: Coach can move a workout from one date to another via the calendar UI. Moving updates the WorkoutSession's `date` field and sets `isManuallyScheduled = true`. If the target date already has a session, swap the two sessions' dates.
+
+- [ ] **Task 17.11**: Implement skip workout action on calendar
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: Coach can mark a workout as skipped. Sets `isSkipped = true`. Skipped sessions appear visually distinct (strikethrough or dimmed). Only NOT_STARTED sessions can be skipped.
+
+- [ ] **Task 17.12**: Add training day selector to program assignment dialog
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: "Assign to Athlete" flow gains a training day configuration UI. Shows 7 day-of-week checkboxes with Mon/Tue/Thu/Fri pre-checked. Presets available: "4-Day", "3-Day", "5-Day", "Custom".
+
+- [ ] **Task 17.13**: Unit test scheduling service with edge cases
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: Tests cover standard, spillover, mid-week start, empty program, and weekend scenarios. All pass with `npx vitest run`.
+
+- [ ] **Task 17.14**: Integration test full assignment-to-train flow
+  - Spec: specs/13-workout-scheduling-calendar.md
+  - Acceptance: End-to-end: create program, assign to athlete, verify WorkoutSessions created, call `/api/train` for scheduled date, verify correct exercises returned.
+
+### Priority 18: Authentication & Athlete Portal
+
+- [ ] **Task 18.1**: Install NextAuth v5, Prisma adapter, and Resend; configure auth
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: `next-auth@5`, `@auth/prisma-adapter`, `resend` installed. `src/lib/auth.ts` exports auth config. API route at `src/app/api/auth/[...nextauth]/route.ts`. `.env.example` documents all auth env vars. `npm run build` passes.
+
+- [ ] **Task 18.2**: Add NextAuth models to Prisma schema and link Athlete to User
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: `User`, `Account`, `Session`, `VerificationToken` models added. `Athlete` gets optional `userId String? @unique`. Migration runs.
+
+- [ ] **Task 18.3**: Build athlete login page at `/athlete/login` with magic link form
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Email input + "Send Login Link" button. Success redirects to `/athlete/check-email`. Error shows inline message. Mobile-optimized.
+
+- [ ] **Task 18.4**: Build "Check your email" confirmation page at `/athlete/check-email`
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Confirmation message, email provider hints, "Try again" link.
+
+- [ ] **Task 18.5**: Add Next.js middleware to protect `/athlete/*` routes
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: `src/middleware.ts` protects all `/athlete/*` routes except login and check-email. Unauthenticated requests redirect to `/athlete/login`. Coach routes unaffected.
+
+- [ ] **Task 18.6**: Create athlete layout with mobile bottom navigation
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Bottom nav with 4 tabs (Dashboard, Train, Calendar, History), SessionProvider, Cannoli branding, 44px tap targets.
+
+- [ ] **Task 18.7**: Build athlete dashboard page at `/athlete`
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Hero card with today's workout, quick stats (streak, weekly workouts, completion rate), last 3 sessions.
+
+- [ ] **Task 18.8**: Build athlete training view at `/athlete/train` reusing TrainingLog
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: TrainingLog with `mode: 'athlete'` (no athlete selector). All existing functionality works with authenticated athlete session.
+
+- [ ] **Task 18.9**: Build athlete calendar view at `/athlete/calendar`
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Weekly calendar with workout indicators, completion %, month toggle. Past from WorkoutSession, future from ProgramAssignment.
+
+- [ ] **Task 18.10**: Build athlete history view at `/athlete/history`
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Reverse-chronological WorkoutSession list, tap to expand, pagination (20 per page).
+
+- [ ] **Task 18.11**: Send email notification on program assignment
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Resend email with program name, start date, link to `/athlete/train`. Fire-and-forget.
+
+- [ ] **Task 18.12**: Send email notification on workout completion
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: Email to coach with athlete name, workout name, completion %. Only on transition to FULLY_COMPLETED.
+
+- [ ] **Task 18.13**: Add PWA manifest and mobile meta tags for "Add to Home Screen"
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: `public/manifest.json`, meta tags, apple-touch-icon. Chrome DevTools shows valid manifest.
+
+- [ ] **Task 18.14**: Seed test athlete with email for auth testing
+  - Spec: specs/10-remote-program-delivery.md
+  - Acceptance: At least one athlete seeded with real email. Linked to User if exists.
+
+### Priority 19: Athlete Management Enhancements
+
+- [ ] **Task 19.1**: Implement bulk program assignment for multiple athletes
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: Checkboxes on athlete rows, bulk "Assign Program" action, program picker dialog, success toast. Existing assignments skipped.
+
+- [ ] **Task 19.2**: Add bodyweight trend chart to athlete profile page
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: Line chart on `/athletes/[id]` when BodyweightLog data exists. Recharts, 90-day default. Hidden when no data.
+
+- [ ] **Task 19.3**: Add per-athlete analytics link on athlete profile
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: "View Analytics" button navigates to `/analytics?athleteId=[id]`.
+
+### Priority 20: Exercise Library Enhancements
+
+- [ ] **Task 20.1**: Implement tag filter UI on exercise library page
+  - Spec: specs/05-exercise-library.md
+  - Acceptance: Tag filter alongside category filter. Multi-select chips. AND logic with category filter.
+
+- [ ] **Task 20.2**: Implement edit exercise form
+  - Spec: specs/05-exercise-library.md
+  - Acceptance: Edit button, pre-populated form, PUT `/api/exercises/[id]`, shared form component.
+
+- [ ] **Task 20.3**: Implement delete exercise with usage protection
+  - Spec: specs/05-exercise-library.md
+  - Acceptance: Usage check before delete. Warning if referenced. Confirmation if unreferenced.
+
+### Priority 21: Training Log Enhancements
+
+- [ ] **Task 21.1**: Implement rest timer between sets
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: Rest timer after completing a set. Defaults to WorkoutExercise.restTimeSeconds or 120s. Start/pause/dismiss controls. Audio/vibration at zero.
+
+- [ ] **Task 21.2**: Add per-exercise notes field for athlete comments
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: Collapsible "Notes" textarea per exercise. Persisted. Coach-visible.
+
+- [ ] **Task 21.3**: Document offline queueing approach (stretch goal)
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: Design doc describing localStorage queue strategy, background sync, pending indicator.
+
+- [ ] **Task 21.4**: Implement offline queue for set logs with localStorage
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: Failed POSTs saved to localStorage. Replayed on connectivity. "N sets pending sync" badge. 100 entry limit.
+
+### Priority 22: Dashboard Quick Actions & Loading States
+
+- [ ] **Task 22.1**: Build quick action buttons (create program, add athlete, view analytics)
+  - Spec: specs/02-coach-dashboard.md
+  - Acceptance: CTA buttons/FAB with links to key pages. Visible on mobile.
+
+- [ ] **Task 22.2**: Add skeleton loading states for all dashboard sections
+  - Spec: specs/02-coach-dashboard.md
+  - Acceptance: Pulse-animated placeholders in Suspense boundaries. No layout shift.
+
+### Priority 23: Program Overview, Notes, Auto-Save
+
+- [ ] **Task 23.1**: Build program overview compact grid showing weekly structure at a glance
+  - Spec: specs/04-program-builder.md
+  - Acceptance: Weeks as rows, days as columns, exercise count per cell, click to navigate.
+
+- [ ] **Task 23.2**: Surface notes fields at exercise, day, and program levels
+  - Spec: specs/04-program-builder.md
+  - Acceptance: Program description, day notes, exercise notes. Note icon when collapsed with content. Persisted on save.
+
+- [ ] **Task 23.3**: Implement auto-save with dirty state tracking and save indicator
+  - Spec: specs/04-program-builder.md
+  - Acceptance: 2s debounce save, "Saving..."/"All changes saved" indicator, beforeunload warning.
+
+### Priority 24: Analytics Enhancements
+
+- [ ] **Task 24.1**: Build RPE distribution histogram and RPE accuracy metric
+  - Spec: specs/07-progress-analytics.md
+  - Acceptance: Bar chart of set count per RPE bin, filterable by exercise. Accuracy metric from rpe-table reverse lookup.
+
+- [ ] **Task 24.2**: Build athlete comparison view (overlay 2-3 athletes on same chart)
+  - Spec: specs/07-progress-analytics.md
+  - Acceptance: Multi-select dropdown, overlaid color-coded trend lines, max 3 athletes.
+
+- [ ] **Task 24.3**: Embed per-athlete analytics on athlete profile page
+  - Spec: specs/07-progress-analytics.md
+  - Acceptance: Analytics tab on `/athletes/[id]` with pre-filtered charts. Link to full analytics.
+
+### Priority 25: VBT Fatigue Tracking
+
+- [ ] **Task 25.1**: Implement within-session velocity loss display per exercise
+  - Spec: specs/08-vbt-integration.md
+  - Acceptance: Velocity drop % from set 1 to final set. Flag when >20%. "N/A" for <2 velocity sets.
+
+- [ ] **Task 25.2**: Build cross-session velocity trend chart (week-over-week fatigue)
+  - Spec: specs/08-vbt-integration.md
+  - Acceptance: Line chart of mean velocity at ~80% 1RM over weeks. Alert on >5% week-over-week drop. Requires 3+ weeks of data.
+
+### Priority 26: Competition Results Enhancements
+
+- [ ] **Task 26.1**: Build post-meet results entry UI with make/miss per attempt
+  - Spec: specs/09-competition-prep.md
+  - Acceptance: 3 attempts per lift per athlete with good/miss toggle. Auto-calculate best attempt and total. Results in MeetEntry `attemptResults` JSON.
+
+- [ ] **Task 26.2**: Build meet results summary with DOTS and Wilks scores
+  - Spec: specs/09-competition-prep.md
+  - Acceptance: Results card per athlete with best attempts, total, DOTS, Wilks. Uses `powerlifting-formulas` package. Handles missed lifts.
+
+### Priority 27: RPE/RIR Enhancements
+
+- [ ] **Task 27.1**: Build RPE history chart on athlete analytics (RPE over time per exercise)
+  - Spec: specs/12-rpe-rir-support.md
+  - Acceptance: Scatter + trend line chart of RPE values over time. Filterable by exercise. Individual sets as scatter points, moving average as trend line.
+
+- [ ] **Task 27.2**: Implement RPE accuracy metric (reported vs estimated effort)
+  - Spec: specs/12-rpe-rir-support.md
+  - Acceptance: `lib/analytics/rpe-accuracy.ts` exports `calculateRpeAccuracy()`. Compares reported RPE to estimated via rpe-table reverse lookup. Per-exercise and aggregate "avg +/- X RPE" metric. Trend chart. Unit tested.
+
+- [ ] **Task 27.3**: Build autoregulated prescription display and RIR co-display
+  - Spec: specs/12-rpe-rir-support.md
+  - Acceptance: "Work up to RPE X, then -Y%" when `prescriptionType = autoregulated`. RPE/RIR co-display (e.g., "RPE 8 / 2 RIR"). `RPEWithRIR` shared component. Half-increments supported.
+
+### Priority 28: Infrastructure & Data Integrity
+
+- [ ] **Task 28.1**: Create Notification model and database migration
+  - Spec: specs/14-notifications.md
+  - Acceptance: `Notification` model with recipientId, recipientType, type, title, body, isRead. Migration runs. Indexed.
+
+- [ ] **Task 28.2**: Integrate email service (Resend) for transactional notifications
+  - Spec: specs/14-notifications.md
+  - Acceptance: `src/lib/email.ts` wrapping Resend SDK. Error handling (never blocks caller). Branded email templates.
+
+- [ ] **Task 28.3**: Add notification triggers to existing flows
+  - Spec: specs/14-notifications.md
+  - Acceptance: ProgramAssignment creates PROGRAM_ASSIGNED notification + email. WorkoutSession FULLY_COMPLETED creates WORKOUT_COMPLETED notification + email. Fire-and-forget.
+
+- [ ] **Task 28.4**: Add notification preferences to Coach and Athlete models
+  - Spec: specs/14-notifications.md
+  - Acceptance: Json preference fields on Coach and Athlete models. Triggers check preferences before sending email.
+
+- [ ] **Task 28.5**: Create `getCurrentCoachId()` utility and audit all queries
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: `src/lib/coach.ts` exports utility. Every coach-scoped query uses `coachId` filter. Hardcoded for now, swapped to session when auth added.
+
+- [ ] **Task 28.6**: Add `isArchived` field to Program model for soft-delete
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `isArchived Boolean @default(false)`. All list queries filter. "Archive" replaces "Delete". Hard delete only when zero assignments/sessions.
+
+- [ ] **Task 28.7**: Add `isActive` field to Athlete model for archive vs hard delete
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: `isActive Boolean @default(true)`. Default filter to active only. "Archived" tab. Reactivation supported. Hard delete only when zero data.
+
+- [ ] **Task 28.8**: Add make/miss fields to MeetEntry model
+  - Spec: specs/09-competition-prep.md
+  - Acceptance: 9 boolean fields for attempt results. UI indicators. Migration runs.
+
+### Priority 29: Settings & Preferences
+
+- [ ] **Task 29.1**: Add settings fields to Coach model
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `defaultWeightUnit`, `timezone`, `defaultRestTimerSeconds` fields. Migration runs.
+
+- [ ] **Task 29.2**: Create Settings page at `/settings`
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: Profile and preferences sections. Server action save. Success toast. Gear icon in nav.
+
+- [ ] **Task 29.3**: Create Settings API route for coach preferences
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: GET/PUT `/api/settings`. Zod validation. Returns updated coach record.
+
+- [ ] **Task 29.4**: Wire default weight unit preference into set logging
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: SetLog unit defaults to coach's `defaultWeightUnit`. UI pre-selects. Per-set override still works.
+
+- [ ] **Task 29.5**: Wire default rest timer into training log
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: Rest timer defaults to coach's `defaultRestTimerSeconds`. Per-session override still works.
+
+### Priority 30: UX Polish
+
+- [ ] **Task 30.1**: Create shared EmptyState component
+  - Spec: specs/02-coach-dashboard.md
+  - Acceptance: `src/components/ui/EmptyState.tsx` with icon, title, description, optional CTA. Centered layout.
+
+- [ ] **Task 30.2**: Add empty states to all coach pages
+  - Spec: specs/02-coach-dashboard.md
+  - Acceptance: Dashboard, athletes, programs, exercises, analytics, meets, and athlete/train all have appropriate empty states with CTAs.
+
+- [ ] **Task 30.3**: Install toast library and create toast wrapper
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: `sonner` installed. `<Toaster />` in root layout. `src/lib/toast.ts` exports `showSuccess`, `showError`, `showLoading`. Bottom-right desktop, bottom-center mobile.
+
+- [ ] **Task 30.4**: Add success and error toasts to all mutation actions
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: Every create/update/delete shows success toast. Failed API calls show error toast. No toast on set logging (too frequent).
+
+- [ ] **Task 30.5**: Add inline form validation to all forms
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: Zod schemas for all forms. Inline error messages on blur/submit. Red borders. User-friendly messages.
+
+- [ ] **Task 30.6**: Create shared ConfirmDialog component
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: Radix AlertDialog wrapper. Destructive variant. Used for archive athlete, archive program, delete exercise, delete meet, unassign program.
+
+- [ ] **Task 30.7**: Add React error boundaries to page routes
+  - Spec: specs/tasks/00-implied-features-audit.md
+  - Acceptance: `error.tsx` files for dashboard, athletes, programs, analytics, meets, athlete. "Something went wrong" + "Try again" button. Dev-only console error logging.
+
+- [ ] **Task 30.8**: Add skeleton loading states to all pages
+  - Spec: specs/02-coach-dashboard.md
+  - Acceptance: `loading.tsx` files for each route with `animate-pulse` skeleton shapes matching actual content layout.
+
+### Priority 31: Missing UI Features
+
+- [ ] **Task 31.1**: Build workout history list component for coach athlete view
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: "Training History" section on `/athletes/[id]` with paginated WorkoutSession list. Date, name, completion %, volume, duration. 20 per page.
+
+- [ ] **Task 31.2**: Build workout session detail view with prescribed vs actual comparison
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: Session detail shows Prescribed vs Actual columns per exercise. Green/yellow/red indicators. Total volume comparison.
+
+- [ ] **Task 31.3**: Add coach notes to completed workout sessions
+  - Spec: specs/03-athlete-management.md
+  - Acceptance: `coachNotes String? @db.Text` on WorkoutSession. Text area in session detail. PATCH API. Visible to both coach and athlete.
+
+- [ ] **Task 31.4**: Enable program builder edit mode for existing programs
+  - Spec: specs/04-program-builder.md
+  - Acceptance: `/programs/[id]/edit` loads existing data into builder. PUT to update. "Edit: {name}" title. Edit button on program cards.
+
+- [ ] **Task 31.5**: Add edit-in-progress warning for programs with active assignments
+  - Spec: specs/04-program-builder.md
+  - Acceptance: Warning banner when editing assigned programs. Shows count and names of assigned athletes. Editing still allowed.
+
+- [ ] **Task 31.6**: Add bodyweight logging entry point
+  - Spec: specs/07-progress-analytics.md
+  - Acceptance: "Log Bodyweight" button on athlete profile. Quick-entry form (weight, unit, date). Optional post-workout bodyweight field. POST `/api/bodyweight`.
+
+- [ ] **Task 31.7**: Add pagination to exercise library, training history, and activity feed
+  - Spec: specs/05-exercise-library.md
+  - Acceptance: Exercise library: 30 per page server-side. Dashboard feed: 20 items. Exercise picker: server-side search with debounce. Paginated response shape `{ data, total, hasMore }`.
+
+- [ ] **Task 31.8**: Display superset grouping in the training log
+  - Spec: specs/06-athlete-training-log.md
+  - Acceptance: Exercises with same `supersetGroup` visually grouped. Colored left border, "Superset" label, reduced spacing. Non-superset exercises normal.
+
+### Priority 32: Athlete Progress Dashboard
+
+- [ ] **Task 32.1**: Create athlete progress API endpoint
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: `GET /api/athlete/progress?range=8w` returns `AthleteProgressData`: e1RM trends, weekly volume, compliance, personal records, bodyweight, available exercises. Session-authenticated, scoped to athlete. Range supports `4w`, `8w`, `12w`, `all`. Unit tested.
+
+- [ ] **Task 32.2**: Build e1RM trend line chart for athlete progress page
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: Recharts LineChart of estimated 1RM over time. Exercise dropdown defaults to competition lifts. Date range selector. Reuses chart wrappers from Spec 07.
+
+- [ ] **Task 32.3**: Build weekly volume bar chart for athlete progress page
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: Recharts BarChart of weekly tonnage. Current week highlighted. Trend indicator (up/down arrow + %).
+
+- [ ] **Task 32.4**: Build compliance ring and training streak display
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: Donut chart for compliance %. Streak counter badge. Weekly and monthly compliance. Capped at 100%.
+
+- [ ] **Task 32.5**: Build personal records list component
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: All-time best per exercise from MaxSnapshot. "New PR" badge for last 7 days. Filterable by category. Sorted most recent first.
+
+- [ ] **Task 32.6**: Build bodyweight trend chart (conditional render)
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: LineChart of BodyweightLog entries. Current weight badge. Only renders with 2+ entries. Target weight class line if applicable.
+
+- [ ] **Task 32.7**: Assemble athlete progress page and update bottom navigation
+  - Spec: specs/15-athlete-progress-dashboard.md
+  - Acceptance: `/athlete/progress` page with all charts. Bottom nav updated to 5 tabs (add "Progress" with TrendingUp icon). Server component data fetch. Mobile-optimized. Full-page empty state.
+
+### Priority 33: Coach-Athlete Messaging
+
+- [ ] **Task 33.1**: Add Conversation and Message models to Prisma schema
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: `Conversation` (coachId, athleteId, lastMessageAt, unreadCounts, unique constraint) and `Message` (conversationId, senderId, senderType, content, readAt) models. `SenderType` enum. Indexes. Migration runs.
+
+- [ ] **Task 33.2**: Create messaging API routes (send, list, read, mark-read)
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: POST `/api/messages` (send), GET `/api/messages` (coach inbox), GET `/api/messages/[athleteId]` (thread, paginated), PATCH `/api/messages/[athleteId]/read` (mark read). Auto-creates conversation on first message. Auth-validated. Unit tested.
+
+- [ ] **Task 33.3**: Build conversation list (coach inbox) page
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: `/messages` page with athlete name, last message preview, timestamp, unread badge. Sorted by most recent. Polling every 30s. Empty state.
+
+- [ ] **Task 33.4**: Build message thread component (shared coach + athlete)
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: Chronological messages with date headers. Coach right-aligned, athlete left-aligned. MessageInput with Enter-to-send. Optimistic updates. Auto-scroll. "Load older" pagination. Marks as read on mount.
+
+- [ ] **Task 33.5**: Build coach message thread page and athlete profile integration
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: `/messages/[athleteId]` page with MessageThread. "Message" button on athlete profile. Conversation auto-created on first message.
+
+- [ ] **Task 33.6**: Build athlete messaging view
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: `/athlete/messages` with single conversation thread. Message icon on dashboard. FAB on other athlete pages. Empty state.
+
+- [ ] **Task 33.7**: Add unread badge to coach navigation and implement polling
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: "Messages" in coach header nav with unread badge. Badge polls every 60s. Thread polls every 10s when open. Polling pauses on page hidden.
+
+- [ ] **Task 33.8**: Implement delayed email notification for unread messages
+  - Spec: specs/16-coach-athlete-messaging.md
+  - Acceptance: 5-minute delayed check after coach sends message. If unread, email athlete via Resend. Respects mute preference. No email for athlete-to-coach messages.
