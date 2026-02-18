@@ -1,0 +1,18 @@
+## Quick Spec Review — Iteration 39
+
+**Findings: 0 new issues**
+
+Task 6.2 (Add Exercise form with video embed preview) completed cleanly — `tsc --noEmit` and `npm run build` both passed. No inconsistencies, missing items, or mismatches found.
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Carried forward** (uncommitted from earlier iterations, still valid):
+1. `specs/01-data-models-and-schema.md` — Exercise model fields expanded, WorkoutSession & MaxSnapshot models added, WorkoutExercise superset/tempo fields added
+2. `specs/05-exercise-library.md` — Categories updated to free-exercise-db taxonomy, seed count corrected from 30+ to 873
+
+Both diffs look correct and match what was actually implemented. These should be committed as a spec sync when convenient.
+
+**Continue building?** Yes — no blockers.

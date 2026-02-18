@@ -1,0 +1,9 @@
+## Quick Spec Review Summary
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Consecutive clean iterations**: 15+ (streak continues from iter 17 through iter 25)
+
+The most recent build (iter 25, Task 18.9 — athlete calendar view) completed cleanly with `tsc --noEmit` and `npm run build` both passing. No spec inconsistencies, mismatches, or discovered-vs-expected discrepancies in any of the recent logs.
+
+**Continue building?** Yes — no blockers.

@@ -1,0 +1,18 @@
+**Task 17.5 complete.** Here's a summary of what was implemented:
+
+### Files created
+- **`src/lib/scheduling/detect-conflicts.ts`** — Conflict detection service that queries existing WorkoutSessions for an athlete on proposed schedule dates. Excludes sessions from the same assignment (re-assignment is idempotent). Returns detailed conflict info including existing title, status, and program.
+
+- **`src/lib/scheduling/__tests__/detect-conflicts.test.ts`** — 8 unit tests covering: empty schedule, no conflicts, single/multiple conflicts, same-assignment exclusion, null titles (imported sessions), and partial overlap on a 4-week program.
+
+### Files modified
+- **`src/app/api/programs/[id]/assign/route.ts`** — Now accepts a `force` boolean in the request body. When `startDate` is provided:
+  - Generates the proposed schedule and runs conflict detection per athlete
+  - If conflicts found and `force !== true`: returns **409 Conflict** with detailed conflict info (dates, existing vs new titles, existing status) per athlete
+  - If no conflicts or `force === true`: proceeds with session persistence as before
+
+### Validation
+- TypeScript: pass
+- Build: pass
+- All 31 scheduling tests pass (8 new + 23 existing)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

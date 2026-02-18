@@ -1,0 +1,9 @@
+## Quick Spec Review Summary
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Continue building?** Yes
+
+Task 17.6 (reassignment cleanup) completed cleanly — 42 scheduling tests pass, TypeScript clean, build succeeds. The cleanup service correctly preserves completed sessions and handles both soft-delete (deactivate) and hard-delete modes. No inconsistencies or mismatches with specs found.
+
+Next up: **Task 17.7** — Enhance `/api/train` to return `nextSession` when no workout exists for today.

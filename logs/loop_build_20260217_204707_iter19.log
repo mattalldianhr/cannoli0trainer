@@ -1,0 +1,9 @@
+**Task 3.1 complete.** Here's what was done:
+
+- Installed `vitest@^3.2.4`, `@vitejs/plugin-react@^4.7.0`, and `vite@^6` as dev dependencies (pinned vite v6 for Node 20.11 compatibility)
+- Created `vitest.config.ts` with `@/*` path alias, TypeScript support, test file patterns (`*.test.ts`, `*.spec.ts`), and `passWithNoTests: true`
+- Added `"test": "vitest run"` script to `package.json`
+- Updated `AGENTS.md` test command to `npm run test`
+- Verified `npx vitest run` exits with code 0 (no test files, passes cleanly)
+- All validation passed: `tsc --noEmit`, `npm run build`
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

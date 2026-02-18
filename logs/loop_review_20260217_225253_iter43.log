@@ -1,0 +1,15 @@
+## Quick Spec Review — Iteration 43 Summary
+
+**Findings: 0 new issues.** Task 7.3 (program builder page) completed cleanly — `tsc` and `npm run build` both passed.
+
+**Carried forward — 2 uncommitted spec updates** from earlier iterations:
+
+| Spec File | Change | Priority |
+|-----------|--------|----------|
+| `specs/01-data-models-and-schema.md` | Exercise model fields expanded, WorkoutSession & MaxSnapshot models added | P1 |
+| `specs/05-exercise-library.md` | Categories updated to free-exercise-db taxonomy, seed count 873 | P1 |
+
+These have been flagged as correct since iteration 41 but remain uncommitted (`git status` shows them as modified).
+
+**Specs updated this pass:** 0  
+**Continue building?** Yes — no blockers. Consider committing the two spec diffs at the next stopping point.

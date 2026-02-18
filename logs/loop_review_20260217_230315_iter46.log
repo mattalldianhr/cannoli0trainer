@@ -1,0 +1,15 @@
+## Quick Spec Review — Iteration 46 Summary
+
+**Findings: 0 new issues.** Task 7.6 (exercise duplication) completed cleanly with no spec conflicts.
+
+**Carried forward — 2 uncommitted spec updates** (flagged since iter 41):
+
+| Spec File | Change | Priority | Status |
+|-----------|--------|----------|--------|
+| `specs/01-data-models-and-schema.md` | Exercise model fields expanded (free-exercise-db taxonomy), WorkoutSession & MaxSnapshot models added, WorkoutExercise fields (superset, tempo, etc.) | P1 | Modified, uncommitted |
+| `specs/05-exercise-library.md` | Categories updated to free-exercise-db taxonomy, seed count 30+ → 873 | P1 | Modified, uncommitted |
+
+Both diffs look correct — they reflect real discoveries from Tasks 2.1 and 2.3 and have proper revision history entries. These have been carried forward for **6 iterations** now. They should be committed.
+
+**Specs updated this pass:** 0 (no new issues found)  
+**Continue building?** Yes — no blockers. Recommend committing the two spec updates at the next natural stopping point.

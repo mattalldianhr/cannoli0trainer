@@ -1,0 +1,12 @@
+**Task 2.8 complete.** Implemented `src/lib/rpe-table.ts` with:
+
+- **Tuchscherer RPE-to-%1RM lookup table** — 9 RPE levels (6–10 in 0.5 increments) × 12 rep counts = 108 data points
+- **`getPercentOneRM(rpe, reps)`** — core lookup returning %1RM as decimal
+- **`getWeightFromOneRM(oneRM, rpe, reps)`** — calculate target weight from 1RM
+- **`estimateOneRMFromRPE(weight, rpe, reps)`** — estimate 1RM from a logged set
+- **`rpeToRIR()` / `rirToRPE()`** — conversion helpers
+- **`RPE_VALUES` and `RPE_DESCRIPTIONS`** — constants for UI selectors and reference charts
+- Full TypeScript types (`RPEValue`, `RepCount`)
+
+All validation passed (`tsc --noEmit`, `npm run build`). Committed as `f4dc133`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

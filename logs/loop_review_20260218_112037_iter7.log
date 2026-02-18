@@ -1,0 +1,9 @@
+The spec says "conflict is flagged to the coach" but doesn't specify the mechanism. Task 17.5 implemented it as a **409 Conflict** response with a `force` boolean to override. This is a reasonable implementation that's consistent with the spec's intent — no spec update needed since the spec was intentionally non-prescriptive about the HTTP mechanism.
+
+## Quick Spec Review Summary
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Continue building?** Yes
+
+Task 17.5 (conflict detection for overlapping program assignments) completed cleanly — all 31 scheduling tests pass, TypeScript clean, build succeeds. The 409/force mechanism for conflict resolution is consistent with the spec's requirement to "flag conflicts to the coach." No inconsistencies or mismatches found.

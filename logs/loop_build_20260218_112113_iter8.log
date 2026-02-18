@@ -1,0 +1,17 @@
+**Task 17.6 complete.** Here's what was built:
+
+**Cleanup service** (`src/lib/scheduling/cleanup-assignment.ts`):
+- `cleanupAssignmentSessions()` — standalone function to delete future NOT_STARTED sessions for an assignment
+- `deactivateAssignment()` — sets `isActive=false` + cleans up sessions in a transaction
+- `deleteAssignment()` — deletes the assignment record + cleans up sessions in a transaction
+- All three preserve PARTIALLY_COMPLETED and FULLY_COMPLETED sessions
+
+**DELETE API endpoint** (`/api/programs/[id]/assign`):
+- Accepts `{ athleteId, mode?: 'deactivate' | 'delete' }`
+- Default mode is `deactivate` (soft-delete)
+- Returns cleanup counts (deleted/preserved)
+
+**Tests**: 11 unit tests covering all three functions and edge cases.
+
+**Validation**: tsc, build, and all 42 scheduling tests pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

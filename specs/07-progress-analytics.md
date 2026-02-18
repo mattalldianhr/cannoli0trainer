@@ -39,6 +39,43 @@ Fill the massive data gap the coach identified: provide long-term strength trend
 | Athlete with no data | "Not enough data yet" message with guidance |
 | Athlete with bodyweight logs | Bodyweight line chart rendered |
 
+## Deferred Features (Phase 2)
+
+### RPE Distribution Chart
+Histogram showing frequency of reported RPE values over a configurable time range:
+- X-axis: RPE values (6-10 in 0.5 increments)
+- Y-axis: count of sets at each RPE
+- Filterable by exercise or "all exercises"
+- Helps coach identify if athlete is consistently under/over-rating effort
+
+Implementation: Recharts `BarChart` with RPE bins. Query SetLog where `rpe IS NOT NULL` grouped by RPE value.
+
+### RPE Accuracy Metric
+Compare athlete's self-reported RPE to an estimated RPE derived from load/reps relative to known 1RM:
+- Estimated RPE = reverse-lookup from RPE table using (weight / e1RM, reps)
+- Accuracy = average absolute difference between reported and estimated RPE
+- Display as a single number (e.g., "avg 0.5 RPE off") plus trend chart
+- Requires athlete to have MaxSnapshot data for the exercise
+
+Implementation: Use existing `src/lib/rpe-table.ts` for reverse lookup. Compute in `lib/analytics/rpe-accuracy.ts`.
+
+### Athlete Comparison View
+Overlay 2-3 athletes' progress on the same chart for group coaching context:
+- Coach selects athletes via multi-select dropdown
+- Overlays 1RM trend lines on same axes, color-coded per athlete
+- Works with any chart type (1RM, volume, compliance)
+- Max 3 athletes at once to keep chart readable
+
+Implementation: Multi-series line chart in Recharts. API endpoint accepts array of athlete IDs. Distinct color palette per athlete.
+
+### Per-Athlete Analytics (Profile Page Embed)
+Embedded analytics view accessible from `/athletes/[id]` profile page:
+- Tab or section on athlete profile showing their key charts
+- Same chart components as `/analytics` but pre-filtered to single athlete
+- Quick link from profile to full analytics page with athlete pre-selected
+
+Implementation: Reuse chart components with `athleteId` prop. Add "Analytics" tab to athlete profile page layout.
+
 ## Technical Notes
 - Use a lightweight charting library (recharts or chart.js via react-chartjs-2)
 - Add charting dependency to package.json
@@ -47,3 +84,8 @@ Fill the massive data gap the coach identified: provide long-term strength trend
 - Server component for data fetching, client component for interactive charts
 - CSV export: generate on server, stream as download response
 - Consider `/api/analytics/[athleteId]` endpoint for chart data
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-18 | Added Deferred Features: RPE distribution chart, RPE accuracy metric, athlete comparison view, per-athlete analytics embed |

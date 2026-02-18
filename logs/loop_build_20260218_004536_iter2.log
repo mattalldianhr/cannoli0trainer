@@ -1,0 +1,13 @@
+Task 11.2 complete. Here's what was implemented:
+
+**Task 11.2: Add recent activity feed to dashboard**
+
+- Added `getRecentActivity()` function that queries WorkoutSessions from the last 7 days with athlete info, grouped by date
+- Parallelized the stats and activity feed queries with `Promise.all` for performance
+- Activity feed displays sessions grouped by day with smart date labels (Today, Yesterday, or weekday/date)
+- Each session row shows: athlete avatar initial, name, session title, exercise completion count, and completion percentage badge
+- Session rows link to the athlete profile page
+- Empty state shown when no sessions exist in the last 7 days
+- Uses existing UI components (Card, Badge, Link) and lucide icons (Activity, Calendar)
+- All validation passes: `tsc --noEmit`, `npm run build`
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

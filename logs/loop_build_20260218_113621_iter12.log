@@ -1,0 +1,19 @@
+**Task 17.10 complete.** Here's what was implemented:
+
+**API Route** — `PATCH /api/schedule/[sessionId]/move`
+- Accepts `{ newDate: "YYYY-MM-DD" }` body
+- Only allows moving `NOT_STARTED` sessions
+- If target date is empty: moves session, sets `isManuallyScheduled = true`
+- If target date has another `NOT_STARTED` session: swaps both sessions' dates atomically using a transaction (with a temporary date to satisfy the unique constraint)
+- Returns `{ action: "moved" | "swapped", ... }` with details
+
+**Calendar UI** — Click-to-move interaction in `WeeklyCalendar`:
+- Each `NOT_STARTED` session shows a move icon (Move) on hover
+- Clicking it enters "move mode" — a blue banner appears explaining the interaction
+- Empty cells in the same athlete row show "Move here" drop targets with dashed borders
+- Other `NOT_STARTED` sessions in the row show a "Swap" indicator
+- Clicking a target executes the move/swap via the API, then refreshes the page
+- Cancel button dismisses move mode
+
+All validation passes: `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

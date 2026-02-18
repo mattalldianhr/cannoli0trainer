@@ -1,0 +1,21 @@
+## Quick Spec Review — Iteration 32
+
+**Findings: 0 new**
+
+Build log (iter 32, Task 4.8) completed cleanly:
+- Program assignment API created with upsert/transaction pattern
+- TypeScript clean, build successful
+- No inconsistencies, mismatches, or unexpected values
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Carried forward** (uncommitted from earlier iterations):
+- `specs/01-data-models-and-schema.md` — Exercise model fields expanded, WorkoutSession/MaxSnapshot models added, WorkoutExercise superset fields (+47 lines)
+- `specs/05-exercise-library.md` — Categories updated to free-exercise-db taxonomy, seed count corrected to 873 (+5 lines)
+
+These are valid discoveries from prior tasks. Consider committing them when convenient.
+
+**Continue building?** Yes — Tasks 4.1–4.8 (all CRUD API routes + program assignment) are complete. Ready for the next task group.

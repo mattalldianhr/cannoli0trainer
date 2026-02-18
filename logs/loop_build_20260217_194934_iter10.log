@@ -1,0 +1,12 @@
+**Task 1.10 complete.** Added 5 new fields to the `WorkoutExercise` model:
+
+| Field | Type | Purpose |
+|---|---|---|
+| `supersetGroup` | `String?` | Grouping letter (A, B, C...) for superset pairing |
+| `supersetColor` | `String?` | Color code for visual superset identification |
+| `isUnilateral` | `Boolean` (default false) | Whether exercise is performed one side at a time |
+| `restTimeSeconds` | `Int?` | Prescribed rest between sets |
+| `tempo` | `String?` | Tempo notation (e.g., "3-1-1-0") |
+
+All validations passed: `prisma validate`, `prisma generate`, `tsc --noEmit`, and `npm run build`. Migration applied to database. Priority 1 (Foundation) is now fully complete — all 10 tasks done. The next task is **Task 2.1**: Download and import free-exercise-db.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

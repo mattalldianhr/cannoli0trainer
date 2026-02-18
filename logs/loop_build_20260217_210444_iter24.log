@@ -1,0 +1,16 @@
+**Task 3.6 complete.** Here's what was done:
+
+- **Installed** `@playwright/test` as a dev dependency + Chromium browser
+- **Created** `playwright.config.ts` — configured for `e2e/` test directory, Chromium project, auto-starts dev server (or uses `PLAYWRIGHT_BASE_URL` for production testing)
+- **Created** `e2e/smoke.spec.ts` — 5 smoke tests:
+  1. Homepage loads with correct title
+  2. `/athletes` lists 5 athletes (Matt, Chris, Michael, Hannah, Maddy)
+  3. `/exercises` shows exercise library with working search
+  4. `/dashboard` displays stat cards with non-zero values
+  5. `/analytics` renders charts
+- **Added** `test:e2e` npm script and updated AGENTS.md
+- **Excluded** `e2e/` from Vitest so the two test runners don't conflict
+- **All validation passes**: `tsc --noEmit`, `npm run build`, `npm run test` (163 unit tests)
+
+Note: The smoke tests for `/athletes`, `/exercises`, `/dashboard`, and `/analytics` will fail until those pages are built in Priorities 4-12. The test scaffolding is ready to validate them once implemented.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

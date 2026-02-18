@@ -1,0 +1,16 @@
+## Quick Spec Review — Iteration 49 Summary
+
+**Findings: 0 new issues.** Task 7.9 (Assign to Athlete flow) completed cleanly — `tsc` and `npm run build` pass, no spec mismatches.
+
+**Carried forward — 2 uncommitted spec updates** (now **9 iterations** since flagged in iter 41):
+
+| Spec File | Change | Priority |
+|-----------|--------|----------|
+| `specs/01-data-models-and-schema.md` | Exercise model fields expanded, WorkoutSession & MaxSnapshot models added, WorkoutExercise fields | P1 |
+| `specs/05-exercise-library.md` | Categories updated to free-exercise-db taxonomy, seed count 873 | P1 |
+
+**Specs updated this pass:** 0 — no new issues found.
+
+**Recommendation:** These two spec files have been correctly updated but uncommitted for 9 iterations. They should be committed at the next opportunity.
+
+**Continue building?** Yes — no blockers.

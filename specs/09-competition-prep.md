@@ -39,6 +39,35 @@ Manage the hardest part of meet day — warm-up room management, timing across m
 | Enter actual attempts: 200/210/217.5 | Results show 217.5 best squat |
 | All lifts entered | Total calculated, DOTS/Wilks estimated |
 
+## Deferred Features (Phase 2)
+
+### Post-Meet Results Entry
+Structured results entry after the competition with attempt-level detail:
+- Per lift (squat, bench, deadlift): 3 attempts each
+- Each attempt: weight attempted + make/miss status (boolean `good` flag)
+- Pre-fill with planned attempts from attempt planning if available
+- Best successful attempt auto-calculated per lift
+- Total auto-calculated from best successful attempt per lift
+
+Schema: MeetEntry already has `squat1`, `squat2`, `squat3`, etc. as Float fields. Add make/miss tracking via a new `attemptResults` JSON field on MeetEntry:
+```json
+{
+  "squat": [{"weight": 200, "good": true}, {"weight": 210, "good": true}, {"weight": 217.5, "good": false}],
+  "bench": [...],
+  "deadlift": [...]
+}
+```
+
+### Meet Results Summary
+Summary view after results entry showing:
+- Best successful attempt per lift
+- Total (sum of best successful attempts)
+- DOTS score (using `powerlifting-formulas` package, requires bodyweight + total + gender)
+- Wilks score (using `powerlifting-formulas` package)
+- Display on meet page as a results card per athlete
+
+Implementation: `lib/meets/results.ts` for score calculations using already-installed `powerlifting-formulas` package. Results summary component renders after `attemptResults` is populated.
+
 ## Technical Notes
 - Warm-up timing: work backward from flight start time
   - Typical warm-up: 5-6 sets over ~15-20 min before first attempt
@@ -49,3 +78,8 @@ Manage the hardest part of meet day — warm-up room management, timing across m
 - Consider a dedicated `components/meets/` directory
 - Warm-up timer needs client-side interval/countdown logic
 - Multi-athlete view: grid layout showing each athlete's current warm-up status
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-18 | Added Deferred Features: post-meet results entry with make/miss tracking, meet results summary with DOTS/Wilks scores |

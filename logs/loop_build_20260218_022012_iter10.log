@@ -1,0 +1,18 @@
+**Task 13.2 complete.** Here's what was built:
+
+**New VBT utility functions** (`src/lib/vbt/velocity-profile.ts`):
+- `buildVelocityProfile()` — Groups velocity data into %1RM buckets (60/70/80/90%) and averages velocity within each bucket (+-5% tolerance)
+- `estimateVelocityAt1RMPercent()` — Uses the linear regression model to estimate velocity at any %1RM
+- `calculatePreparedness()` — Compares current session velocity to a rolling baseline with load-matching, returns above/at/below status (+-2% threshold)
+- `calculateVelocityDrop()` — Calculates fatigue as % velocity loss from first to last set
+
+**New components** (`src/components/charts/`):
+- `VelocityProfileTable` — Table showing avg velocity at 60/70/80/90% 1RM with sample counts. Shows empty state when insufficient data.
+- `PreparednessIndicator` — Visual card comparing current velocity to 4-week baseline. Color-coded: green (above), blue (at), amber (below) with percentage difference and velocity values.
+
+**Updated types** (`src/lib/vbt/types.ts`):
+- `VelocityProfileRow` — Row data for the profile table
+- `PreparednessResult` — Preparedness comparison result
+
+All validation passed (`tsc --noEmit`, `npm run build`). Committed as `83657b4`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

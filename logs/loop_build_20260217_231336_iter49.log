@@ -1,0 +1,13 @@
+**Task 7.9 complete.** Here's what was done:
+
+- **New file**: `src/components/programs/AssignAthletes.tsx` — Client component with a dialog that:
+  - Fetches all athletes from `/api/athletes` when opened
+  - Shows checkboxes for each athlete, with already-assigned athletes disabled and marked with a checkmark
+  - POSTs new selections to `/api/programs/[id]/assign` (the existing API route)
+  - Refreshes the page on success to show updated assignments
+  - Only appears for non-template programs
+
+- **Modified**: `src/app/programs/[id]/page.tsx` — Added the "Assign to Athletes" button in the header bar next to the Edit button
+
+- **Validation**: `tsc --noEmit` clean, `npm run build` passes
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

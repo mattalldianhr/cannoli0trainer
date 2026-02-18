@@ -1,0 +1,16 @@
+## Quick Spec Review — Iteration 40 Summary
+
+**Findings: 0 new issues** in iter 40. Task 6.3 (ExercisePicker component) completed cleanly.
+
+**Carried forward — 2 uncommitted spec updates** (correct and already validated):
+
+| Spec File | Changes | Priority |
+|-----------|---------|----------|
+| `specs/01-data-models-and-schema.md` | Exercise model fields expanded, WorkoutSession & MaxSnapshot models added, WorkoutExercise superset/tempo fields | P1 — reflects actual schema |
+| `specs/05-exercise-library.md` | Categories updated to free-exercise-db taxonomy, seed count 30+ → 873 | P1 — reflects actual data |
+
+Both diffs look correct — they document what was actually built vs what was originally spec'd. These should be committed as a spec sync.
+
+**Specs updated this pass:** 0 (changes were already made in earlier iterations, just not committed yet)
+
+**Continue building?** Yes — no blockers. Consider committing the spec updates at your next convenient stopping point.

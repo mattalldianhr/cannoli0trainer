@@ -1,0 +1,14 @@
+**Task 17.14 complete.** 
+
+Integration test at `src/lib/scheduling/__tests__/assignment-to-train.integration.test.ts` covers the full assignment-to-train flow with 7 test cases:
+
+1. Creates a 2-week, 3-day program with exercises
+2. Assigns it to an athlete and verifies 6 WorkoutSessions on correct dates (Mon/Tue/Thu schedule)
+3. Idempotency — re-running schedule creates no duplicates
+4. `/api/train` returns correct workout and exercises for a scheduled date
+5. Rest day returns no session but provides `nextSession` info
+6. All 6 scheduled dates return correct workout with full exercises
+7. Non-training days have no sessions from the assignment
+
+All validation passes: `tsc --noEmit`, `npm run build`, 7/7 tests passing.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

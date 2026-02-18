@@ -1,0 +1,19 @@
+**Task 24.2 complete.** Here's what was built:
+
+**API endpoint** (`/api/analytics/compare`):
+- Accepts `athleteIds` (comma-separated, 2-3), `metric` (e1rm/volume/compliance), `from`/`to` date range, and optional `exerciseId` filter
+- Fetches e1RM trends (from MaxSnapshot + RPE fallback), weekly volume tonnage, or weekly compliance per athlete
+- Returns a union of exercises across athletes for the e1rm exercise filter
+
+**AthleteComparisonView component**:
+- Color-coded athlete selection chips (blue, green, amber) — max 3, min 2
+- Three metric tabs: Est. 1RM, Volume, Compliance
+- For e1rm: shows shared exercises with overlaid trend lines per athlete, plus exercise filter dropdown
+- For volume: side-by-side bar chart of weekly tonnage per athlete
+- For compliance: overlaid line chart of weekly compliance %
+- Date range selector (4w/8w/12w/All Time)
+
+**AnalyticsPageClient wrapper**:
+- Individual/Compare toggle on the analytics page
+- Supports `?view=compare` URL param for direct linking
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

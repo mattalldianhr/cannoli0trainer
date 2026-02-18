@@ -1,0 +1,13 @@
+**Task 4.3 complete.** Created CRUD API routes for Programs:
+
+- **`/api/programs` (route.ts)**:
+  - `POST` — Creates a program with optional nested workouts and exercises in a single request. Validates coachId exists. Supports all WorkoutExercise fields (prescription type, RPE, velocity, superset, etc.).
+  - `GET` — Lists programs with filters: `coachId`, `search` (name/description), `isTemplate`, `type`. Includes coach info and counts of workouts/assignments.
+
+- **`/api/programs/[id]` (route.ts)**:
+  - `GET` — Returns full program with nested workouts → exercises (with exercise details), assignments (with athlete names), and counts.
+  - `PUT` — Partial update of program fields (name, description, type, periodization, dates, template flag).
+  - `DELETE` — Deletes program (cascades to workouts/exercises via schema).
+
+All validation passes: `tsc --noEmit` clean, `npm run build` succeeds with both routes compiled.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,8 @@
+**Task 19.2 complete.** 
+
+Changes made:
+- **`src/app/athletes/[id]/page.tsx`**: Added `bodyweightLogs` query (ordered by `loggedAt` ascending, max 200 entries) and serialized the data for the client component
+- **`src/components/athletes/AthleteProfile.tsx`**: Added `bodyweightLogs` to the `AthleteProfileData` interface, imported `BaseLineChart` and `Weight` icon, replaced the placeholder chart card in the Analytics tab with a bodyweight trend line chart that only renders when data exists
+
+All validation passes: `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

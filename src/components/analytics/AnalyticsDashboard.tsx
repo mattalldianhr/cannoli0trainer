@@ -128,9 +128,11 @@ function formatDate(dateStr: string): string {
 interface AnalyticsDashboardProps {
   athletes: Athlete[];
   initialAthleteId?: string;
+  /** Hide the athlete selector and CSV export — used when embedded on athlete profile */
+  compact?: boolean;
 }
 
-export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDashboardProps) {
+export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: AnalyticsDashboardProps) {
   const [selectedAthleteId, setSelectedAthleteId] = useState<string>(
     initialAthleteId ?? athletes[0]?.id ?? ''
   );
@@ -285,23 +287,25 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
     <div className="space-y-6">
       {/* Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <label htmlFor="athlete-select" className="text-sm font-medium whitespace-nowrap">
-            Athlete:
-          </label>
-          <select
-            id="athlete-select"
-            value={selectedAthleteId}
-            onChange={(e) => setSelectedAthleteId(e.target.value)}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            {athletes.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!compact && (
+          <div className="flex items-center gap-3">
+            <label htmlFor="athlete-select" className="text-sm font-medium whitespace-nowrap">
+              Athlete:
+            </label>
+            <select
+              id="athlete-select"
+              value={selectedAthleteId}
+              onChange={(e) => setSelectedAthleteId(e.target.value)}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              {athletes.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
@@ -316,15 +320,17 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
               </Button>
             ))}
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExportCSV}
-            disabled={!selectedAthleteId}
-          >
-            <Download className="h-4 w-4 mr-1" />
-            CSV
-          </Button>
+          {!compact && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportCSV}
+              disabled={!selectedAthleteId}
+            >
+              <Download className="h-4 w-4 mr-1" />
+              CSV
+            </Button>
+          )}
         </div>
       </div>
 

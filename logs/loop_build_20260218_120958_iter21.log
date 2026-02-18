@@ -1,0 +1,10 @@
+**Task 18.5 complete.** 
+
+Created `src/middleware.ts` that:
+- Uses NextAuth v5's `auth` wrapper to check session on every matching request
+- Protects all `/athlete/*` routes except `/athlete/login` and `/athlete/check-email` (via the matcher regex)
+- Redirects unauthenticated users to `/athlete/login` with a `callbackUrl` query param
+- Leaves all coach routes completely unaffected
+
+All checks pass: `tsc --noEmit` clean, `npm run build` succeeds (middleware detected as `ƒ Proxy`).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

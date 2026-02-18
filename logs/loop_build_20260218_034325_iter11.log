@@ -1,0 +1,16 @@
+**Task 13.3 complete.** Here's what was done:
+
+**API changes** (`src/app/api/analytics/[athleteId]/route.ts`):
+- Added `getVBTData()` function that queries SetLogs with velocity data, groups by exercise, includes session-level velocity arrays for fatigue calculation, and fetches latest e1RM per exercise for profile bucketing
+- VBT data is now fetched in parallel with all other analytics queries and returned as `vbt` in the response
+
+**Dashboard changes** (`src/components/analytics/AnalyticsDashboard.tsx`):
+- Added VBT section at the bottom of the analytics page with:
+  - **Exercise selector** dropdown showing exercises with velocity data (with data point/session counts)
+  - **Load-velocity scatter chart** using the existing `LoadVelocityChart` component with regression line
+  - **Preparedness indicator** comparing latest session velocity to baseline using `PreparednessIndicator`
+  - **Session fatigue** card showing velocity drop percentage from set 1 to final set
+  - **Velocity profile table** showing avg velocity at 60/70/80/90% 1RM using `VelocityProfileTable`
+  - **Empty state** when no velocity data exists: "No velocity data yet. Log velocity (m/s) per set..."
+- All VBT calculations (profile, preparedness, fatigue) computed client-side via `useMemo` using the existing `@/lib/vbt` functions
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,12 @@
+**Task 5.4 complete.** Here's what was implemented:
+
+1. **`src/components/ui/dialog.tsx`** — New Radix UI Dialog primitive component (used `@radix-ui/react-dialog` which was already installed)
+
+2. **`src/components/athletes/EditAthleteForm.tsx`** — Edit form pre-populated with athlete data, calls `PUT /api/athletes/[id]`, refreshes page on save
+
+3. **`src/components/athletes/DeleteAthleteDialog.tsx`** — Confirmation dialog with warning message, calls `DELETE /api/athletes/[id]`, redirects to `/athletes` on success
+
+4. **`src/components/athletes/AthleteProfile.tsx`** — Added Edit and Delete buttons to the profile header. Edit toggles to an inline edit form view. Delete opens the confirmation dialog.
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful (lint skipped — pre-existing Next.js 16 issue).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

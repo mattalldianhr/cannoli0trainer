@@ -1,0 +1,19 @@
+**Task 18.6 complete.** Here's what was implemented:
+
+1. **`src/app/athlete/layout.tsx`** — Athlete shell layout that:
+   - Wraps authenticated routes with `SessionProvider` from next-auth
+   - Shows a minimal top header bar with "Cannoli Trainer" branding
+   - Renders `AthleteBottomNav` at the bottom
+   - Skips the chrome for public routes (login, check-email) so they keep their standalone layouts
+
+2. **`src/components/athlete/AthleteBottomNav.tsx`** — Fixed bottom navigation with:
+   - 4 tabs: Dashboard, Train, Calendar, History (using lucide-react icons)
+   - 56px min-height tap targets (exceeds 44px requirement)
+   - Active state highlighting via pathname matching
+   - Safe area padding for devices with home indicators
+   - Backdrop blur matching the coach header style
+
+3. **`src/components/layout/ConditionalCoachChrome.tsx`** — Updated root layout to conditionally hide the coach Header/Footer on `/athlete/*` routes, preventing double chrome.
+
+4. **`src/app/layout.tsx`** — Updated to use `ConditionalCoachChrome` and renamed metadata to "Cannoli Trainer".
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

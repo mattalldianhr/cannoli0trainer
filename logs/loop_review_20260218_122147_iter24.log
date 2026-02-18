@@ -1,0 +1,9 @@
+## Quick Spec Review Summary
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Consecutive clean iterations**: 15+ (streak continues)
+
+Task 18.8 (athlete training view at `/athlete/train`) completed cleanly — tsc and build passed, no spec drift or mismatches found.
+
+**Continue building?** Yes — no blockers.

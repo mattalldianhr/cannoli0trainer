@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 122
+- Completed: 123
 - In progress: 0
-- Remaining: 57
+- Remaining: 56
 
 ## Tasks
 
@@ -658,7 +658,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Multi-select dropdown, overlaid color-coded trend lines, max 3 athletes.
 
-- [ ] **Task 24.3**: Embed per-athlete analytics on athlete profile page
+- [x] **Task 24.3**: Embed per-athlete analytics on athlete profile page
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Analytics tab on `/athletes/[id]` with pre-filtered charts. Link to full analytics.
 

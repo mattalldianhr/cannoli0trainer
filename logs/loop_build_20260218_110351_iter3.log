@@ -1,0 +1,16 @@
+**Task 17.1 complete.** Here's what was done:
+
+**ProgramAssignment** — added 2 fields:
+- `trainingDays` (Json, default `[1,2,4,5]`) — Mon/Tue/Thu/Fri training day config
+- `isActive` (Boolean, default true) — soft-deactivation support
+
+**WorkoutSession** — added 6 fields:
+- `workoutId` (String?, FK -> Workout) — links session to source Workout
+- `programAssignmentId` (String?, FK -> ProgramAssignment) — tracks generating assignment
+- `isManuallyScheduled` (Boolean, default false) — coach manual override flag
+- `isSkipped` (Boolean, default false) — coach skip flag
+- `weekNumber` (Int?) — program week reference
+- `dayNumber` (Int?) — program day reference
+
+**Indexes** added on `workoutId` and `programAssignmentId`. **Reverse relations** added to Workout and ProgramAssignment models. Migration `20260218160513_add_scheduling_fields` applied. All validations pass (prisma validate, tsc, build).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

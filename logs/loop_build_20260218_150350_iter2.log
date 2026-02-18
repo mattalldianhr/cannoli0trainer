@@ -1,0 +1,19 @@
+**Task 21.4 complete.** Here's what was implemented:
+
+**`src/lib/offline-queue.ts`** — Queue manager module:
+- `enqueue()` / `dequeue()` / `getQueue()` / `clearQueue()` / `queueSize()` for localStorage-backed FIFO queue
+- `syncQueue()` replays queued POSTs to `/api/sets`, handling success, 409 duplicates, 404 gone resources, and network errors
+- 100 entry capacity limit
+
+**`src/hooks/useOfflineSync.ts`** — Background sync hook:
+- Listens for browser `online` event to sync immediately on reconnect
+- Polls every 30s while items are queued
+- Returns `pendingCount` for UI display and calls `onSync` callback after successful sync
+
+**`src/components/training/TrainingLog.tsx`** — Integration:
+- `handleLogSet` now catches network errors and enqueues the set payload instead of silently failing
+- Yellow "N sets pending sync" banner appears when queued items exist, with an offline indicator when disconnected
+- Queued items automatically sync and refresh the workout data when connectivity returns
+
+All validation passes (tsc, build). Committed as `b25a89a`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

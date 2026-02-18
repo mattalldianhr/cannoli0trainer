@@ -1,0 +1,11 @@
+**Task 14.3 complete.** Here's what was built:
+
+**`WarmupCalculator` component** (`src/components/meets/WarmupCalculator.tsx`):
+- Collapsible card per athlete on the meet detail page
+- **Configuration inputs**: lift selector (squat/bench/deadlift), flight start time, opener weight (auto-filled from planned attempts), configurable interval between sets (default 3 min)
+- **Schedule generation**: 6 warm-up sets at 50%, 60%, 70%, 80%, 90%, and 100% of opener, timed backward from flight start. Weights rounded to nearest 2.5 kg
+- **Live countdown timer**: Start/pause/reset controls. Shows time remaining to next set with color-coded urgency (amber under 1 min). "GO!" flash when current set is due
+- **Set list**: Each warm-up set shows scheduled time, weight, percentage label. Past sets dimmed with "Done" badge, current set highlighted green with "NOW" badge
+
+**Integration**: Each athlete entry card on `/meets/[id]` now has a warm-up calculator section below the attempt planning grid.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

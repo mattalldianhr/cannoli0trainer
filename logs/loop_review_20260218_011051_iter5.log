@@ -1,0 +1,16 @@
+The review log for iter 5 is empty (likely the review process was interrupted). Let me analyze the build log for iter 5 instead.
+
+## Quick Spec Review Summary — Iter 5
+
+**Findings: 0**
+
+- Build log (Task 11.5 — Header nav update): Clean completion
+- Nav updated from research hub links to coaching platform links (Dashboard, Athletes, Programs, Exercises)
+- Branding changed to "Cannoli Trainer", logo links to `/dashboard`
+- `tsc --noEmit` and `npm run build` both pass
+- Pre-existing Next.js 16 lint issue noted (not new)
+- No inconsistencies, mismatches, or unexpected values detected
+
+**Specs updated:** None needed
+
+**Continue building?** Yes — all 5 iterations in this session (Tasks 11.1–11.5) completed cleanly. Next up is Task 12.1 (install recharts and create base chart components).

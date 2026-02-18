@@ -1,0 +1,8 @@
+**Task 4.5 complete.** Created CRUD API routes for SetLog entries:
+
+- **`/api/sets` (POST)** — Creates a set log with required fields (`workoutExerciseId`, `athleteId`, `setNumber`, `reps`, `weight`) and optional fields (`unit`, `rpe`, `rir`, `velocity`, `notes`). Validates that both the workout exercise and athlete exist.
+- **`/api/sets` (GET)** — Returns set logs filtered by `athleteId` (required), with optional `exerciseId`, `workoutExerciseId`, `limit`, and `offset` params. Includes related exercise data. Ordered by `completedAt` desc, then `setNumber` asc.
+- **`/api/sets/[id]` (GET/PUT/DELETE)** — Standard single-resource operations with 404 handling.
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful. Committed as `de7f8c3`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

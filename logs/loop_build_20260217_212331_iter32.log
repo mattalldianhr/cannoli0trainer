@@ -1,0 +1,9 @@
+**Task 4.8 complete.** Created `POST /api/programs/[id]/assign` with:
+
+- **Input**: `{ athleteIds: string[], startDate?: string, endDate?: string }`
+- **Validation**: Checks `athleteIds` is non-empty array, verifies program and all athletes exist
+- **Behavior**: Uses `upsert` in a transaction — creates new assignments or updates dates for existing ones (respects the `@@unique([programId, athleteId])` constraint)
+- **Response**: Returns `{ programId, assignments, count }` with athlete details, status 201
+
+All validation passed (`tsc --noEmit`, `npm run build`). Lint has a pre-existing Next.js 16 issue.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

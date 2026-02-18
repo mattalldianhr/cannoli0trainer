@@ -1,0 +1,14 @@
+**Task 6.2 complete.** Here's what was built:
+
+**`src/components/exercises/AddExerciseForm.tsx`** — Client component following the AddAthleteForm pattern:
+- Required fields: name, category (dropdown with 7 categories from free-exercise-db taxonomy)
+- Optional fields: equipment (text), force/level/mechanic (dropdowns), coaching cues (textarea)
+- Tags section: checkbox toggles for competition_lift, competition_variation, accessory, gpp
+- Video URL input with live embed preview — parses YouTube and Vimeo URLs into responsive iframe embeds
+- POSTs to `/api/exercises`, redirects to `/exercises` on success
+- Error handling, loading state, disabled submit when name is empty
+
+**`src/app/exercises/new/page.tsx`** — Server component that fetches coach and renders the form
+
+All validation passed: `tsc --noEmit` clean, `npm run build` clean. Committed as `8d9eb44`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

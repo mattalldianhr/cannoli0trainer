@@ -1,0 +1,9 @@
+**Task 17.9 complete.** Created `GET /api/schedule` route at `src/app/api/schedule/route.ts` that:
+
+- Accepts `startDate`, `endDate` (required, YYYY-MM-DD format), and `athleteId` (optional, defaults to all) query params
+- Returns array of athletes with their sessions for the date range, each session containing id, date, title, status, isSkipped, completionPercentage, weekNumber, dayNumber
+- Validates date params, returns 400 for missing/invalid/inverted dates
+- Follows existing API route patterns (NextRequest, prisma singleton, try/catch error handling)
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

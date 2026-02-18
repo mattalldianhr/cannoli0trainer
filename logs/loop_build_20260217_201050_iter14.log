@@ -1,0 +1,9 @@
+**Task 2.4 complete.** The seed script now:
+
+- Creates coach **Joe Cristando** (Cannoli Strength) via upsert
+- Creates all **5 athletes** from the TeamBuildr export: Matt Alldian, Chris Laakko, Michael Odermatt, Hannah Jenny, Maddy Corman
+- Stores **TeamBuildr IDs**, **group assignments** (deduplicated), and **date ranges** in the `metadata` JSON field
+- Is fully **idempotent** — re-runs update existing records instead of creating duplicates
+- Gracefully skips if the export file is missing
+- All validation passes: `tsc --noEmit`, `npm run build`
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,17 @@
+**Task 19.1 complete.** Here's what was implemented:
+
+**AthleteList changes:**
+- Added checkboxes on every athlete row (checkbox click doesn't navigate, card content still links to profile)
+- "Select all / Deselect all" toggle above the list
+- Bulk action bar appears when any athletes are selected, showing count + "Assign Program" button + clear selection
+- Selected cards get a primary ring highlight
+
+**New BulkAssignDialog component:**
+- Program picker with search filtering
+- Start date picker (defaults to next Monday)
+- Training day presets (3-Day, 4-Day, 5-Day) and custom day toggles
+- Calls the existing `/api/programs/[id]/assign` endpoint with `athleteIds` array
+- Clears selection on success and refreshes the page
+
+All validation passed (tsc, build). Committed as `eeb7543`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,8 @@
+**Task 5.3 complete.** Created the athlete profile page at `/athletes/[id]` with three tabs:
+
+- **Info tab**: Profile details (email, bodyweight, weight class, member since), current program with previous programs, notes, and competition history table with best attempts and totals
+- **Training tab**: Current estimated maxes grid, recent 20 sessions with completion badges
+- **Analytics tab**: Summary stat cards (sessions, sets, PRs, meets, weigh-ins), 4-week training frequency heatmap, and placeholder for charts (deferred to Task 12.1)
+
+The page links from athlete cards on `/athletes` already point to `/athletes/[id]`. All validation passes (tsc, build). Committed as `545c56b`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

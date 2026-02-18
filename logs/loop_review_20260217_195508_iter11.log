@@ -1,0 +1,7 @@
+## Summary
+
+- **Findings: 2** (both P2 — minor spec drift, not blocking)
+  1. **Exercise model expanded** — 8 new fields added, coachId now optional for library exercises. Updated `01-data-models-and-schema.md`.
+  2. **Category taxonomy changed** — free-exercise-db uses general fitness categories instead of powerlifting-specific ones. Updated `05-exercise-library.md`.
+- **Specs updated: 2** (`01-data-models-and-schema.md`, `05-exercise-library.md`)
+- **Continue building? Yes** — no blockers found.

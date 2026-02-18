@@ -44,3 +44,17 @@ Enable athletes to log their training (sets, reps, weight, RPE, velocity) via a 
 - Volume calculations: sum(reps * weight) per exercise and per session
 - Use existing Progress component for workout completion bar
 - Consider `useReducer` pattern matching existing `useInterview` hook
+
+## Deferred Features
+
+### Rest Timer Between Sets
+Optional start/stop/dismiss timer that appears after completing a set. Default duration configurable per exercise (falls back to WorkoutExercise.restTimeSeconds or a global default like 120s). UI: countdown overlay or inline timer with start, pause, reset, and dismiss controls. Plays an audio/vibration alert when timer expires. Does not block set logging — athlete can dismiss and log the next set at any time.
+
+### Notes Field Per Exercise
+Allow athletes to add free-text notes per exercise during a workout session. Notes are saved to the WorkoutExercise.notes field or to a per-set notes field on SetLog. The coach can view these notes on the athlete profile training log. UI: collapsible text area below the set logging grid for each exercise.
+
+### Offline Queueing (Stretch Goal)
+Queue set logs in localStorage if the device is offline. When connectivity returns, sync queued logs to the server. Use a simple queue: on set completion, if fetch fails, store the SetLog payload in localStorage with a timestamp. A background sync function checks the queue periodically and replays pending requests. Show a "pending sync" indicator to the athlete. This is a stretch goal — document the approach but deprioritize implementation.
+
+## Revision History
+- 2026-02-18: Added Deferred Features section (rest timer, exercise notes, offline queueing stretch goal) — spec update pass

@@ -1,0 +1,13 @@
+**Task 3.5 complete.** 
+
+Created `src/lib/api-routes.integration.test.ts` with 35 integration tests covering:
+
+- **GET /api/athletes** — lists 5 seeded athletes, search by name (case-insensitive), filter by isCompetitor/isRemote, empty results for no matches
+- **GET /api/athletes/[id]** — full profile, program assignments, workout sessions (descending order), max snapshots, null for non-existent ID
+- **GET /api/exercises** — 800+ exercises, search by name, filter by category, combined search+filter, full detail fields, pagination, powerlifting tags
+- **POST/PUT/DELETE athletes** — create with minimal/full fields, FK validation, update single/multiple fields, updatedAt timestamp, cascade delete
+- **POST/PUT/DELETE exercises** — create with/without coachId, full detail fields, update tags, delete
+- **Cross-entity queries** — workout counts per athlete, recent set logs with joins, aggregate stats (tonnage), current max snapshots
+
+All 163 tests pass (35 new + 128 existing). TypeScript and build pass clean.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

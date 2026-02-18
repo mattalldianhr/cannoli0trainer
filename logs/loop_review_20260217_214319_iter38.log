@@ -1,0 +1,18 @@
+## Quick Spec Review — Iteration 38
+
+**Findings: 0 new issues**
+
+Task 6.1 (exercise library page) completed cleanly — `tsc --noEmit` and `npm run build` both passed, no inconsistencies found.
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Carried forward** (uncommitted from ~iter 10, still valid):
+1. `specs/01-data-models-and-schema.md` — Exercise model fields expanded, WorkoutSession & MaxSnapshot models added
+2. `specs/05-exercise-library.md` — Categories updated to free-exercise-db taxonomy, seed count corrected from 30+ to 873
+
+These remain correct per implemented code. Consider committing as a spec sync.
+
+**Continue building?** Yes — no blockers.

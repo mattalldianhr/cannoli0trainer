@@ -1,0 +1,14 @@
+**Task 5.2 complete.** Created:
+
+- **`src/components/athletes/AddAthleteForm.tsx`** — Client component with:
+  - All profile fields: name (required), email, bodyweight, weight class, experience level (select), remote/competitor checkboxes, federation (shown conditionally when competitor checked), notes
+  - Client-side validation (name required, submit disabled when empty)
+  - API submission to `POST /api/athletes` with proper error handling
+  - Loading state with spinner during submission
+  - Redirects to `/athletes` on success
+  - Back button and Cancel link navigation
+
+- **`src/app/athletes/new/page.tsx`** — Server component that fetches the coach and passes `coachId` to the form
+
+All checks pass: `tsc --noEmit`, `npm run build`. Committed as `7eedd9b`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

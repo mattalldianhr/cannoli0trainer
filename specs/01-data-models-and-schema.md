@@ -60,9 +60,17 @@ Establish the foundational data architecture so all platform features have a con
 
 ### Exercise
 - id (UUID, PK)
-- coachId (FK → Coach)
+- coachId (FK → Coach, optional — null for library exercises)
 - name
-- category (e.g., "squat", "bench", "deadlift", "accessory")
+- category (e.g., "strength", "stretching", "plyometrics", "powerlifting", "cardio")
+- force (optional — "push", "pull", "static")
+- level (optional — "beginner", "intermediate", "expert")
+- mechanic (optional — "compound", "isolation")
+- equipment (optional — "barbell", "dumbbell", "machine", etc.)
+- primaryMuscles (JSON array)
+- secondaryMuscles (JSON array)
+- instructions (JSON array of strings)
+- images (JSON array of filenames)
 - videoUrl (optional)
 - cues (optional text)
 - tags (JSON array)
@@ -80,6 +88,11 @@ Establish the foundational data architecture so all platform features have a con
 - prescribedRIR (optional int)
 - velocityTarget (optional float, m/s)
 - percentageOf1RM (optional float)
+- supersetGroup (optional string — letter grouping, e.g., "A", "B")
+- supersetColor (optional string — hex color code for UI grouping)
+- isUnilateral (boolean, default false)
+- restTimeSeconds (optional int)
+- tempo (optional string — e.g., "3-1-0", "2-2-2")
 - notes (optional)
 
 ### SetLog
@@ -122,6 +135,32 @@ Establish the foundational data architecture so all platform features have a con
 - warmupPlan (JSON — timing and logistics)
 - notes
 
+### WorkoutSession
+- id (UUID, PK)
+- athleteId (FK → Athlete)
+- date (Date)
+- programId (FK → Program, optional)
+- title (optional string)
+- durationSeconds (optional int)
+- completionPercentage (float, default 0)
+- completedItems (int, default 0)
+- totalItems (int, default 0)
+- status (enum: NOT_STARTED, IN_PROGRESS, COMPLETED, PARTIAL)
+- createdAt, updatedAt
+- Unique constraint: [athleteId, date]
+
+### MaxSnapshot
+- id (UUID, PK)
+- athleteId (FK → Athlete)
+- exerciseId (FK → Exercise)
+- date (DateTime)
+- workingMax (float — the max the athlete is working off of)
+- generatedMax (optional float — system-calculated max)
+- isCurrentMax (boolean, default false)
+- source (enum: WORKOUT, MANUAL, IMPORT)
+- createdAt
+- Indexes: [athleteId, exerciseId], [athleteId, date]
+
 ## Acceptance Criteria
 - [ ] Prisma schema compiles without errors (`npx prisma validate`)
 - [ ] Migration runs successfully (`npx prisma migrate dev`)
@@ -146,3 +185,7 @@ Establish the foundational data architecture so all platform features have a con
 - Use JSON fields sparingly — only where schema truly needs to be flexible (metadata, openers, warmupPlan)
 - Keep load prescription as explicit typed fields, not JSON, for queryability
 - Add database indexes for coach→athlete and program→workout lookups
+
+## Revision History
+- 2026-02-17: Exercise model updated — coachId now optional (null for library exercises), added force/level/mechanic/equipment/primaryMuscles/secondaryMuscles/instructions/images fields, updated category examples to match free-exercise-db taxonomy — discovered during Task 2.1
+- 2026-02-17: Added WorkoutSession and MaxSnapshot models (implemented in Task 1.9/1.10 but missing from spec). Added supersetGroup, supersetColor, isUnilateral, restTimeSeconds, tempo fields to WorkoutExercise (implemented in Task 1.10) — discovered during Task 2.3 review

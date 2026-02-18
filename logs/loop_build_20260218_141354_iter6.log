@@ -1,0 +1,18 @@
+**Task 21.1 complete.** Here's what was built:
+
+**New file:** `src/components/training/RestTimer.tsx`
+- Countdown timer with `formatTime` display (M:SS format)
+- Start/pause, reset, and dismiss controls
+- Progress bar that fills as time elapses
+- Audio alert (880Hz beep via Web Audio API) and vibration on expiration
+- Visual state change (green border/bg) when timer completes
+
+**Modified:** `src/components/training/TrainingLog.tsx`
+- Timer triggers automatically after logging a set via `handleLogSet`
+- Does NOT trigger when the final prescribed set completes (exercise done)
+- Duration defaults to `WorkoutExercise.restTimeSeconds` or 120s fallback
+- Timer renders inline between logged sets and the new set form
+- Non-blocking — athlete can dismiss and continue logging at any time
+
+All validation passed: `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

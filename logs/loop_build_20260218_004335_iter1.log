@@ -1,0 +1,10 @@
+**Task 11.1 complete.** Created `/dashboard` page with:
+
+- **4 stat cards**: Total Athletes, Active Programs, Workouts This Week, Needs Attention
+- Server component fetching real counts from Prisma (athletes, non-template programs, sessions this week, athletes with no logs in 3+ days)
+- **Empty state**: When 0 athletes, shows "Add your first athlete" CTA
+- **Quick action buttons**: New Program, Add Athlete, Analytics
+- **Responsive grid**: 1 col on mobile, 2 on sm, 4 on lg
+- Clickable cards (Athletes → `/athletes`, Programs → `/programs`)
+- All validation passed (tsc, build)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

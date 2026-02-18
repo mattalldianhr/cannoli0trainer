@@ -312,7 +312,7 @@ function transformSets(item: WorkoutItem, prescribedRPE: number | null): Transfo
   const sets: TransformedSet[] = [];
 
   for (const setData of item.tableData) {
-    const set = transformSet(setData, prescribedRPE);
+    const set = transformSet(setData, prescribedRPE, item.fullyCompleted);
     if (set) {
       sets.push(set);
     }
@@ -321,26 +321,50 @@ function transformSets(item: WorkoutItem, prescribedRPE: number | null): Transfo
   return sets;
 }
 
-function transformSet(setData: SetData, prescribedRPE: number | null): TransformedSet | null {
+function transformSet(
+  setData: SetData,
+  prescribedRPE: number | null,
+  itemFullyCompleted: boolean,
+): TransformedSet | null {
   const weightVal = findSetValue(setData, 'primary1');
   const repsVal = findSetValue(setData, 'reps');
   const velocityVal = findSetValue(setData, 'peakVelocity')
     ?? findSetValue(setData, 'meanVelocity')
     ?? findSetValue(setData, 'velocity');
 
-  // actual = value field, prescribed = placeholder field
+  // TeamBuildr pre-populates reps.value from the coach's prescription
+  // even when the athlete never touches the exercise. Only weight.value
+  // stays null until the athlete actually enters data. So the reliable
+  // completion signal is: weight.value !== null.
+  //
+  // Exception: bodyweight/AMAP exercises where weight is legitimately 0
+  // but the item is marked fullyCompleted and the athlete typed actual reps.
+  const weightEntered = weightVal?.value != null;
   const actualWeight = weightVal?.value ?? 0;
   const actualReps = repsVal?.value ?? 0;
 
-  // Skip sets with no actual data (0 weight AND 0 reps means not completed)
-  if (actualWeight === 0 && actualReps === 0) {
-    // Check if there's prescribed data - if so, it's an incomplete set
-    const prescribedWeight = parseFloat(weightVal?.placeholder ?? '0') || 0;
-    const prescribedReps = parseInt(repsVal?.placeholder ?? '0', 10) || 0;
-    if (prescribedWeight === 0 && prescribedReps === 0) {
-      return null;
+  if (!weightEntered) {
+    // Weight was never entered — check if this is a genuine bodyweight exercise
+    // where the item is fully completed (e.g., AMAP push-ups, inverted rows)
+    if (itemFullyCompleted && actualReps > 0) {
+      // Genuine bodyweight completion — keep it with weight=0
+      return {
+        setNumber: setData.setId,
+        reps: actualReps,
+        weight: 0,
+        rpe: prescribedRPE,
+        velocity: velocityVal?.value ?? null,
+        prescribedReps: parseInt(repsVal?.placeholder ?? '0', 10) || null,
+        prescribedWeight: parseFloat(weightVal?.placeholder ?? '0') || null,
+        percentageOf1RM: setData.percentage ?? null,
+      };
     }
-    // If there's a prescription but no completion, still skip (not completed)
+    // Ghost data — prescribed reps pre-filled, athlete never started
+    return null;
+  }
+
+  // Weight was entered — skip only if both weight and reps are zero
+  if (actualWeight === 0 && actualReps === 0) {
     return null;
   }
 

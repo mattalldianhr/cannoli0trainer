@@ -1,0 +1,10 @@
+**Task 4.6 complete.** Created CRUD API routes for BodyweightLog:
+
+- **`POST /api/bodyweight`** — Creates a bodyweight log entry (requires `athleteId`, `weight`; optional `unit`, `loggedAt`)
+- **`GET /api/bodyweight?athleteId=...`** — Returns bodyweight history for an athlete, with optional `from`/`to` date range filtering and `limit`/`offset` pagination
+- **`GET /api/bodyweight/[id]`** — Returns a single log entry
+- **`PUT /api/bodyweight/[id]`** — Updates weight, unit, or loggedAt
+- **`DELETE /api/bodyweight/[id]`** — Deletes a log entry
+
+All validation passed: `tsc --noEmit` clean, `npm run build` clean (lint remains pre-existing broken). Committed as `2e05c98`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

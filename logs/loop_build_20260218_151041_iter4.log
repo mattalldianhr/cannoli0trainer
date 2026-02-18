@@ -1,0 +1,10 @@
+**Task 22.2 complete.** Created `src/app/dashboard/loading.tsx` with pulse-animated skeleton placeholders matching the dashboard layout:
+
+- **Header**: Title and subtitle placeholders + 3 button placeholders (hidden on mobile)
+- **Stat cards**: 4-card grid with label and value placeholders
+- **Recent activity**: 2 date groups with 3 session rows each
+- **Needs attention**: 2 athlete row placeholders
+- **Upcoming meets**: 2 meet row placeholders
+
+All skeletons match the actual content dimensions to prevent layout shift. Uses the existing `bg-muted animate-pulse rounded` pattern from the athlete pages. Next.js automatically wraps the route in a Suspense boundary using this `loading.tsx` file.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

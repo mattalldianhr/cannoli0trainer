@@ -1,0 +1,19 @@
+## Quick Spec Review — Iteration 25
+
+**Findings: 0 new**
+
+Build log (iter 25, Task 4.1) completed cleanly:
+- Coach CRUD API routes created (`/api/coaches` and `/api/coaches/[id]`)
+- TypeScript clean, build successful
+- Committed as `877981f`
+- No inconsistencies, mismatches, or unexpected values
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+| Prior uncommitted spec changes | 2 files — already correct, from Tasks 2.1/2.3 |
+
+The two uncommitted spec files (`01-data-models-and-schema.md`, `05-exercise-library.md`) contain valid corrections discovered during earlier iterations (exercise model fields, category taxonomy, WorkoutSession/MaxSnapshot models, seed count). These are accurate and should be committed when convenient.
+
+**Continue building?** Yes — Task 4.1 done cleanly. Ready for next task.

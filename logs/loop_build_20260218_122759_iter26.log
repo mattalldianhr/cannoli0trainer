@@ -1,0 +1,15 @@
+**Task 18.10 complete.** Here's what was built:
+
+**API Route** (`/api/athlete/history`):
+- `GET ?page=1&limit=20` — paginated list of completed/partially-completed WorkoutSessions with exercise summaries (names, volume, sets count)
+- `GET ?sessionId=xxx` — detailed session view with full exercise breakdown and set logs (weight, reps, RPE, velocity)
+- Auth-gated via NextAuth session with `athleteId`
+
+**Page** (`/athlete/history/page.tsx`):
+- Reverse-chronological session list with status icons, completion badges, program name, and volume stats
+- Tap-to-expand reveals exercise details with per-set data (weight x reps @ RPE, velocity)
+- Client-side detail caching (fetches once, cached for the session)
+- "Load More" pagination (20 per page)
+- Loading skeletons and empty state
+- Mobile-optimized layout matching existing athlete page patterns
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

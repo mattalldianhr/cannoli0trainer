@@ -1,0 +1,6 @@
+**Task 18.12 complete.**
+
+**What was done**: Integrated the existing `notifyWorkoutCompletion()` function into `src/lib/training/update-session-status.ts`. The email fires only on the **transition** to `FULLY_COMPLETED` — it captures the session's previous status before updating, then compares to the new status. When the transition is detected, it looks up the athlete's coach email and calls `notifyWorkoutCompletion` fire-and-forget (with `.catch()` to avoid unhandled rejections). The email includes athlete name, workout name, completion %, date, and a link to the athlete's profile.
+
+**Validation**: `tsc --noEmit` passed, `npm run build` passed. Lint has the pre-existing Next.js 16 issue (not related to this change).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,9 @@
+Task 24.1 is complete. Here's what was implemented:
+
+**New file:**
+- `src/lib/analytics/rpe-accuracy.ts` — RPE accuracy calculation utility with `estimateRPEFromLoad()` (reverse RPE table lookup) and `calculateRpeAccuracy()` that computes average absolute deviation between reported and estimated RPE, plus weekly trend data
+
+**Modified files:**
+- `src/app/api/analytics/[athleteId]/route.ts` — Added `rpeExerciseId` query param to filter RPE distribution by exercise, returns exercise list for the dropdown, and computes RPE accuracy via MaxSnapshot e1RM data
+- `src/components/analytics/AnalyticsDashboard.tsx` — Added exercise filter dropdown to RPE section, RPE accuracy metric card showing "±X RPE avg deviation", and accuracy trend line chart over time
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

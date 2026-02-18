@@ -1,0 +1,9 @@
+## Quick Spec Review Summary — Iter 6
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Build status**: Clean — Task 21.1 (rest timer between sets) completed successfully. `RestTimer.tsx` created, `TrainingLog.tsx` updated, committed as `071ec54`.
+
+No spec inconsistencies, mismatches, or missing items detected. Both the build and review logs are clean across the last two iterations.
+
+**Continue building?** Yes — no blockers.

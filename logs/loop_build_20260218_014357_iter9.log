@@ -1,0 +1,17 @@
+**Task 13.1 complete.** Here's what was built:
+
+**New files:**
+- `src/lib/vbt/types.ts` — TypeScript types for velocity data points, regression results
+- `src/lib/vbt/regression.ts` — Least-squares linear regression with R² calculation and trend line point generation
+- `src/lib/vbt/index.ts` — Barrel export
+- `src/components/charts/LoadVelocityChart.tsx` — Scatter chart using recharts `ComposedChart` with:
+  - Scatter dots for (weight, velocity) data points
+  - Dashed red regression trend line overlay
+  - Custom tooltip showing load, velocity, date, and RPE
+  - R² and slope statistics display below chart
+  - Empty state when no velocity data exists
+
+**Updated:**
+- `src/components/charts/index.ts` — Added `LoadVelocityChart` export
+- `IMPLEMENTATION_PLAN.md` — Marked Task 13.1 complete (70/82)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

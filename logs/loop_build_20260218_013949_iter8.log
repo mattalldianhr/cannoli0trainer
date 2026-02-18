@@ -1,0 +1,10 @@
+Done. Here's what happened this iteration:
+
+**Tasks 12.3 & 12.4** — Already fully implemented in the existing `AnalyticsDashboard.tsx` (from Task 12.2). Marked complete with notes.
+
+**Task 12.5** — Implemented CSV export:
+- Created `/api/analytics/[athleteId]/export/route.ts` — streams CSV with Date, Exercise, Set, Reps, Weight, Unit, RPE, RIR, Velocity, Notes columns. Respects date range params, proper CSV escaping, and `Content-Disposition` download header.
+- Added "CSV" download button to the analytics dashboard next to the date range controls, which triggers the export with the currently selected date range.
+
+Build passes. Committed as `c8e09da`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

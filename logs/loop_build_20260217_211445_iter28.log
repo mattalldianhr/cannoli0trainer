@@ -1,0 +1,13 @@
+**Task 4.4 complete.** Created CRUD API routes for Exercises:
+
+- **`/api/exercises` (route.ts)**: 
+  - `POST` — creates exercise with name, category, and optional fields (force, level, mechanic, equipment, muscles, instructions, images, videoUrl, cues, tags)
+  - `GET` — lists exercises with `?search=` (name, case-insensitive), `?category=` filter, `?tag=` filter (JSON array_contains), and `?limit=`/`?offset=` pagination
+
+- **`/api/exercises/[id]` (route.ts)**:
+  - `GET` — returns exercise with usage counts (workoutExercises, maxSnapshots)
+  - `PUT` — partial update of any exercise fields
+  - `DELETE` — deletes exercise, but returns 409 if it's used in workouts (prevents data loss)
+
+All validation passed: `tsc --noEmit` clean, `npm run build` clean. Committed as `cdbfc73`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

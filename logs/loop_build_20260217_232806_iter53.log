@@ -1,0 +1,10 @@
+**Task 9.1 complete.** Created `src/components/shared/RPESelector.tsx`:
+
+- Visual button grid with RPE 6–10 in 0.5 increments (uses `RPE_VALUES` from rpe-table)
+- Color-coded from green (RPE 6) to red (RPE 10)
+- Shows RPE descriptions from `RPE_DESCRIPTIONS` when a value is selected
+- Supports `value`/`onChange` props, `allowClear`, `disabled`, and `showDescription`
+- Reusable across program builder and training log
+- `aria-label` and `aria-pressed` for accessibility
+- All validations pass (tsc, build)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

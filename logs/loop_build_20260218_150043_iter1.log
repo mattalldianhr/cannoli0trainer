@@ -1,0 +1,12 @@
+**Task 21.3 complete.** Created `docs/offline-queue-design.md` covering:
+
+- **Queue architecture**: localStorage-based queue with 100-entry cap
+- **Queue manager**: `enqueue()`, `dequeue()`, `syncQueue()` functions
+- **Background sync**: `useOfflineSync` hook with 30s polling + `online` event listener
+- **UI**: Pending sync badge + optimistic set display for queued items
+- **Server-side**: Idempotency via optional `clientId` field on SetLog
+- **Edge cases**: Stale entries, multi-tab, queue overflow, cross-device limitations
+- **Implementation sequence**: 7-step plan for Task 21.4
+
+Status: **114/179 tasks complete**, next up is **Task 21.4** (implement the offline queue).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

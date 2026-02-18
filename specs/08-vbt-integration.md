@@ -32,6 +32,24 @@ Support the coach's VBT practice by storing velocity data, generating load-veloc
 | Prescribed velocity target 0.8 m/s | Training log shows target, athlete enters actual |
 | Athlete with no velocity data | VBT section shows "No velocity data yet" |
 
+## Deferred Features (Phase 2)
+
+### Fatigue Tracking — Velocity Loss Within and Across Sessions
+Expand the existing single-session fatigue metric to include week-over-week trending:
+
+**Within-session velocity loss** (already spec'd as basic fatigue metric):
+- Velocity drop % from set 1 to final set: `((set1 - setN) / set1) * 100`
+- Flag workouts exceeding coach-configured velocity loss threshold (default 20%)
+- Display per-exercise in session view
+
+**Across-session velocity loss** (new):
+- Track mean velocity at a given load across sessions week-over-week
+- Compare rolling 2-week average velocity to previous 2-week average at same load bracket
+- Display as trend line chart: mean velocity at ~80% 1RM over time
+- Alert when week-over-week velocity drops >5% at same load (possible overreaching indicator)
+
+Implementation: `lib/vbt/fatigue.ts` for calculations. Within-session uses existing SetLog data. Across-session requires grouping SetLogs by exercise + approximate load bracket (round to nearest 5% of 1RM) and computing weekly averages.
+
 ## Technical Notes
 - Velocity field already in SetLog model (optional float)
 - Load-velocity curve: scatter plot of (weight, velocity) with linear regression
@@ -41,3 +59,8 @@ Support the coach's VBT practice by storing velocity data, generating load-veloc
 - This builds on top of the analytics spec — implement after base analytics
 - Consider a `lib/vbt/` directory for velocity calculations
 - Chart.js scatter plot or recharts scatter for load-velocity curve
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-18 | Added Deferred Feature: cross-session velocity loss tracking with week-over-week trend |

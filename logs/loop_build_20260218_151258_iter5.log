@@ -1,0 +1,12 @@
+**Task 23.1 complete.** 
+
+Created `ProgramOverview` component at `src/components/programs/ProgramOverview.tsx` and integrated it into the program detail page (`/programs/[id]`):
+
+- **Table layout**: Weeks as rows (W1, W2...), days as columns (Day 1, Day 2...)
+- **Cell content**: Workout name, exercise count badge, top 3 exercise names with "+N more" overflow
+- **Navigation**: Each cell is an anchor link to `#week-N`, scrolling to the corresponding week card below
+- **Responsive**: Horizontal scroll on narrow screens via `overflow-x-auto`
+- **Empty handling**: Dash for missing days when weeks have uneven day counts
+
+All validation passed (tsc, build). Committed as `78c8697`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

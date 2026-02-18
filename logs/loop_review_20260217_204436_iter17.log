@@ -1,0 +1,18 @@
+## Quick Spec Review — Iteration 17
+
+**Findings: 0 spec issues**
+
+The iter17 build (Task 2.7 — fitness calculation libraries) completed cleanly:
+- `@finegym/fitness-calc` v1.0.1 installed — all 7 1RM formulas working (Epley, Brzycki, Lombardi, Mayhew, O'Conner, Wathan, Lander)
+- `powerlifting-formulas` v0.2.3 installed — DOTS, Wilks, Wilks 2020, Glossbrenner, Schwartz-Malone, Reshel all available
+- `tsc --noEmit` and `npm run build` both pass clean
+
+No inconsistencies, missing items, or unexpected values discovered. The review log for iter17 was empty (likely wasn't populated yet when this session started).
+
+| Item | Assessment | Priority |
+|------|-----------|----------|
+| Library install clean | Confirms packages work with existing TS setup | N/A |
+| All formulas verified | Matches spec expectations for calculation engines | N/A |
+
+**Specs updated:** 0
+**Continue building?** Yes — Phase 2 appears fully complete (Tasks 2.1–2.7). Ready for Phase 3.

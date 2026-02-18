@@ -1,0 +1,13 @@
+## Quick Spec Review — Iteration 14
+
+**Findings: 0 new issues**
+
+The iter13 review already caught and fixed the 2 P1 issues:
+1. WorkoutExercise missing 5 fields (supersetGroup, supersetColor, isUnilateral, restTimeSeconds, tempo) — **fixed in spec 01**
+2. WorkoutSession + MaxSnapshot models missing from spec — **fixed in spec 01**
+
+The iter14 build (Task 2.4 — coach/athlete seeding) completed cleanly with no spec inconsistencies. The 5 athletes and coach data match the TeamBuildr export.
+
+**Specs updated this cycle:** 2 (`01-data-models-and-schema.md`, `05-exercise-library.md`) — both already updated in iter13
+**Specs needing update now:** 0
+**Continue building?** Yes — no blockers.

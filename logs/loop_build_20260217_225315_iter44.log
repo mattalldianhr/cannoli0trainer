@@ -1,0 +1,17 @@
+**Task 7.4 complete.** Here's what was implemented:
+
+- **ExerciseRow** is now expandable — clicking the gear icon reveals an inline prescription editor
+- **Prescription type selector** — dropdown to choose between all 6 types (% of 1RM, RPE, RIR, Velocity, Autoregulated, Fixed Weight)
+- **Sets/Reps inputs** — always visible, shared across all prescription types
+- **Type-specific conditional fields**:
+  - **Percentage**: % of 1RM input
+  - **RPE**: Target RPE + optional load
+  - **RIR**: Reps in Reserve + optional load
+  - **Velocity**: Velocity target (m/s) + optional load
+  - **Autoregulated**: Target RPE, backoff %, backoff sets, free-text instructions
+  - **Fixed**: Load amount + unit selector (lbs/kg)
+- **Exercise notes** field per exercise
+- Changing prescription type resets to sensible defaults via `createDefaultPrescription()`
+- All state changes flow up through `onUpdateExercise` → `updateExercise` callback chain
+- `tsc --noEmit` and `npm run build` pass cleanly
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

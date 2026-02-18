@@ -33,6 +33,25 @@ Give the coach a single landing page that replaces the need to switch between mu
 | Meet in 14 days | Appears in upcoming meets section |
 | Mobile viewport (375px width) | Cards stack vertically, all content accessible |
 
+## Deferred Features (Phase 2)
+
+### Quick Action Buttons
+Quick-access floating action menu or card-level buttons for the 3 most common coach tasks:
+- **Create Program** — navigates to `/programs/new`
+- **Add Athlete** — navigates to `/athletes/new`
+- **View Analytics** — navigates to `/analytics`
+
+Implementation: Either a floating action button (FAB) in bottom-right corner (mobile-first) or prominent CTA buttons within each dashboard card. Use Radix UI DropdownMenu for FAB variant.
+
+### Loading States / Skeleton Loaders
+Replace blank states during data fetch with skeleton placeholders:
+- Overview stat cards: pulse-animated rectangles matching card dimensions
+- Activity feed: 3-4 skeleton rows with avatar circle + text lines
+- Needs Attention section: skeleton list items
+- Upcoming meets: skeleton cards
+
+Implementation: Create `DashboardSkeleton` component using Tailwind `animate-pulse`. Use React Suspense boundaries around each dashboard section for granular loading.
+
 ## Technical Notes
 - Use existing layout components (Header, Container, Footer)
 - Follow existing card patterns from `components/ui/card.tsx`
@@ -41,3 +60,8 @@ Give the coach a single landing page that replaces the need to switch between mu
 - Use `@/lib/prisma` singleton for database access
 - Path alias `@/*` maps to `./src/*`
 - Group related stats queries to minimize database round-trips
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-18 | Added Deferred Features: quick action buttons, skeleton loading states |

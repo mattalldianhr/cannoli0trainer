@@ -1,0 +1,13 @@
+**Task 17.7 complete.** Here's what was done:
+
+**API** (`src/app/api/train/route.ts`):
+- When no `WorkoutSession` exists for the requested athlete+date, the API now queries for the next upcoming `NOT_STARTED` (non-skipped) session
+- Returns `nextSession: { date, title, programName }` in the response (or `null` if no future sessions exist)
+
+**UI** (`src/components/training/TrainingLog.tsx`):
+- Added `NextSessionData` interface to the `TrainResponse` type
+- Changed the empty state heading to "Rest Day" when viewing today's date
+- Added a clickable "Next: {day} — {title}" link that jumps the date picker to the next scheduled workout
+
+**Validation**: `tsc --noEmit` and `npm run build` both pass. Committed as `db688fa`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

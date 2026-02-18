@@ -1,0 +1,9 @@
+**Task 18.13 complete.** Here's what was done:
+
+- **`public/manifest.json`** — PWA manifest with `name: "Cannoli Trainer"`, `short_name: "Cannoli"`, `start_url: "/athlete"`, `display: "standalone"`, theme color `#f97316` (orange), background `#000000` (black)
+- **`public/icons/`** — Generated icon-192x192.png, icon-512x512.png, icon.svg, and apple-touch-icon.png using sharp from an SVG with orange "C" on black rounded-rect
+- **`public/apple-touch-icon.png`** — 180x180 copy at standard root location
+- **`src/app/layout.tsx`** — Added `manifest` link, `appleWebApp` config (capable, black-translucent status bar), icon metadata, and `viewport` export with theme color and mobile-optimized viewport settings
+
+All validation passes (tsc, build). Chrome DevTools will show a valid manifest at `/manifest.json`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

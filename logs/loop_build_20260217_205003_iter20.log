@@ -1,0 +1,19 @@
+**Task 3.2 complete.** 
+
+Created 58 unit tests for the TeamBuildr data transformer at `src/lib/teambuildr/transformer.test.ts` covering:
+
+- **parseRPE**: single values, ranges, half-values, case-insensitive, boundary validation
+- **parseTempo**: 3-count and 4-count patterns, before/after "tempo" keyword
+- **Prescribed vs actual**: `value` field = actual, `placeholder` = prescribed, skipping incomplete sets
+- **Superset grouping**: `groupingLetter` → `supersetGroup`, `groupingColorCode` → `supersetColor`
+- **Exercise type codes**: L (Lift), S (SAQ+C), C (Circuit), W (Warm-up) accepted; N (Note) and Sc (Survey) skipped
+- **Non-exercise skipping**: All 6 names in `teambuildrNonExercises` set
+- **Prescription type**: percentage > RPE > fixed priority chain
+- **MaxSnapshot conversion**: `workingMax` → IMPORT source, `generatedMax` → WORKOUT source, respects `maxTrackingEnabled`, skips zero values
+- **Deduplication**: keeps highest `workingMax` per (athlete, exercise, date) key
+- **Name resolution**: `Back Squat` → `Barbell Squat`, case normalization
+- **Stats aggregation**: per-athlete and aggregate counting
+- **Multi-athlete transforms**: multiple athletes from single export
+
+All 58 tests pass. TypeScript and build validation pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

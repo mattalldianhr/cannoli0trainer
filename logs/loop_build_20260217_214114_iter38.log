@@ -1,0 +1,14 @@
+**Task 6.1 complete.** Created:
+
+- **`src/app/exercises/page.tsx`** — Server component that fetches all exercises from Prisma and renders the page with title and count
+- **`src/components/exercises/ExerciseList.tsx`** — Client component with:
+  - Search by exercise name
+  - Category filter chips (All, Strength, Powerlifting, Olympic, Strongman, Plyometrics, Stretching, Cardio)
+  - Tag filter chips (Competition Lifts, Variations, Accessory, GPP) with multi-select
+  - Exercise cards showing name, category, equipment, primary muscles, force, and level
+  - Competition/Variation badges on tagged exercises
+  - Empty state messaging
+  - Follows the same patterns as AthleteList
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

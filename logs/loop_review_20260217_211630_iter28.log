@@ -1,0 +1,23 @@
+## Quick Spec Review — Iteration 28
+
+**Findings: 0 new**
+
+Build log (iter 28, Task 4.4) completed cleanly:
+- Exercise CRUD API routes created (`/api/exercises` and `/api/exercises/[id]`)
+- TypeScript clean, build successful
+- Committed as `cdbfc73`
+- No inconsistencies, mismatches, or unexpected values
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+| Prior uncommitted spec changes | 2 files — valid corrections from earlier iterations |
+
+**Uncommitted spec changes** (from earlier iterations, still valid):
+- `specs/01-data-models-and-schema.md` — Exercise model fields expanded, WorkoutSession/MaxSnapshot models added, WorkoutExercise superset fields added
+- `specs/05-exercise-library.md` — Categories updated to free-exercise-db taxonomy, seed count corrected to 873
+
+These are all accurate corrections discovered during earlier tasks. They should be committed when convenient.
+
+**Continue building?** Yes — Task 4.4 done cleanly. Ready for next task.

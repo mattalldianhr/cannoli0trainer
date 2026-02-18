@@ -1,0 +1,12 @@
+**Task 17.4 complete.** 
+
+Here's what was done:
+
+- Updated `/api/programs/[id]/assign` to integrate the scheduling pipeline
+- After creating ProgramAssignments, the API now fetches the program's workouts and calls `generateSchedule()` + `persistSchedule()` for each athlete when `startDate` is provided
+- Added support for optional `trainingDays` parameter (validated as array of 0-6 integers, defaults to `[1,2,4,5]`)
+- Added support for single-athlete assignment via `athleteId` param (in addition to existing `athleteIds` array)
+- `trainingDays` and `isActive` are now persisted on ProgramAssignment records
+- Response includes `scheduling.sessionsCreated` count and per-athlete details
+- All 186 tests pass, `tsc --noEmit` clean, build succeeds
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

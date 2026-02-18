@@ -1,0 +1,7 @@
+**Task 4.1 complete.** Created two API route files:
+
+- **`/api/coaches` (route.ts)**: POST creates a coach with name/email validation and unique email check (409 on conflict). GET returns all coaches with athlete/program counts.
+- **`/api/coaches/[id]` (route.ts)**: GET returns a single coach with relation counts (athletes, programs, exercises, meets). PUT updates coach fields with partial update support and email uniqueness check.
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful. Committed as `877981f`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

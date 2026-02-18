@@ -1,0 +1,21 @@
+**Task 17.8 complete.** Here's what was built:
+
+**Files created:**
+- `src/app/schedule/page.tsx` — Server component that fetches athletes and their WorkoutSessions for the displayed week using Prisma. Supports `?week=YYYY-MM-DD` search param for week navigation.
+- `src/components/schedule/WeeklyCalendar.tsx` — Client component with:
+  - 7-day week grid (Mon-Sun columns, athlete rows)
+  - Today column highlighting
+  - Session cells showing workout title, W/D numbers, completion %, and status icons (not started, in progress, completed, skipped)
+  - Athlete dropdown filter
+  - Previous/next week navigation via URL search params
+  - "Today" button to return to current week
+  - Status legend
+  - Sticky athlete name column for horizontal scroll
+  - Links from athlete names to their profile pages
+
+**Files modified:**
+- `src/components/layout/Header.tsx` — Added "Schedule" nav link between Programs and Exercises
+- `IMPLEMENTATION_PLAN.md` — Marked Task 17.8 complete (84/179)
+
+**Validation:** `tsc --noEmit` and `npm run build` both pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

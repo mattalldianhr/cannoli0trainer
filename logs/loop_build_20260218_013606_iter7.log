@@ -1,0 +1,18 @@
+**Task 12.2 complete.** 
+
+Created:
+- **`src/app/analytics/page.tsx`** — Server component that fetches athlete list from DB and renders the analytics dashboard
+- **`src/components/analytics/AnalyticsDashboard.tsx`** — Client component with:
+  - Athlete selector dropdown
+  - Date range buttons (4 weeks, 8 weeks, 12 weeks, all time) 
+  - Summary stat cards (total sessions, compliance %, avg RPE, lifts tracked)
+  - E1RM trend line charts per exercise (up to 6 lifts)
+  - Weekly volume bar chart (tonnage)
+  - Weekly compliance bar chart
+  - RPE distribution bar chart + weekly avg RPE trend line
+  - Bodyweight trend line chart
+  - Loading, error, and empty states for all sections
+  - Fetches from existing `/api/analytics/[athleteId]` endpoint
+
+All validations pass (tsc, build). Committed as `26ded2f`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

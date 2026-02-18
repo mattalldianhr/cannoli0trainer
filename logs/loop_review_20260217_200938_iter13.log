@@ -1,0 +1,12 @@
+No dedicated data import/transformer spec — the transformer stats are implementation details, not spec-level. The key spec gap was in `01-data-models-and-schema.md` which is now fixed.
+
+## Quick Spec Review — Iteration 13
+
+**Findings: 2 (P1 — spec drift from implementation)**
+
+1. **WorkoutExercise missing 5 fields** — `supersetGroup`, `supersetColor`, `isUnilateral`, `restTimeSeconds`, `tempo` were added to Prisma in Task 1.10 but never backported to the data models spec. **Fixed.**
+
+2. **WorkoutSession + MaxSnapshot models missing** — Both models were implemented in Task 1.9 (committed `b2244e2`) but never added to spec 01. **Fixed.**
+
+**Specs updated: 1** (`01-data-models-and-schema.md`)
+**Continue building? Yes** — no blockers. Task 2.3 completed cleanly with solid validation numbers (2,033 sessions, 12,283 exercises, 31,660 sets).

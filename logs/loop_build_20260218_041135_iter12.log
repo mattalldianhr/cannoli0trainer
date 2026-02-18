@@ -1,0 +1,9 @@
+**Task 14.1 complete.** Here's what was implemented:
+
+- **`/meets` page** — server component that fetches all meets from the database and renders them via the `MeetList` client component
+- **`MeetList` component** — client-side search (name, federation, location) with filter chips (All / Upcoming / Past), showing date, federation, location, and athlete count per meet card; cards link to `/meets/[id]`
+- **`CreateMeetDialog` component** — modal form with name, date, federation, and location fields; creates meets via the existing `/api/meets` POST endpoint
+- **Nav updated** — added "Meets" link to the Header navigation
+
+All validation passes: `tsc --noEmit` clean, `npm run build` succeeds (lint is a pre-existing Next.js 16 issue).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

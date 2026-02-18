@@ -1,0 +1,18 @@
+## Quick Spec Review — Iteration 37
+
+**Findings: 0 new issues**
+
+Task 5.4 (edit/delete athlete functionality) completed cleanly — no inconsistencies, mismatches, or unexpected values.
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Carried forward (uncommitted spec updates from ~iter 10):**
+1. **`specs/01-data-models-and-schema.md`** — Exercise model fields expanded, WorkoutSession & MaxSnapshot models added
+2. **`specs/05-exercise-library.md`** — Categories updated to free-exercise-db taxonomy, seed count corrected from 30+ to 873
+
+These are correct and match implemented code. Should be committed as a "spec sync" when ready.
+
+**Continue building?** Yes — no blockers.

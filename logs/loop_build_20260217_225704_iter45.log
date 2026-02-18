@@ -1,0 +1,15 @@
+Task 7.5 is complete. Here's a summary of what was implemented:
+
+**Task 7.5: Prescription type conditional fields**
+
+All 6 prescription types now show the correct input fields with contextual helpers:
+
+1. **% of 1RM** — percentage input with `%` suffix, description of what it means
+2. **RPE** — split into RPE min + RPE max (optional) for range support (e.g. "RPE 7-8"), plus optional load. Shows RPE description hints ("could do 2 more")
+3. **RIR** — reps in reserve input + optional load. Shows RPE equivalence ("2 RIR = RPE 8")
+4. **Velocity** — velocity target (m/s) + optional load. Shows training zone classification (speed, strength-speed, strength, max strength)
+5. **Autoregulated** — target RPE + optional RPE max + backoff % + backoff sets + instructions. Shows live preview in coach-speak format ("Work up to RPE 8, then -10% for 3x5")
+6. **Fixed** — load + unit (lbs/kg). Shows description text
+
+The `formatPrescription` summary display was also updated to handle RPE ranges and the "Work up to" autoregulated format.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

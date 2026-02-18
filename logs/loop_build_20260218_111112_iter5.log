@@ -1,0 +1,14 @@
+**Task 17.3 complete.**
+
+Created `src/lib/scheduling/persist-schedule.ts` with the `persistSchedule()` function that:
+- Takes `athleteId`, `programId`, `programAssignmentId`, and a `ScheduledSession[]` schedule
+- Queries existing WorkoutSessions for the athlete on the scheduled dates
+- Skips dates that already have sessions (idempotent)
+- Creates all new sessions in a single Prisma `$transaction` for atomicity
+- Links each session to the source Workout via `workoutId` and assignment via `programAssignmentId`
+- Returns `{ created, skipped, total }` counts
+
+8 unit tests pass covering: empty schedule, full creation, correct data shape, skip logic, full idempotent skip, correct query parameters, 16-session program, and assignment linking.
+
+All validation passes: `tsc --noEmit`, `npm run build` (lint has pre-existing issue).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,11 @@
+No spec issues found — only benign mentions of "errors" (error handling in the UI) and "issue" (pre-existing lint, already known).
+
+## Quick Spec Review Summary — Iter 5
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Build status**: Clean — Task 20.3 (delete exercise with usage protection) completed successfully. `DeleteExerciseDialog` created, 409 Conflict handling implemented, committed as `49c823f`.
+
+No spec inconsistencies, mismatches, or missing items detected.
+
+**Continue building?** Yes — no blockers.

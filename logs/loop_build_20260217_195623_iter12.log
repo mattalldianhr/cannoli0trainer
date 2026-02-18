@@ -1,0 +1,16 @@
+**Task 2.2 complete.** Here's the summary:
+
+**What was done:**
+- Analyzed all 136 TeamBuildr exercise names — 6 are non-exercises (notes/surveys), 130 are real exercises
+- Matched 11 exercises exactly to free-exercise-db, mapped 53 more via name normalization (e.g., "Back Squat" → "Barbell Squat", "Comp bench" → "Barbell Bench Press - Medium Grip")
+- Created 66 new powerlifting-specific exercises not in free-exercise-db (Spoto Press, Larsen Press, paused/tempo variations, SSB Squat, Belt Squat, etc.)
+- Tagged 165 exercises with powerlifting categories: `competition_lift` (7), `competition_variation` (51), `accessory` (74), `gpp` (33)
+- Plus descriptive tags: `squat`, `bench`, `deadlift`, `upper_body`, `lower_body`, `paused`, `tempo`, `unilateral`, `machine`, etc.
+
+**Files created/modified:**
+- `prisma/seed-data/exercise-tags.ts` — mapping module with `freeExerciseDbTags`, `teambuildrToFreeExerciseDb`, `teambuildrNewExercises`, `teambuildrNonExercises`, and `resolveTeambuildrExerciseName()`
+- `prisma/seed.ts` — updated to apply tags and seed new exercises
+- `IMPLEMENTATION_PLAN.md` — task marked complete, discovery added
+
+**Validation:** `tsc --noEmit` passes, `npm run build` passes, seed runs successfully (939 total exercises).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

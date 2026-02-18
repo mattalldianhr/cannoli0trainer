@@ -1,0 +1,9 @@
+No real issues — "doesn't match" is about the UI preset logic, and "lint issue" is pre-existing.
+
+## Quick Spec Review Summary
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Continue building?** Yes
+
+The last build (Task 17.12 — training day selector in program assignment dialog) completed cleanly. TSC and build pass. The loop has been clean for 7+ consecutive iterations with no spec drift or inconsistencies detected.

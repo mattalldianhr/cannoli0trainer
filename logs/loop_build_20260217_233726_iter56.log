@@ -1,0 +1,15 @@
+**Task 10.2 complete.** Here's what was implemented:
+
+**Set Logging Interface** (`TrainingLog.tsx`):
+- Each exercise card now has an inline form for logging sets with **weight**, **reps**, optional **RPE selector** (for RPE/RIR/autoregulated prescriptions), and optional **velocity** input (for VBT prescriptions)
+- Form prefills with smart defaults: last logged set > previous performance > prescribed values
+- Existing logged sets are **editable** (inline edit mode with weight/reps/RPE/velocity) and **deletable** (with confirm-to-delete)
+- Exercise cards **expand/collapse** — auto-expanded for incomplete exercises, collapsed for completed ones
+- "Log Set N" button saves immediately via POST `/api/sets`
+
+**Session Status Updates** (`update-session-status.ts`):
+- New utility recalculates WorkoutSession completion (status, completionPercentage, completedItems) after every set create/update/delete
+- Wired into both `/api/sets` POST and `/api/sets/[id]` PUT/DELETE endpoints
+
+**Validation**: `tsc --noEmit` passes, `npm run build` succeeds (lint is a pre-existing issue).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

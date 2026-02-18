@@ -1,0 +1,8 @@
+**Task 10.4 complete.** Added a `WorkoutSummary` component to `TrainingLog.tsx` that renders when `completionPercent === 100`. It shows:
+
+- **2×2 stat grid**: exercises, sets, reps, and volume (with icons)
+- **Top RPE** across all logged sets (shown when > 0)
+- **Green-themed** styling matching the existing completed exercise card pattern
+
+All validation passed (tsc, build). Next incomplete task is **Task 11.1**: Create dashboard page at `/dashboard` with overview stat cards.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

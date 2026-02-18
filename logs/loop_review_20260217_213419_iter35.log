@@ -1,0 +1,21 @@
+## Quick Spec Review — Iteration 35
+
+**Findings: 0 new issues**
+
+Build log (iter 35, Task 5.2) completed cleanly:
+- "Add Athlete" form created at `/athletes/new` with validation
+- TypeScript clean, build successful
+- No inconsistencies, mismatches, or unexpected values found
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Carried forward** (uncommitted spec updates from earlier iterations — still need committing):
+- `specs/01-data-models-and-schema.md` — Exercise model fields expanded, WorkoutSession/MaxSnapshot models added, WorkoutExercise superset fields
+- `specs/05-exercise-library.md` — Categories updated to free-exercise-db taxonomy, seed count corrected to 873
+
+These have been carried forward since ~iteration 10. The previous review (iter 34) recommended committing them as a standalone "spec sync" commit.
+
+**Continue building?** Yes — Task 5.2 complete, ready for the next task.

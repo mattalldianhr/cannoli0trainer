@@ -1,0 +1,17 @@
+Task 18.7 is complete. Here's what was built:
+
+**API Route** (`src/app/api/athlete/dashboard/route.ts`):
+- Session-authenticated endpoint using NextAuth
+- Returns today's workout (or next scheduled workout if rest day)
+- Calculates streak (consecutive training days), workouts this week, and completion rate
+- Returns last 3 completed sessions and current active program
+
+**Athlete Dashboard Page** (`src/app/athlete/page.tsx`):
+- **Hero card**: Shows today's workout with status badge, progress bar for in-progress workouts, "Start Workout" button for not-started, or rest day card with next session info
+- **Quick stats**: 3-column grid with streak (flame icon), workouts this week, and completion rate
+- **Recent sessions**: Last 3 completed sessions with date, exercise count, and completion percentage
+- Skeleton loading states, empty state for no data, personalized greeting from session name
+- Mobile-optimized with 44px+ tap targets, links to `/athlete/train`
+
+All validation passed: `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

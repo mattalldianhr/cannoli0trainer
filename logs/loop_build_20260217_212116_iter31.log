@@ -1,0 +1,10 @@
+**Task 4.7 complete.** Created CRUD API routes for competition meets:
+
+- **`/api/meets` (POST)** — creates a meet with name, date, federation, location, and optional inline entries with athlete data
+- **`/api/meets` (GET)** — lists meets with search (name/federation/location) and `upcoming=true` filter
+- **`/api/meets/[id]` (GET)** — returns meet with all entries and athlete details
+- **`/api/meets/[id]` (PUT)** — updates meet fields (name, date, federation, location)
+- **`/api/meets/[id]` (DELETE)** — deletes meet (cascade deletes entries per schema)
+
+All validation passed: `tsc --noEmit` clean, `npm run build` succeeds (44 routes). Committed as `4b6c8ea`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

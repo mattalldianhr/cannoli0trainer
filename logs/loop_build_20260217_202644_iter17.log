@@ -1,0 +1,8 @@
+**Task 2.7 complete.** 
+
+Installed both packages:
+- **`@finegym/fitness-calc`** v1.0.1 — `calculateOneRepMax(100, 5)` returns 116.7 kg (Epley). All 7 formulas working (Epley, Brzycki, Lombardi, Mayhew, O'Conner, Wathan, Lander).
+- **`powerlifting-formulas`** v0.2.3 — `wilks(82.5, 510, 'male')` returns 341.65. DOTS, Wilks 2020, Glossbrenner, Schwartz-Malone, and Reshel all available.
+
+TypeScript types resolve, `tsc --noEmit` and `npm run build` both pass clean.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

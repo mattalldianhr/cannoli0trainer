@@ -1,0 +1,14 @@
+**Task 17.13 complete.** Added 12 new edge case unit tests to `src/lib/scheduling/__tests__/generate-schedule.test.ts`, bringing the total to 24 passing tests. New coverage includes:
+
+- Start on last training day of week (Friday with Mon/Tue/Thu/Fri)
+- Start on Sunday (week boundary)
+- Start on non-training day between training days (Wednesday with Mon/Tue/Thu/Fri)
+- Multi-week spillover (8-day program week with 3 training days → spans 3 calendar weeks)
+- 6-day training schedule (Mon-Sat)
+- Single workout program
+- Large program (6 weeks × 5 days = 30 sessions)
+- Non-sequential program weeks (gaps in week numbers)
+- Time stripping (non-midnight start date produces midnight session dates)
+
+All validation passed: `vitest run` (24/24), `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

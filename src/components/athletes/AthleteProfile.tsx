@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { BaseLineChart } from '@/components/charts/BaseLineChart';
+import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { EditAthleteForm } from './EditAthleteForm';
 import { DeleteAthleteDialog } from './DeleteAthleteDialog';
 
@@ -499,12 +499,6 @@ function TrainingTab({ athlete }: { athlete: AthleteProfileData }) {
 }
 
 function AnalyticsTab({ athlete }: { athlete: AthleteProfileData }) {
-  const totalSessions = athlete._count.workoutSessions;
-  const totalSets = athlete._count.setLogs;
-  const totalPRs = athlete._count.maxSnapshots;
-  const totalMeets = athlete._count.meetEntries;
-  const totalBodyweight = athlete._count.bodyweightLogs;
-
   return (
     <div className="space-y-6">
       {/* View Full Analytics Link */}
@@ -518,41 +512,7 @@ function AnalyticsTab({ athlete }: { athlete: AthleteProfileData }) {
         </Button>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{totalSessions}</p>
-            <p className="text-xs text-muted-foreground">Sessions</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{totalSets.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">Sets</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{totalPRs}</p>
-            <p className="text-xs text-muted-foreground">PRs</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{totalMeets}</p>
-            <p className="text-xs text-muted-foreground">Meets</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{totalBodyweight}</p>
-            <p className="text-xs text-muted-foreground">Weigh-ins</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Training Frequency */}
+      {/* Training Frequency Heatmap */}
       {athlete.workoutSessions.length > 0 && (
         <Card>
           <CardContent className="p-6 space-y-4">
@@ -582,27 +542,12 @@ function AnalyticsTab({ athlete }: { athlete: AthleteProfileData }) {
         </Card>
       )}
 
-      {/* Bodyweight Trend Chart */}
-      {athlete.bodyweightLogs.length > 0 && (
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <Weight className="h-5 w-5" />
-              <h2 className="text-lg font-semibold">Bodyweight Trend</h2>
-            </div>
-            <BaseLineChart
-              data={athlete.bodyweightLogs.map((bw) => ({
-                date: new Date(bw.loggedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                weight: bw.weight,
-              }))}
-              lines={[{ dataKey: 'weight', label: `Weight (${athlete.bodyweightLogs[0]?.unit ?? 'kg'})` }]}
-              xAxisKey="date"
-              yAxisLabel={athlete.bodyweightLogs[0]?.unit ?? 'kg'}
-              height={250}
-            />
-          </CardContent>
-        </Card>
-      )}
+      {/* Embedded Analytics Dashboard (pre-filtered to this athlete) */}
+      <AnalyticsDashboard
+        athletes={[{ id: athlete.id, name: athlete.name }]}
+        initialAthleteId={athlete.id}
+        compact
+      />
     </div>
   );
 }

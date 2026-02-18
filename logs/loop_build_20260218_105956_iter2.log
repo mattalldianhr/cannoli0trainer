@@ -1,0 +1,15 @@
+**Task 14.4 complete.** Here's what was built:
+
+**FlightTracker component** (`src/components/meets/FlightTracker.tsx`):
+- Grid view where rows are warm-up sets (with times) and columns are athletes
+- Shared flight start time and interval configuration
+- Each cell shows the athlete's warm-up weight for that set as a clickable toggle (tap to mark complete)
+- Live countdown timer showing time to next warm-up set across all athletes
+- Time-based status highlighting (current set = green "NOW" badge, past sets dimmed)
+- Progress summary bar showing completion count per athlete (e.g., "Matt 4/6")
+- Appears automatically on meet detail page when 2+ athletes are entered
+
+**WarmupCalculator refactor**: Exported `generateWarmupSchedule`, `formatTime`, `formatCountdown`, `getSetStatus`, and related types/constants so the FlightTracker can reuse the same warm-up generation logic.
+
+**Integration**: FlightTracker is inserted on the meet detail page between the header and individual athlete cards, only when there are 2+ athletes.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

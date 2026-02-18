@@ -1,0 +1,8 @@
+**Task 4.2 complete.** Created CRUD API routes for Athletes:
+
+- **`/api/athletes` (route.ts)**: POST creates an athlete (validates name + coachId, checks coach exists), GET lists athletes with optional `search`, `coachId`, `isCompetitor`, and `isRemote` query params. Includes counts of setLogs, workoutSessions, and programAssignments.
+
+- **`/api/athletes/[id]` (route.ts)**: GET returns full athlete profile with coach info, program assignments, recent 10 workout sessions, and relation counts. PUT updates any subset of fields. DELETE removes athlete with 404 check.
+
+All validation passed (tsc, build). Committed as `4148e8b`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

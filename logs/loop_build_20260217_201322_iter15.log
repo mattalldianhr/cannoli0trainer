@@ -1,0 +1,22 @@
+**Task 2.5 complete.** Here's the summary:
+
+**What was built:**
+- `seedWorkoutHistory()` function in `prisma/seed.ts` that transforms and imports the full TeamBuildr export into the database
+- Creates per-athlete "TeamBuildr Import" Programs as containers for Workout/WorkoutExercise records
+- Processes 2,033 session dates with all exercises, sets, and max snapshots
+- Idempotent — skips if data already exists
+
+**Fixes applied:**
+- Added 9 missing exercises to `teambuildrNewExercises` (Bulgarian Split Squat, Glute Bridge, Kettlebell Swing, etc.)
+- Added 2 case-sensitivity mappings to `teambuildrToFreeExerciseDb` (Band Assisted Pull-up, Bicep Exercise of choice)
+- Runtime type coercion for `prescribedLoad` (number→string) and set fields (string→number) since TeamBuildr JSON types are looser than TS definitions
+
+**Final verified counts:**
+| Metric | Count |
+|--------|-------|
+| WorkoutSessions | 2,033 |
+| WorkoutExercises | 12,283 |
+| SetLogs | 31,660 |
+| MaxSnapshots | 5,316 |
+| Total exercises | 948 |
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,14 @@
+**Task 18.11 complete.** Here's what was done:
+
+**Created** `src/lib/notifications.ts`:
+- `notifyProgramAssignment()` — sends branded HTML email via Resend with program name, start date, and link to `/athlete/train`
+- `notifyWorkoutCompletion()` — sends email to coach with athlete name, workout name, completion %, and link to athlete profile (pre-built for Task 18.12)
+- Lazy Resend client initialization to avoid build errors when `AUTH_RESEND_KEY` is not set
+- Fire-and-forget pattern — errors logged but never thrown to callers
+
+**Modified** `src/app/api/programs/[id]/assign/route.ts`:
+- Added import and fire-and-forget call to `notifyProgramAssignment()` after successful assignment
+- Updated athlete query to include `email` and `name` for notification
+
+**Validation**: `tsc --noEmit` passes, `npm run build` passes.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

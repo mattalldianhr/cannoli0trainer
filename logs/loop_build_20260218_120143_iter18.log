@@ -1,0 +1,11 @@
+**Task 18.2 complete.** 
+
+Added to Prisma schema:
+- **User** model (id, name, email, emailVerified, image) with unique email constraint
+- **Account** model (composite PK on provider+providerAccountId, cascade delete on User)
+- **Session** model (unique sessionToken, cascade delete on User)
+- **VerificationToken** model (composite PK on identifier+token, used for magic links)
+- **Athlete.userId** (`String? @unique`) with optional relation to User
+
+Migration `20260218120316_add_nextauth_models` applied successfully. All validation passes (`prisma validate`, `prisma generate`, `tsc --noEmit`, `npm run build`).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

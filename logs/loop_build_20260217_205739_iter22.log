@@ -1,0 +1,11 @@
+**Task 3.4 complete.** 
+
+Created `src/lib/teambuildr/seed-import.integration.test.ts` with 18 integration tests that verify the seeded database against transformer-computed expected counts:
+
+- **Aggregate counts** (7 tests): 5 athletes, WorkoutSessions, WorkoutExercises, SetLogs, MaxSnapshots, 900+ exercises, coach exists
+- **Per-athlete counts** (4 tests): sessions, exercises, sets, and max snapshots per athlete match transformer output
+- **Per-athlete tonnage** (1 test): DB tonnage >= TeamBuildr summary tonnage for each athlete
+- **Data integrity** (6 tests): no orphaned SetLogs/MaxSnapshots, no empty sets, no duplicate sessions, all kg units, powerlifting tags present
+
+All 128 tests pass (52 fitness-calc + 58 transformer + 18 integration). TypeScript and build clean.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

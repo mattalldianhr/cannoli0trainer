@@ -1,0 +1,17 @@
+**Task 7.3 complete.** Here's what was built:
+
+**Server page** (`src/app/programs/new/page.tsx`):
+- Fetches coach from Prisma, passes `coachId` to the builder component
+- Follows the exact same pattern as `/exercises/new/page.tsx`
+
+**Client component** (`src/components/programs/ProgramBuilder.tsx`):
+- **Program metadata**: Name, description, type (Individual/Template/Group), periodization type (Block/DUP/Linear/RPE-Based/Hybrid)
+- **Week management**: Add, remove, duplicate weeks with auto-renumbering
+- **Day management**: Add, remove, duplicate days within weeks; editable day names and optional notes
+- **Exercise support**: ExercisePicker integration — add exercises from the full library, remove exercises, compact row display with prescription type badges
+- **Collapsible UI**: Weeks and days can be collapsed/expanded for overview
+- **Summary stats**: Live badges showing total weeks, days, and exercises
+- Uses all existing types from `lib/programs/types.ts` (ProgramFormState, WeekState, DayState, ExerciseEntry) and factory functions (createDefaultWeek, createDefaultDay, etc.)
+
+All validation passed (`tsc --noEmit`, `npm run build`). Committed as `ff6dc0e`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

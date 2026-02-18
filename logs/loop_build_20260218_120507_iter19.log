@@ -1,0 +1,13 @@
+**Task 18.3 complete.** Built the athlete login page at `/athlete/login` with:
+
+- **Cannoli Trainer branding** with dumbbell icon and "Athlete Portal" subtitle
+- **Email input** (h-12, text-base for mobile-friendly 44px+ tap targets)
+- **"Send Login Link" button** that calls NextAuth's `signIn("resend")` with redirect to `/athlete/check-email` on success
+- **Inline error handling**: AccessDenied shows "No athlete account found", other errors show generic message
+- **URL error param support**: Reads `?error=` from NextAuth redirect for server-side errors
+- **Loading state** with spinner and "Sending login link..." text
+- **Suspense boundary** wrapping `useSearchParams` (Next.js requirement)
+- **Mobile-optimized**: centered layout, max-w-sm, min-h-screen flex centering
+
+All validations pass (tsc, build). Committed as `1c72620`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

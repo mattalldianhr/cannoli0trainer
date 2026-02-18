@@ -1,0 +1,15 @@
+**Task 20.3 complete.** Here's what was done:
+
+1. **Created `DeleteExerciseDialog`** (`src/components/exercises/DeleteExerciseDialog.tsx`) following the existing `DeleteAthleteDialog` pattern:
+   - Confirmation dialog with exercise name
+   - Calls `DELETE /api/exercises/[id]` (already implemented with usage protection)
+   - Handles **409 Conflict** response: shows usage count and explains the exercise is referenced in N workouts — hides the delete button so the user can only cancel
+   - Handles general errors with inline error display
+   - Redirects to `/exercises` on successful deletion
+
+2. **Added delete button to `ExerciseList`** (`src/components/exercises/ExerciseList.tsx`):
+   - Red trash icon button next to the existing edit button on each exercise card
+   - Opens the `DeleteExerciseDialog` with the selected exercise
+
+3. **All validation passes**: `tsc --noEmit` clean, `npm run build` clean (lint is pre-existing known issue).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

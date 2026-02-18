@@ -1,0 +1,16 @@
+**Task 8.2 complete.** Here's what was done:
+
+**Created:**
+- `src/app/programs/templates/page.tsx` — Server component that fetches all templates (`isTemplate: true`) and renders the `TemplateList` component
+- `src/components/programs/TemplateList.tsx` — Client component with:
+  - Search by name/description
+  - Filter chips for periodization type (All, Block, DUP, Linear, RPE-Based, Hybrid)
+  - Template cards showing name, description, periodization badge, duration, and workout count
+  - Delete button with confirmation dialog (uses existing `DELETE /api/programs/[id]`)
+  - Links to template detail pages
+
+**Updated:**
+- `src/components/programs/ProgramList.tsx` — Simplified to only show non-template programs, with the "Templates" tab chip now linking to `/programs/templates` instead of filtering locally
+
+**Validation:** `tsc --noEmit` and `npm run build` pass. Lint has the pre-existing Next.js 16 issue.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,10 @@
+**Task 18.4 complete.** Created `/athlete/check-email` page with:
+- Mail icon and "Check your email" heading
+- Confirmation message about the sign-in link
+- Tips section (check spam, 24h expiry, look for Cannoli Trainer)
+- "Try again" link back to `/athlete/login`
+- Matches the login page's branding and styling (Dumbbell icon, Card layout, mobile-optimized)
+- Server component (no client-side JS needed)
+
+All validation passed (tsc, build). Committed as `116cd05`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

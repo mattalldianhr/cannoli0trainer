@@ -1,0 +1,12 @@
+Done. Here's what was accomplished:
+
+**Task 20.1** (tag filter UI) — Already implemented in `ExerciseList.tsx`. Multi-select chip buttons for 4 powerlifting tags with AND logic against category filter. Marked complete.
+
+**Task 20.2** (edit exercise form) — Implemented:
+- **Shared `ExerciseForm` component** (`src/components/exercises/ExerciseForm.tsx`) — supports both create and edit modes via optional `exercise` prop. Pre-populates all fields when editing, uses PUT to `/api/exercises/[id]` for updates.
+- **Edit page** at `/exercises/[id]/edit/page.tsx` — server component that fetches the exercise and passes it to `ExerciseForm`.
+- **Edit button** — pencil icon added to each exercise card in `ExerciseList.tsx` linking to the edit page.
+- **`AddExerciseForm`** simplified to a thin wrapper around the shared `ExerciseForm`.
+
+All validations pass (tsc, build). Committed as `2a7635b`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

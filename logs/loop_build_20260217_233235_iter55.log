@@ -1,0 +1,18 @@
+Task 10.1 is complete. Here's what was built:
+
+**Task 10.1: Create training log page at `/train` showing today's workout**
+
+**Files created:**
+- `src/app/train/page.tsx` — Server page with athlete list fetched from DB, renders `TrainingLog` component inside a mobile-friendly `Container` (max-w-2xl)
+- `src/app/api/train/route.ts` — API endpoint that takes `athleteId` + `date`, finds the `WorkoutSession`, loads all `WorkoutExercise` records with their prescriptions and existing `SetLog` data, plus fetches previous performance for each exercise
+- `src/components/training/TrainingLog.tsx` — Client component with:
+  - Athlete selector dropdown
+  - Date navigation (prev/next day, date picker, "Today" button)
+  - Session header card with title, program name, status badge, progress bar
+  - Completion stats (exercises done, sets logged, total volume)
+  - Exercise cards showing: name, prescription (sets×reps @ load), prescription type badge, superset grouping, tempo/rest info, notes, previous performance reference ("Last: 225 lbs × 5"), and completed set summaries with green checkmarks
+  - Empty state when no workout is scheduled
+  - Loading spinner during fetch
+
+**Validation:** `tsc --noEmit` passes, `npm run build` passes (lint known broken pre-existing).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

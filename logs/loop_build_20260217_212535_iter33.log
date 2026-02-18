@@ -1,0 +1,10 @@
+**Task 4.9 complete.** Created `src/app/api/analytics/[athleteId]/route.ts` with a GET endpoint that returns five aggregated analytics sections:
+
+1. **e1rmTrends** — 1RM history per exercise from MaxSnapshots, with RPE-based estimation fallback from SetLogs using the Tuchscherer table
+2. **volumeByWeek** — weekly tonnage, total sets, and total reps grouped by ISO week
+3. **compliance** — workout session completion rates (fully/partially/not started) with weekly trend
+4. **rpeDistribution** — RPE value histogram, overall average, and weekly average trend
+5. **bodyweightTrend** — bodyweight log entries over time
+
+All sections support optional `from`/`to` date range query params, and e1rmTrends supports an additional `exerciseId` filter. All queries run in parallel for performance. Validation passed (tsc, build). Committed as `33da686`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

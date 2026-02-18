@@ -1,0 +1,6 @@
+**Task 22.1 complete.**
+
+Summary of changes:
+- **New file**: `src/components/dashboard/QuickActionFab.tsx` — A client component with a floating action button (+ icon) that appears only on mobile (`sm:hidden`). Tapping it reveals 3 action items (New Program, Add Athlete, Analytics) with labeled badges and colored icons. Closes on outside click.
+- **Modified**: `src/app/dashboard/page.tsx` — Desktop quick action buttons hidden on mobile (`hidden sm:flex`), FAB component rendered at page level. All validation passes (tsc, build).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,9 @@
+**Task 18.14 complete.** 
+
+Summary of changes:
+- **`prisma/seed.ts`**: Added `seedTestAthleteAuth()` function that reads `SEED_ATHLETE_EMAIL` from environment, sets it on the first athlete (Matt Alldian), upserts a `User` record with `emailVerified` set, and links the athlete to the user via `userId`. Idempotent — skips if already linked. Skips entirely if env var not set.
+- **`.env.example`**: Documented the new `SEED_ATHLETE_EMAIL` env var.
+- **`IMPLEMENTATION_PLAN.md`**: Marked task complete (104/179).
+
+To use: set `SEED_ATHLETE_EMAIL=your@email.com` in `.env`, then run `npx prisma db seed`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

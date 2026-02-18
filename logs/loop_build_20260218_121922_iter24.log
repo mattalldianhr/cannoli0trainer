@@ -1,0 +1,18 @@
+Task 18.8 complete. Here's what was done:
+
+**Task 18.8: Build athlete training view at `/athlete/train`**
+
+1. **Modified `TrainingLog` component** (`src/components/training/TrainingLog.tsx`):
+   - Added optional `mode` prop (`'coach' | 'athlete'`, defaults to `'coach'`)
+   - Athlete selector dropdown is hidden when `mode === 'athlete'`
+   - "No workout" message adapted for athlete context (doesn't say "This athlete has no workout...")
+
+2. **Created `/athlete/train/page.tsx`**:
+   - Client component using `useSession()` to get the athlete ID from NextAuth JWT
+   - Loading state while session is being fetched
+   - Error state if no athlete profile is linked
+   - Renders `TrainingLog` with `mode="athlete"` and `initialAthleteId` from the session
+   - Mobile-optimized layout matching the athlete shell
+
+All validation passes (tsc, build). Committed as `c51366d`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

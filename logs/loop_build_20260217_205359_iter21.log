@@ -1,0 +1,11 @@
+**Task 3.3 complete.** 
+
+Summary:
+- Created `src/lib/fitness-calc.test.ts` with **52 tests** across 3 domains:
+  - **1RM calculations** (8 tests): Epley (140×5 → ~163kg), Brzycki (140×5 → ~157.5kg), all 7 formula variants, rep estimation
+  - **RPE/RIR lookup table** (30 tests): Known value verification (RPE 10@1 = 100%, RPE 8@5 = 81.1%), weight estimation, 1RM estimation from RPE, RPE↔RIR conversion, table structure validation, boundary cases, rounding behavior
+  - **Powerlifting coefficients** (14 tests): Wilks, Wilks2020, DOTS for known bodyweight+total combos, linearity verification, lighter-vs-heavier lifter comparison
+- All **110 tests** pass (52 new + 58 existing transformer tests)
+- `tsc --noEmit` and `npm run build` both pass
+- 22/82 tasks now complete
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

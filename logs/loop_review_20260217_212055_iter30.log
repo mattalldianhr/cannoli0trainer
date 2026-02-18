@@ -1,0 +1,22 @@
+## Quick Spec Review — Iteration 30
+
+**Findings: 0 new**
+
+Build log (iter 30, Task 4.6) completed cleanly:
+- BodyweightLog CRUD API routes created (`/api/bodyweight` and `/api/bodyweight/[id]`)
+- TypeScript clean, build successful
+- Committed as `2e05c98`
+- No inconsistencies, mismatches, or unexpected values
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Uncommitted spec changes** (carried from earlier iterations):
+- `specs/01-data-models-and-schema.md` — Exercise model fields expanded, WorkoutSession/MaxSnapshot models added, WorkoutExercise superset fields added
+- `specs/05-exercise-library.md` — Categories updated to free-exercise-db taxonomy, seed count corrected to 873
+
+These are still valid and should be committed when convenient.
+
+**Continue building?** Yes — Tasks 4.1–4.6 (all CRUD API routes) are complete. Ready for the next task group.

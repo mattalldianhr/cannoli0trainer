@@ -1,0 +1,9 @@
+**Task 12.1 complete.** Committed as `e98b5bc`.
+
+Summary:
+- Installed `recharts` (39 packages added)
+- Created `src/components/charts/BaseLineChart.tsx` — typed wrapper with `LineConfig[]` for multi-line support, responsive sizing, empty state, `formatXAxis` prop, theme-matched tooltip styling
+- Created `src/components/charts/BaseBarChart.tsx` — typed wrapper with `BarConfig[]` supporting stacked bars, rounded corners, same responsive/empty-state patterns
+- Created `src/components/charts/index.ts` — barrel export
+- All validation passes (`tsc --noEmit`, `npm run build`)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

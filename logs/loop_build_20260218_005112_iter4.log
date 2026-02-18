@@ -1,0 +1,6 @@
+**Task 11.4 complete.** Added the "Upcoming Meets" section to the dashboard page:
+
+- **Data fetcher**: `getUpcomingMeets()` queries `CompetitionMeet` records in the next 30 days, includes athlete entry counts via `_count`, ordered by date ascending
+- **UI section**: Shows meet name, date, location, federation, athlete count, and days-until countdown. Links to `/meets/[id]` for each meet. Empty state shows "No meets scheduled" with a CTA to `/meets`
+- **Validation**: `tsc --noEmit` and `npm run build` both pass cleanly
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

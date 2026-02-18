@@ -1,0 +1,20 @@
+## Quick Spec Review — Iteration 36
+
+**Findings: 0 new issues in latest build**
+
+Task 5.3 (athlete profile page) completed cleanly — no inconsistencies, mismatches, or unexpected values.
+
+| Item | Count |
+|------|-------|
+| New findings | 0 |
+| Specs updated | 0 |
+
+**Carried forward (uncommitted spec updates):**
+These two spec files have had pending changes since ~iteration 10 and are still unstaged:
+
+1. **`specs/01-data-models-and-schema.md`** — Exercise model fields expanded (force/level/mechanic/equipment/muscles/instructions/images), WorkoutSession & MaxSnapshot models added, WorkoutExercise superset/rest/tempo fields
+2. **`specs/05-exercise-library.md`** — Categories updated to free-exercise-db taxonomy, seed count corrected from 30+ to 873
+
+These changes are correct and match the implemented code. They should be committed as a "spec sync" commit when ready.
+
+**Continue building?** Yes — no blockers. Would you like me to commit those spec updates first?

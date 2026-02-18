@@ -43,3 +43,17 @@ Give the coach a centralized place to manage all 31-50 athletes with their profi
 - Use `cn()` utility for conditional styling
 - lucide-react icons for action buttons
 - Consider `useSearchParams` for filter state in URL
+
+## Deferred Features
+
+### Bulk Program Assignment
+Select multiple athletes from the roster and assign the same program to all of them in one action. UI: checkboxes on athlete list rows, "Assign Program" bulk action button that opens a program picker dialog. Creates ProgramAssignment records for each selected athlete.
+
+### Bodyweight Chart on Athlete Profile
+The acceptance criteria state "Profile shows bodyweight chart if data exists" but no implementation task was created. Requires a line chart component (using recharts or similar) on `/athletes/[id]` that queries BodyweightLog entries for the athlete and renders a time-series bodyweight trend.
+
+### Per-Athlete Analytics Link
+Add a link/button on the athlete profile page that navigates to `/analytics?athleteId=[id]`, pre-filtering the analytics dashboard to show only that athlete's data. Provides a quick path from athlete management to performance insights.
+
+## Revision History
+- 2026-02-18: Added Deferred Features section (bulk program assignment, bodyweight chart, per-athlete analytics link) — spec update pass

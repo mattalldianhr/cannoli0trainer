@@ -1,0 +1,10 @@
+**Task 11.3 complete.** 
+
+Added a "Needs Attention" section to the dashboard that:
+- Queries athletes with no workout sessions in the last 3 days
+- Displays each flagged athlete with their name, email, and days since last session
+- Links each row to the athlete's profile page
+- Shows an empty state message when all athletes are active
+- Updated the stat card icon to `AlertTriangle` and linked it to scroll to the section via `#needs-attention` anchor
+- Runs in parallel with the other dashboard queries for performance
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

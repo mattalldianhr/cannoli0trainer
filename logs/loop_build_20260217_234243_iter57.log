@@ -1,0 +1,13 @@
+**Task 10.3 complete.** Here's what was done:
+
+**API (`/api/train`)** — Fixed the previous performance query which had a broken grouping logic (only kept 1 set per exercise, inefficiently fetched all historical SetLogs). New approach uses a clean 2-step query per exercise:
+1. Find the most recent SetLog (by `completedAt` desc) excluding the current workout
+2. Fetch all SetLogs from that same WorkoutExercise to get the full session's sets
+
+Now returns a `date` field alongside each set for display.
+
+**Component (`TrainingLog.tsx`)** — Added a `PreviousPerformance` component that:
+- Shows a compact summary for uniform sets (e.g., "Last (Feb 10): 3×5 @ 225 lbs RPE 8")
+- Shows individual set breakdown when weights/reps vary (e.g., "225 lbs × 5 · 235 lbs × 3 · 245 lbs × 1")
+- Includes a History icon and the session date for context
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

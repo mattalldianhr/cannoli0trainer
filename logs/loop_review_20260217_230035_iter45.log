@@ -1,0 +1,13 @@
+## Quick Spec Review — Iteration 45 Summary
+
+**Findings: 0 new issues.** Task 7.5 (prescription type conditional fields with RPE ranges) completed cleanly.
+
+**Carried forward — 2 uncommitted spec updates** (flagged since iter 41):
+
+| Spec File | Change | Priority |
+|-----------|--------|----------|
+| `specs/01-data-models-and-schema.md` | Exercise model fields expanded, WorkoutSession & MaxSnapshot models added | P1 |
+| `specs/05-exercise-library.md` | Categories updated to free-exercise-db taxonomy, seed count 873 | P1 |
+
+**Specs updated this pass:** 0  
+**Continue building?** Yes — no blockers. The two spec diffs have been carried forward for several iterations now; would recommend committing them at the next natural stopping point.

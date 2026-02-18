@@ -1,0 +1,13 @@
+**Task 6.3 complete.** Created `src/components/programs/ExercisePicker.tsx` — a reusable dialog modal that:
+
+- Fetches exercises from `/api/exercises` on first open (lazy loading)
+- Provides search-by-name filtering
+- Has category filters (strength, powerlifting, olympic, etc.) matching ExerciseList
+- Has tag filters (competition lifts, variations, accessory, GPP)
+- Shows exercise details (name, category, equipment, muscles, badges)
+- Calls `onSelect(exercise)` with full exercise data when clicked, then closes
+- Resets filters on selection for clean reuse
+- Controlled via `open`/`onOpenChange` props for easy integration into program builder
+
+All validation passed: `tsc --noEmit`, `npm run build`. Committed as `8b2888a`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

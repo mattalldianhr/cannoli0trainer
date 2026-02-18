@@ -1,0 +1,10 @@
+**Task 7.2 complete.** Created `src/lib/programs/types.ts` with:
+
+- **Client-side editing types**: `ProgramFormState`, `WeekState`, `DayState`, `ExerciseEntry` — the state tree for building/editing programs in the browser
+- **Prescription value types**: Discriminated union (`PrescriptionValues`) with typed shapes for all 6 methods (percentage, RPE, RIR, velocity, autoregulated, fixed)
+- **API payload types**: `ProgramSavePayload`, `ProgramWithDetails` — for save/load to match existing API routes
+- **Label constants**: `PRESCRIPTION_TYPE_LABELS`, `PERIODIZATION_TYPE_LABELS`, `PROGRAM_TYPE_LABELS` — for dropdowns
+- **Factory functions**: `createDefaultPrescription()`, `createDefaultExerciseEntry()`, `createDefaultDay()`, `createDefaultWeek()`, `createDefaultProgramForm()` — for initializing empty state
+
+All Prisma enums re-exported from `@prisma/client` for consistency. `tsc --noEmit` and `npm run build` both pass clean.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

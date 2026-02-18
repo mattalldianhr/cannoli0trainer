@@ -1,0 +1,11 @@
+**Task 11.5 complete.** Here's what was done:
+
+- **Header nav**: Replaced 6 research hub links (Home, Research, Interview, Submissions, Findings, PRD) with 4 coaching platform links (Dashboard, Athletes, Programs, Exercises)
+- **Branding**: Changed "S&C Research Hub" to "Cannoli Trainer"  
+- **Logo link**: Updated to point to `/dashboard` instead of `/`
+- **Homepage redirect**: `/` now redirects to `/dashboard`
+- **Active state**: Cleaned up the active link detection (removed unnecessary `/` guard)
+- **Validation**: `tsc --noEmit` and `npm run build` both pass (lint has pre-existing Next.js 16 issue)
+
+Next incomplete task: **Task 12.1** — Install recharts and create base chart components.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,8 @@
+**Task 7.7 complete.** Here's what was implemented:
+
+- **`moveExercise` callback** in `ProgramBuilder` — swaps two adjacent exercises and renumbers all `order` values
+- **Move up/down buttons** in `ExerciseRow` — stacked arrow buttons replace the static grip icon, with `isFirst`/`isLast` props to disable at boundaries
+- **Props threaded** through `WeekCard` → `DayCard` → `ExerciseRow` via `onMoveExercise`
+
+All validation passed (tsc, build). Committed as `af29676`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,16 @@
+**Task 8.3 complete.** Here's what was implemented:
+
+**"Create from Template" flow** — 4 files modified, 1 helper added:
+
+1. **`src/lib/programs/types.ts`** — Added `templateToNewProgramForm()` which reuses `programResponseToForm()` but strips all database IDs (`id`, `workoutId`, `workoutExerciseId`), resets `isTemplate: false`, `type: 'individual'`, and clears name/description so the coach can customize
+
+2. **`src/app/programs/new/page.tsx`** — Accepts `?templateId=` search param, fetches the template with full nested workout/exercise data, and passes it as `templateProgram` to ProgramBuilder
+
+3. **`src/components/programs/ProgramBuilder.tsx`** — New `templateProgram` prop initializes form state via `templateToNewProgramForm()`. Shows "From template: {name}" subtitle in the header. Treats it as a new program (not edit mode) so it POSTs to create
+
+4. **`src/components/programs/TemplateList.tsx`** — Added "Use" button on each template card linking to `/programs/new?templateId={id}`
+
+5. **`src/app/programs/[id]/page.tsx`** — Added "Use Template" button in the header for template programs, linking to the same flow
+
+All validation passes (tsc, build). Committed as `6bb81e6`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

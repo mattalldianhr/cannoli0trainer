@@ -50,6 +50,34 @@ Enable the coach to build training programs with the "flexibility of Google Shee
 | Assign to 3 athletes | ProgramAssignment created for each |
 | Mixed prescription in single day | All 6 types render correctly side by side |
 
+## Deferred Features (Phase 2)
+
+### Program Overview — Weekly Structure at a Glance
+A compact grid/table view showing the entire program structure without expanding each week:
+- Rows = weeks, columns = days
+- Each cell shows exercise count and key lifts (e.g., "4 exercises: Squat, Bench")
+- Click a cell to jump to that day's detail view
+- Useful for reviewing multi-week block periodization at a glance
+
+Implementation: Rendered as a `<table>` or CSS grid in `components/programs/ProgramOverview.tsx`. Server component fetching program with all nested relations.
+
+### Notes Fields (Exercise, Day, Program Level)
+Rich-text-free notes at three levels:
+- **Program-level notes**: Already supported via `Program.description` — enhance UI to make it prominent
+- **Day-level notes**: Already in `Workout.notes` — add visible textarea in day header
+- **Exercise-level notes**: Already in `WorkoutExercise.notes` — add inline note input below each exercise row
+
+Implementation: Plain `<textarea>` inputs with auto-resize. Notes save alongside the parent entity. Show note icon indicator when notes exist but are collapsed.
+
+### Auto-Save Indicator / Dirty State Tracking
+Track unsaved changes and provide clear save feedback:
+- "Saving..." indicator when auto-save triggers (debounced 2s after last change)
+- "All changes saved" confirmation text
+- "Unsaved changes" warning before navigation (via `beforeunload` event)
+- Dirty state tracked via React state comparing current form data to last-saved snapshot
+
+Implementation: Custom `useDirtyState` hook. Auto-save via `useDebouncedCallback`. Visual indicator component in program builder header bar.
+
 ## Technical Notes
 - This is the most complex feature — break into sub-tasks in implementation plan
 - Program builder should be a client component (heavy interactivity)
@@ -60,3 +88,8 @@ Enable the coach to build training programs with the "flexibility of Google Shee
 - Follow existing pattern of typed interfaces in `lib/` directory
 - Create `lib/programs/types.ts` for program builder types
 - Consider optimistic UI updates for responsiveness
+
+## Revision History
+| Date | Change |
+|------|--------|
+| 2026-02-18 | Added Deferred Features: program overview grid, notes fields detail, auto-save with dirty state |

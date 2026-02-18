@@ -1,0 +1,18 @@
+## Quick Spec Review — Iteration 18
+
+**Findings: 0 new spec issues**
+
+The iter18 build (Task 2.8 — RPE/RIR lookup table) completed cleanly:
+- `src/lib/rpe-table.ts` implemented with 108-point Tuchscherer table
+- All 4 helper functions + constants working
+- `tsc --noEmit` and `npm run build` both pass
+
+The 2 modified spec files (`01-data-models-and-schema.md`, `05-exercise-library.md`) contain previously-discovered updates from Tasks 2.1 and 2.3 — already written, just not yet committed.
+
+| Item | Count |
+|------|-------|
+| Findings | 0 |
+| Specs updated this review | 0 |
+| Uncommitted spec changes (prior) | 2 files |
+
+**Continue building?** Yes — Phase 2 (Tasks 2.1–2.8) appears fully complete. Ready for Phase 3.

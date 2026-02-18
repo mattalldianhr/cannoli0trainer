@@ -1,0 +1,15 @@
+**Task 2.3 complete.** Here's what was built:
+
+**`src/lib/teambuildr/types.ts`** — Full TypeScript type definitions for the TeamBuildr export JSON format (export metadata, athlete profiles, workout days, workout items, set data, session summaries, max data).
+
+**`src/lib/teambuildr/transformer.ts`** — Data transformer with these capabilities:
+- **Exercise types**: Handles L (Lift), S (SAQ+C), C (Circuit), N (Notes), W (Warm-Up) — skips non-exercises (notes, surveys)
+- **Prescribed vs Actual**: `placeholder` = what coach programmed, `value` = what athlete recorded
+- **Superset mapping**: `groupingLetter` → `supersetGroup`, `groupingColorCode` → `supersetColor`
+- **RPE extraction**: Parses free text like "RPE 8", "RPE 6-7" (takes higher), "rpe 8.5"
+- **Tempo extraction**: Parses "3-1-0 tempo", "Tempo 2-2-2" from additional info
+- **Max snapshots**: Maps `workingMax`/`generatedMax` with deduplication (16,681 raw → 5,316 unique)
+- **Percentage-based**: Preserves `percentage` field as `percentageOf1RM`
+
+Validated against the full 37 MB export: 2,033 sessions, 12,283 exercises (97 non-exercises + 57 empty items skipped), 31,660 sets with actual data.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

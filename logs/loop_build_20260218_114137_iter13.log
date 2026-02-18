@@ -1,0 +1,10 @@
+**Task 17.11 complete.** Here's what was implemented:
+
+1. **API route** at `/api/schedule/[sessionId]/skip` (PATCH) — toggles `isSkipped` on a WorkoutSession. Validates that only `NOT_STARTED` sessions can be skipped/unskipped. Accepts `{ skip: boolean }` body.
+
+2. **UI buttons** in `WeeklyCalendar.tsx`:
+   - **Skip button** (SkipForward icon) on NOT_STARTED sessions — marks as skipped
+   - **Unskip button** (Undo2 icon) on skipped sessions — restores to normal
+   - Loading state (`isSkipping`) disables button during API call
+   - Skipped sessions already had visual treatment (Ban icon, strikethrough, dimmed) from previous work
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

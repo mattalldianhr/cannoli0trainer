@@ -1,0 +1,14 @@
+## Quick Spec Review — Iteration 48 Summary
+
+**Findings: 0 new issues.** Task 7.8 (program save create/update) completed cleanly with no spec mismatches or inconsistencies.
+
+**Carried forward — 2 uncommitted spec updates** (flagged since iter 41, now **8 iterations**):
+
+| Spec File | Change | Priority |
+|-----------|--------|----------|
+| `specs/01-data-models-and-schema.md` | Exercise model fields expanded, WorkoutSession & MaxSnapshot models added, WorkoutExercise fields added | P1 |
+| `specs/05-exercise-library.md` | Categories updated to free-exercise-db taxonomy, seed count 873 | P1 |
+
+**Specs updated this pass:** 0 (changes were already made in prior iterations, just never committed)
+
+**Continue building?** Yes — no blockers. The two spec file updates are correct and well-documented with revision history. They should be committed at the next convenient opportunity to stop carrying this forward.

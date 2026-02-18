@@ -1,0 +1,5 @@
+Task 19.3 complete. Two changes made:
+
+1. **`src/components/athletes/AthleteProfile.tsx`** — Added a "View Full Analytics" button at the top of the Analytics tab that links to `/analytics?athleteId=[id]`
+2. **`src/app/analytics/page.tsx`** — Updated the analytics page to read `athleteId` from search params and pass it as `initialAthleteId` to `AnalyticsDashboard`, so the athlete is pre-selected when navigating from the profile
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

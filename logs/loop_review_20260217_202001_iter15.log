@@ -1,0 +1,29 @@
+Good — `prescribedLoad` is `String?` in Prisma which matches the spec. The type coercion note is about TeamBuildr sending numbers where the schema expects strings — that's a transformer implementation detail, not a spec issue.
+
+Now let me assess the findings:
+
+**Finding 1: Total exercise count is 948, not 873**
+- Spec 05 says "873 exercises from free-exercise-db" — that's the seed count
+- The 948 total = 873 seeded + 75 new exercises added from TeamBuildr data (9 explicitly mentioned + others from the mapping process)
+- The spec correctly says "873 exercises from free-exercise-db" — that's accurate for the seed. The additional exercises came from TeamBuildr import. This is **not a spec error** — the 948 is the post-import total, not the seed count.
+
+**Finding 2: Type coercion (prescribedLoad number→string, set fields string→number)**
+- This is a TeamBuildr data quality quirk handled by the transformer. The Prisma schema types are correct. **P3 — implementation detail, no spec change needed.**
+
+**Finding 3: 9 missing exercises + 2 case-sensitivity mappings**
+- These are TeamBuildr↔exercise-library mapping gaps fixed in code. The exercise library spec doesn't need to enumerate every exercise. **P3 — no spec change needed.**
+
+## Quick Spec Review — Iteration 15
+
+**Findings: 0 spec issues**
+
+The iter15 build (Task 2.5 — workout history import) completed cleanly. Key observations:
+
+| Item | Assessment | Priority |
+|------|-----------|----------|
+| Total exercises now 948 (was 873 seeded) | Expected — 75 new from TeamBuildr import | Not a spec issue |
+| Type coercion in transformer (number↔string) | TeamBuildr data quirk, Prisma types correct | P3 — implementation detail |
+| 9 missing exercises + 2 case mappings | Mapping gaps fixed in code | P3 — implementation detail |
+
+**Specs updated:** 0 (both spec 01 and 05 were already corrected in iter13)
+**Continue building?** Yes — no blockers.

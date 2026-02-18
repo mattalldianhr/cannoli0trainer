@@ -1,0 +1,17 @@
+**Task 7.8 complete.** Here's what was implemented:
+
+### Changes Summary
+
+1. **PUT `/api/programs/[id]` route** — Updated to handle full workout structure replacement. When `workouts` is included in the request body, it runs a Prisma transaction that deletes all existing workouts (cascading to exercises) and recreates the full structure. Without `workouts`, it still does a partial field-only update.
+
+2. **Conversion functions in `lib/programs/types.ts`**:
+   - `programFormToPayload()` — Transforms the client-side `ProgramFormState` into the `ProgramSavePayload` for the API, mapping each prescription type's specific fields to the flat DB columns
+   - `programResponseToForm()` — Transforms API response data back into `ProgramFormState` for editing, grouping workouts by week and reconstructing typed prescription unions
+   - Fixed `ProgramAssignmentData.athlete` to use `name` (matching the actual `Athlete` model)
+
+3. **ProgramBuilder component** — Added save button with loading/error states, `useRouter` for redirect after save, support for `initialProgram` prop (edit mode), and a bottom save button for convenience
+
+4. **`/programs/[id]` detail page** — Read-only view showing program structure organized by week/day/exercise with prescription summaries and an Edit button
+
+5. **`/programs/[id]/edit` page** — Server component that loads the program from the database and passes it to `ProgramBuilder` in edit mode
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

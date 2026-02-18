@@ -1,0 +1,13 @@
+**Task 18.1 complete.** Here's what was done:
+
+- Installed `next-auth@5.0.0-beta.30`, `@auth/prisma-adapter@2.11.1`, and `resend@6.9.2`
+- Created `src/lib/auth.ts` with NextAuth config using Resend email provider (magic link), JWT session strategy, and callbacks that:
+  - Gate sign-in to only pre-registered athletes (by email match)
+  - Attach `athleteId` to JWT token
+  - Expose `athleteId` on the session object
+  - Route to custom `/athlete/login` and `/athlete/check-email` pages
+- Created `src/app/api/auth/[...nextauth]/route.ts` exporting the GET/POST handlers
+- Created `.env.example` documenting `DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`, `AUTH_RESEND_KEY`, and `EMAIL_FROM`
+- Added `AUTH_SECRET` placeholder to `.env` for dev builds
+- All validations pass: `tsc --noEmit`, `npm run build`
+[?25h

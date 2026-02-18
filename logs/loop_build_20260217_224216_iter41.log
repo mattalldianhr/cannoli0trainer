@@ -1,0 +1,12 @@
+**Task 7.1 complete.** Created:
+
+- **`src/app/programs/page.tsx`** — Server component that fetches all programs from the database and serializes dates for the client
+- **`src/components/programs/ProgramList.tsx`** — Client component with:
+  - Search by name/description
+  - Programs vs Templates tab switcher with counts
+  - Card layout showing program name, periodization type badge, duration (weeks), workout count, and athlete count
+  - Empty states for no results / no programs / no templates
+  - "New Program" button linking to `/programs/new`
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful. Committed as `339be22`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,22 @@
+Task 23.3 is complete. Here's what was implemented:
+
+**Task 23.3: Auto-save with dirty state tracking and save indicator**
+
+Changes to `src/components/programs/ProgramBuilder.tsx`:
+
+1. **Dirty state detection** — JSON snapshot comparison between current `program` state and `lastSavedSnapshotRef`. Computed on every render.
+
+2. **Auto-save with 2s debounce** — A `useEffect` watches `currentSnapshot` and starts a 2-second timer after each change. The timer is cleared/reset on subsequent changes (debounce). After 2s of inactivity, `performSave()` fires.
+
+3. **Save status indicator** — New `SaveStatusIndicator` component shows:
+   - "Saving..." with spinner during save
+   - "All changes saved" with green check after successful save
+   - "Unsaved changes" with cloud-off icon when dirty
+   - Error message in red when save fails
+
+4. **beforeunload warning** — Warns the user before navigating away or closing the tab when unsaved changes exist.
+
+5. **New program handling** — On first save of a new program, the POST response provides the ID. The component captures it, updates the URL via `history.replaceState()` to `/programs/[id]/edit`, and subsequent auto-saves use PUT.
+
+6. **Manual save button** — Still available as a fallback, cancels any pending auto-save timer to avoid racing.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

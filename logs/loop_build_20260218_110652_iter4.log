@@ -1,0 +1,16 @@
+**Task 17.2 complete.** Here's a summary:
+
+**Created:**
+- `src/lib/scheduling/generate-schedule.ts` — Pure function `generateSchedule(workouts, startDate, trainingDays)` that maps abstract Week/Day workout pairs to concrete calendar dates
+- `src/lib/scheduling/__tests__/generate-schedule.test.ts` — 15 unit tests covering:
+  - Standard 4-day program on Mon/Tue/Thu/Fri (4 tests)
+  - 3-day program on Mon/Wed/Fri
+  - Spillover (5-day program with 4 training days)
+  - Mid-week start (Wednesday)
+  - Empty inputs, weekend training days, single training day
+  - Fewer program days than training days (rest gaps)
+  - Unsorted workout and training day inputs
+  - **Dealbreaker test**: 4-week/4-day program verifying all 16 exact dates
+
+**Validation:** `tsc --noEmit` passes, `npm run build` passes, all 15 tests pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

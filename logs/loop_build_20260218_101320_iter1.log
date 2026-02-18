@@ -1,0 +1,24 @@
+{"level":"warn","message":"[BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests."}
+**Task 14.2 complete.** Here's what was built:
+
+**API Routes:**
+- `POST /api/meets/[id]/entries` — Add an athlete to a meet (with duplicate check)
+- `PUT /api/meets/[id]/entries/[entryId]` — Update attempt values (SBD x 3 attempts)
+- `DELETE /api/meets/[id]/entries/[entryId]` — Remove an athlete from a meet
+
+**Server Page** (`/meets/[id]/page.tsx`):
+- Fetches meet with entries, all available athletes, and current SBD maxes from MaxSnapshot
+- Groups maxes by athlete for estimated 1RM reference
+
+**Client Component** (`MeetDetail.tsx`):
+- Meet header with date, federation, location, athlete count
+- Per-athlete cards with SBD attempt planning grid (opener, 2nd, 3rd attempts)
+- Estimated 1RM column showing each athlete's current max per lift
+- Percentage display under each attempt input (% of e1RM)
+- Best attempt and total calculation
+- Add athlete dialog with auto-fill weight class from profile
+- Save attempts and remove athlete actions
+- Results summary table sorted by total
+
+All validation passed: `tsc --noEmit` clean, `npm run build` clean.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

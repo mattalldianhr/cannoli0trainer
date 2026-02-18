@@ -1,0 +1,9 @@
+**Task 23.2 complete.** Here's what was done:
+
+**Changes to `ProgramBuilder.tsx`:**
+1. **Program description** — Added `StickyNote` icon to the label, renamed to "Description / Notes" for clarity
+2. **Day notes** — Added `StickyNote` icon to the Notes toggle button, plus a small colored dot indicator (`bg-primary` circle) when notes exist but the textarea is collapsed
+3. **Exercise notes** — Added a `StickyNote` icon in the compact exercise row (with title tooltip showing the note content) when the exercise has notes but the settings panel is collapsed. Also upgraded the notes input from single-line `Input` to multi-line `Textarea`
+
+All notes were already persisted through the existing state management (`updateField`, `updateDayNotes`, `updateExercise`) and API save flow (`programFormToPayload`). No schema or API changes needed.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

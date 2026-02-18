@@ -1,0 +1,7 @@
+## Quick Spec Review Summary
+
+- **Findings**: 0
+- **Specs updated**: None
+- **Continue building?** Yes
+
+The most recent build (Task 17.11 — skip/unskip workout on calendar) completed cleanly. The last 6+ iterations (iter 8–13) have all been clean with zero findings. No spec drift, no inconsistencies, no mismatches detected. The loop is healthy.

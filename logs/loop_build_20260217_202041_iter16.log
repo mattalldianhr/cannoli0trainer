@@ -1,0 +1,9 @@
+**Task 2.6 complete.** Created `scripts/validate-import.ts` — an import validation script that:
+
+- **42 checks**, all passing
+- **Aggregate checks** (7): athlete count, sessions, exercises, sets, max snapshots, exercise library, coach
+- **Per-athlete checks** (30): sessions, exercises, sets, maxes, tonnage, and reps for each of 5 athletes
+- **Data integrity checks** (5): no orphaned SetLogs/MaxSnapshots, no empty sets, no duplicate sessions, all weights in kg
+
+**Key discovery**: TeamBuildr's summary endpoint underreports tonnage (16-47%) and reps (63-302%) compared to raw set data. Our DB stores all sets with actual data, not just "fully completed" exercises — so we have more complete data than TB's own summary view.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

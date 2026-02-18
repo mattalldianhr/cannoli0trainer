@@ -1,0 +1,20 @@
+**Task 18.9 complete.** Here's what was built:
+
+**API endpoint** (`/api/athlete/calendar`):
+- `GET /api/athlete/calendar?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD`
+- Auth-protected via `session.user.athleteId`
+- Returns sessions with title, status, completion %, program name, week/day numbers
+- Includes overall completion rate for the range
+
+**Calendar page** (`/athlete/calendar`):
+- **Week view** (default): 7 day cards (Mon-Sun) with workout indicators, status icons, completion badges, progress bars for in-progress workouts
+- **Month view**: Compact grid with colored cells per status, status icons on workout days
+- Week/month navigation with prev/next buttons and "Today" quick-return
+- Week/Month toggle switch
+- Status indicators: scheduled (circle), in progress (clock/amber), completed (check/green), skipped (ban)
+- Actionable: tapping a NOT_STARTED or in-progress workout links to `/athlete/train`
+- Mobile-optimized: 44px tap targets on day cells, responsive layout
+- Suspense boundary for `useSearchParams()` compatibility
+
+All validation passed: `tsc --noEmit` clean, `npm run build` successful.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

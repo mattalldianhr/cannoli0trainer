@@ -1,0 +1,15 @@
+**Task 8.1 complete.** Here's what was implemented:
+
+**API route** (`src/app/api/programs/[id]/template/route.ts`):
+- `POST /api/programs/[id]/template` deep-copies the source program's full structure (weeks, days, exercises, prescription types, sets/reps, RPE, %1RM, etc.)
+- Sets `isTemplate=true` and `type='template'` on the new program
+- Strips `prescribedLoad` (set to null) since templates shouldn't carry athlete-specific loads
+- Accepts optional `name` and `description` overrides in the request body
+
+**SaveAsTemplate component** (`src/components/programs/SaveAsTemplate.tsx`):
+- Dialog with name and description inputs, pre-populated from the source program
+- Calls the template API, then navigates to the new template's detail page
+
+**Program detail page** (`src/app/programs/[id]/page.tsx`):
+- "Save as Template" button added next to "Assign to Athletes" for non-template programs
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

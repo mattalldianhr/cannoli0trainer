@@ -1,0 +1,19 @@
+**Task 5.1 complete.** Here's what was built:
+
+**`src/app/athletes/page.tsx`** — Server component that:
+- Fetches all athletes from Prisma with counts (sessions, sets, program assignments)
+- Includes last workout date and current program name via nested queries
+- Serializes data and passes to client component
+- Uses `force-dynamic` for fresh data on every request
+
+**`src/components/athletes/AthleteList.tsx`** — Client component with:
+- Search input (filters by name and email in real-time)
+- Filter chips: All, Competitors, Remote, Needs Attention (3+ days since last workout)
+- Each athlete rendered as a clickable Card linking to `/athletes/[id]`
+- Shows badges (Competitor, Remote, Needs Attention), current program, bodyweight, experience level
+- Quick stats: session count, set count, last workout relative date
+- Empty state handling
+- "Add Athlete" button linking to `/athletes/new`
+
+All validation passed: `tsc --noEmit`, `npm run build` (page renders as dynamic `ƒ`).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

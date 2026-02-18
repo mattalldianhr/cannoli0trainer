@@ -1,0 +1,12 @@
+**Task 17.12 complete.** Here's what was done:
+
+**Changes to `src/components/programs/AssignAthletes.tsx`:**
+
+1. **Start date picker** — Date input defaulting to next Monday, with a calendar icon
+2. **Training day checkboxes** — 7 day-of-week toggle buttons (Mon–Sun) showing which days are training days
+3. **Presets** — "4-Day" (Mon/Tue/Thu/Fri, default), "3-Day" (Mon/Wed/Fri), "5-Day" (Mon–Fri) quick-select buttons, plus a "Custom" indicator when the selection doesn't match a preset
+4. **Wired into API** — `startDate` and `trainingDays` are now sent in the POST body to `/api/programs/[id]/assign`, which already supports them for schedule generation
+5. **Validation** — Assign button disabled when no training days selected, with a red validation message
+
+All validation passes (tsc, build). The lint issue is pre-existing and unrelated.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

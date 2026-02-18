@@ -1,0 +1,19 @@
+**Task 2.1 complete.** Here's the summary:
+
+### What was done
+- **Extended Exercise model** in Prisma schema: added `force`, `level`, `mechanic`, `equipment`, `primaryMuscles`, `secondaryMuscles`, `instructions`, `images` fields. Made `coachId` optional so library exercises (no coach owner) can coexist with coach-created exercises.
+- **Added indexes** on `name` and `category` for search/filter performance.
+- **Downloaded free-exercise-db** (873 exercises, public domain) to `prisma/seed-data/exercises.json`.
+- **Created `prisma/seed.ts`** — idempotent seed script using `createMany`. Re-runs safely skip existing exercises.
+- **Configured Prisma seed** in `package.json`.
+
+### Validation
+- `npx prisma validate` — passed
+- `npx prisma db seed` — 873 exercises created
+- Re-run seed — 0 created, 873 skipped (idempotent)
+- `npx tsc --noEmit` — passed
+- `npm run build` — passed
+
+### Category breakdown
+strength: 581, stretching: 123, plyometrics: 61, powerlifting: 38, olympic weightlifting: 35, strongman: 21, cardio: 14
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
