@@ -11,6 +11,7 @@ const navItems = [
   { href: "/research", label: "Research" },
   { href: "/interview", label: "Interview" },
   { href: "/submissions", label: "Submissions" },
+  { href: "/findings", label: "Findings" },
   { href: "/prd", label: "PRD" },
 ];
 

@@ -1,7 +1,7 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 60
+- Total tasks: 66
 - Completed: 0
 - In progress: 0
 
@@ -270,6 +270,32 @@
 - [ ] **Task 12.4**: Create multi-athlete flight tracking view
   - Spec: specs/09-competition-prep.md
   - Acceptance: Grid shows all athletes' warm-up progress in a single view
+
+### Priority 13: Data Migration
+
+- [ ] **Task 13.1**: Add WorkoutSession and MaxSnapshot models to Prisma schema
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `npx prisma validate` passes, both models have proper relations and indexes
+
+- [ ] **Task 13.2**: Add superset, unilateral, rest, tempo fields to WorkoutExercise model
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `npx prisma validate` passes, WorkoutExercise has supersetGroup, supersetColor, isUnilateral, restTimeSeconds, tempo fields
+
+- [ ] **Task 13.3**: Create `/api/import/teambuildr` endpoint for bulk data migration
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: POST endpoint accepts TeamBuildr JSON export, creates WorkoutSessions, WorkoutExercises, SetLogs, MaxSnapshots
+
+- [ ] **Task 13.4**: Build TeamBuildr data transformer (TeamBuildr schema -> Cannoli schema)
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: Transforms all exercise types, handles prescribed vs actual values, maps superset grouping, extracts RPE from additionalInformation
+
+- [ ] **Task 13.5**: Create migration validation script to verify import completeness
+  - Spec: summaries/spec-review-teambuildr-data-alignment.md
+  - Acceptance: Script compares source TeamBuildr data counts against imported database records, reports discrepancies
+
+- [ ] **Task 13.6**: Create production TeamBuildr export script with rate limiting and resume
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: `npx tsx scripts/teambuildr-export.ts --help` prints usage, supports --token, --account, --output, --resume flags
 
 ## Discoveries
 _Updated by Ralph during execution_

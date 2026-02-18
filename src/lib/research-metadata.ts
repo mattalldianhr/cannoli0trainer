@@ -44,4 +44,22 @@ export const researchMetadata: Record<
       "Deep dive into TeamBuildr Strength: program design, Weight Room View, APRE automation, Velocity-Based Training integrations, 16+ report types, and coaching workflow capabilities.",
     category: "Platform Deep Dive",
   },
+  "teambuildr-api-structure-data-migration": {
+    title: "API Structure & Data Migration Analysis",
+    description:
+      "Live monitoring of TeamBuildr's dual-domain API architecture (legacy PHP + v3 REST). Maps all endpoints, data models, navigation structure, and outlines a migration strategy for extracting athlete workout history, maxes/PRs, and session data to our new platform.",
+    category: "Technical Analysis",
+  },
+  "teambuildr-api-exploration-findings": {
+    title: "API Exploration & Data Extraction Findings",
+    description:
+      "Complete findings from live API extraction: 5 athletes, 2,033 dates, 4,066 API calls. Reveals 10 spec gaps between TeamBuildr's actual data model and our current platform design, with actionable recommendations for each spec.",
+    category: "Technical Analysis",
+  },
+  "spec-review-teambuildr-data-alignment": {
+    title: "Spec Review: TeamBuildr Data Alignment",
+    description:
+      "Systematic review of all 12 technical specifications against real TeamBuildr API data. Identifies field-level gaps, confirms alignments, and provides specific recommendations for each spec to ensure complete data migration support.",
+    category: "Technical Analysis",
+  },
 };

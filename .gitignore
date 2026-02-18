@@ -26,6 +26,9 @@ yarn-error.log*
 .env
 .env*.local
 
+# test data (contains real athlete data from TeamBuildr)
+/test-data/*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
