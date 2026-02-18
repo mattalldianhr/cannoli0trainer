@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 105
+- Completed: 106
 - In progress: 0
-- Remaining: 75 (7 original + 97 new from spec review)
+- Remaining: 74 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -579,7 +579,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 19: Athlete Management Enhancements
 
-- [ ] **Task 19.1**: Implement bulk program assignment for multiple athletes
+- [x] **Task 19.1**: Implement bulk program assignment for multiple athletes
   - Spec: specs/03-athlete-management.md
   - Acceptance: Checkboxes on athlete rows, bulk "Assign Program" action, program picker dialog, success toast. Existing assignments skipped.
 
