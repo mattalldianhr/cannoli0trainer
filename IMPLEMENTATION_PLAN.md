@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 40
+- Completed: 41
 - In progress: 0
 
 ## Tasks
@@ -184,7 +184,7 @@
   - Spec: specs/05-exercise-library.md
   - Acceptance: Form creates exercise, video URL renders embed preview
 
-- [ ] **Task 6.3**: Create reusable ExercisePicker component for program builder
+- [x] **Task 6.3**: Create reusable ExercisePicker component for program builder
   - Spec: specs/05-exercise-library.md
   - Acceptance: Modal/popover with search, selecting exercise returns exercise data
 
