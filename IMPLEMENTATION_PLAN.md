@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 131
+- Completed: 132
 - In progress: 0
-- Remaining: 48
+- Remaining: 47
 
 ## Tasks
 
@@ -705,7 +705,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/14-notifications.md
   - Acceptance: `Notification` model with recipientId, recipientType, type, title, body, isRead. Migration runs. Indexed.
 
-- [ ] **Task 28.2**: Integrate email service (Resend) for transactional notifications
+- [x] **Task 28.2**: Integrate email service (Resend) for transactional notifications
   - Spec: specs/14-notifications.md
   - Acceptance: `src/lib/email.ts` wrapping Resend SDK. Error handling (never blocks caller). Branded email templates.
 
