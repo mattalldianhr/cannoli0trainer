@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 99
+- Completed: 100
 - In progress: 0
-- Remaining: 80 (7 original + 97 new from spec review)
+- Remaining: 79 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -557,7 +557,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Weekly calendar with workout indicators, completion %, month toggle. Past from WorkoutSession, future from ProgramAssignment.
 
-- [ ] **Task 18.10**: Build athlete history view at `/athlete/history`
+- [x] **Task 18.10**: Build athlete history view at `/athlete/history`
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Reverse-chronological WorkoutSession list, tap to expand, pagination (20 per page).
 
