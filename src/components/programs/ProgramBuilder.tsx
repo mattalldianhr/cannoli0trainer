@@ -4,12 +4,13 @@ import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
+  ArrowUp,
+  ArrowDown,
   Plus,
   Copy,
   Trash2,
   ChevronDown,
   ChevronRight,
-  GripVertical,
   Dumbbell,
   Settings2,
 } from 'lucide-react';
@@ -302,6 +303,28 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
     }));
   }, []);
 
+  const moveExercise = useCallback((dayId: string, exerciseId: string, direction: 'up' | 'down') => {
+    setProgram((prev) => ({
+      ...prev,
+      weeks: prev.weeks.map((w) => ({
+        ...w,
+        days: w.days.map((d) => {
+          if (d.id !== dayId) return d;
+          const idx = d.exercises.findIndex((ex) => ex.id === exerciseId);
+          if (idx === -1) return d;
+          const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+          if (targetIdx < 0 || targetIdx >= d.exercises.length) return d;
+          const exercises = [...d.exercises];
+          [exercises[idx], exercises[targetIdx]] = [exercises[targetIdx], exercises[idx]];
+          return {
+            ...d,
+            exercises: exercises.map((ex, i) => ({ ...ex, order: i + 1 })),
+          };
+        }),
+      })),
+    }));
+  }, []);
+
   const updateExercise = useCallback(
     (dayId: string, exerciseId: string, updates: Partial<ExerciseEntry>) => {
       setProgram((prev) => ({
@@ -468,6 +491,7 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
               onAddExercise={openExercisePicker}
               onRemoveExercise={removeExercise}
               onDuplicateExercise={duplicateExercise}
+              onMoveExercise={moveExercise}
               onUpdateExercise={updateExercise}
             />
           ))}
@@ -504,6 +528,7 @@ interface WeekCardProps {
   onAddExercise: (dayId: string) => void;
   onRemoveExercise: (dayId: string, exerciseId: string) => void;
   onDuplicateExercise: (dayId: string, exerciseId: string) => void;
+  onMoveExercise: (dayId: string, exerciseId: string, direction: 'up' | 'down') => void;
   onUpdateExercise: (dayId: string, exerciseId: string, updates: Partial<ExerciseEntry>) => void;
 }
 
@@ -523,6 +548,7 @@ function WeekCard({
   onAddExercise,
   onRemoveExercise,
   onDuplicateExercise,
+  onMoveExercise,
   onUpdateExercise,
 }: WeekCardProps) {
   const exerciseCount = week.days.reduce((sum, d) => sum + d.exercises.length, 0);
@@ -606,6 +632,7 @@ function WeekCard({
                   onAddExercise={() => onAddExercise(day.id)}
                   onRemoveExercise={(exId) => onRemoveExercise(day.id, exId)}
                   onDuplicateExercise={(exId) => onDuplicateExercise(day.id, exId)}
+                  onMoveExercise={(exId, direction) => onMoveExercise(day.id, exId, direction)}
                   onUpdateExercise={(exId, updates) => onUpdateExercise(day.id, exId, updates)}
                 />
               ))
@@ -633,6 +660,7 @@ interface DayCardProps {
   onAddExercise: () => void;
   onRemoveExercise: (exerciseId: string) => void;
   onDuplicateExercise: (exerciseId: string) => void;
+  onMoveExercise: (exerciseId: string, direction: 'up' | 'down') => void;
   onUpdateExercise: (exerciseId: string, updates: Partial<ExerciseEntry>) => void;
 }
 
@@ -648,6 +676,7 @@ function DayCard({
   onAddExercise,
   onRemoveExercise,
   onDuplicateExercise,
+  onMoveExercise,
   onUpdateExercise,
 }: DayCardProps) {
   const [showNotes, setShowNotes] = useState(day.notes.length > 0);
@@ -736,12 +765,16 @@ function DayCard({
             </p>
           ) : (
             <div className="space-y-1">
-              {day.exercises.map((exercise) => (
+              {day.exercises.map((exercise, idx) => (
                 <ExerciseRow
                   key={exercise.id}
                   exercise={exercise}
+                  isFirst={idx === 0}
+                  isLast={idx === day.exercises.length - 1}
                   onRemove={() => onRemoveExercise(exercise.id)}
                   onDuplicate={() => onDuplicateExercise(exercise.id)}
+                  onMoveUp={() => onMoveExercise(exercise.id, 'up')}
+                  onMoveDown={() => onMoveExercise(exercise.id, 'down')}
                   onUpdate={(updates) => onUpdateExercise(exercise.id, updates)}
                 />
               ))}
@@ -759,12 +792,16 @@ function DayCard({
 
 interface ExerciseRowProps {
   exercise: ExerciseEntry;
+  isFirst: boolean;
+  isLast: boolean;
   onRemove: () => void;
   onDuplicate: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   onUpdate: (updates: Partial<ExerciseEntry>) => void;
 }
 
-function ExerciseRow({ exercise, onRemove, onDuplicate, onUpdate }: ExerciseRowProps) {
+function ExerciseRow({ exercise, isFirst, isLast, onRemove, onDuplicate, onMoveUp, onMoveDown, onUpdate }: ExerciseRowProps) {
   const [expanded, setExpanded] = useState(false);
   const prescriptionSummary = formatPrescription(exercise);
 
@@ -785,7 +822,28 @@ function ExerciseRow({ exercise, onRemove, onDuplicate, onUpdate }: ExerciseRowP
     <div className="rounded-md border border-border bg-background group">
       {/* Compact Row */}
       <div className="flex items-center gap-2 px-3 py-2">
-        <GripVertical className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+        <div className="flex flex-col shrink-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMoveUp}
+            disabled={isFirst}
+            className="h-4 w-5 p-0 disabled:opacity-20"
+            title="Move up"
+          >
+            <ArrowUp className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMoveDown}
+            disabled={isLast}
+            className="h-4 w-5 p-0 disabled:opacity-20"
+            title="Move down"
+          >
+            <ArrowDown className="h-3 w-3" />
+          </Button>
+        </div>
         <span className="text-xs text-muted-foreground w-5 shrink-0">{exercise.order}.</span>
         <Dumbbell className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
         <span className="text-sm font-medium truncate">{exercise.exerciseName}</span>

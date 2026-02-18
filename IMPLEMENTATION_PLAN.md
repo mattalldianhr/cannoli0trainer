@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 47
+- Completed: 48
 - In progress: 0
 
 ## Tasks
@@ -214,7 +214,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: Duplicate week copies all days/exercises, duplicate day copies exercises
 
-- [ ] **Task 7.7**: Add exercise reordering within a day
+- [x] **Task 7.7**: Add exercise reordering within a day
   - Spec: specs/04-program-builder.md
   - Acceptance: Move up/down buttons change exercise order
 
