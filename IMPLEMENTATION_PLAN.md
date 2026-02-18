@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 97
+- Completed: 98
 - In progress: 0
-- Remaining: 82 (7 original + 97 new from spec review)
+- Remaining: 81 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -549,7 +549,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Hero card with today's workout, quick stats (streak, weekly workouts, completion rate), last 3 sessions.
 
-- [ ] **Task 18.8**: Build athlete training view at `/athlete/train` reusing TrainingLog
+- [x] **Task 18.8**: Build athlete training view at `/athlete/train` reusing TrainingLog
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: TrainingLog with `mode: 'athlete'` (no athlete selector). All existing functionality works with authenticated athlete session.
 

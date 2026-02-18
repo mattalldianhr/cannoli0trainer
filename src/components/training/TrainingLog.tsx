@@ -111,6 +111,7 @@ interface AthleteOption {
 interface TrainingLogProps {
   athletes: AthleteOption[];
   initialAthleteId?: string;
+  mode?: 'coach' | 'athlete';
 }
 
 interface SetFormValues {
@@ -675,7 +676,7 @@ function ExerciseCard({
                 size="sm"
                 className="w-full h-9"
                 onClick={handleLogSet}
-                disabled={saving || !weight || !reps}
+                disabled={saving || weight === '' || !reps}
               >
                 {saving ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
@@ -754,7 +755,7 @@ function WorkoutSummary({ exercises }: { exercises: ExerciseData[] }) {
   );
 }
 
-export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
+export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: TrainingLogProps) {
   const [athleteId, setAthleteId] = useState(initialAthleteId ?? athletes[0]?.id ?? '');
   const [date, setDate] = useState(formatDate(new Date()));
   const [data, setData] = useState<TrainResponse | null>(null);
@@ -804,17 +805,19 @@ export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
 
   return (
     <div className="space-y-4">
-      {/* Athlete selector */}
+      {/* Athlete selector (coach mode only) + date navigation */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <select
-          value={athleteId}
-          onChange={(e) => setAthleteId(e.target.value)}
-          className="flex h-10 w-full sm:w-64 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          {athletes.map((a) => (
-            <option key={a.id} value={a.id}>{a.name}</option>
-          ))}
-        </select>
+        {mode === 'coach' && (
+          <select
+            value={athleteId}
+            onChange={(e) => setAthleteId(e.target.value)}
+            className="flex h-10 w-full sm:w-64 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {athletes.map((a) => (
+              <option key={a.id} value={a.id}>{a.name}</option>
+            ))}
+          </select>
+        )}
 
         {/* Date navigation */}
         <div className="flex items-center gap-2">
@@ -857,8 +860,10 @@ export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
               {isToday(date) ? 'Rest Day' : 'No workout scheduled'}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {selectedAthlete?.name ?? 'This athlete'} has no workout assigned for{' '}
-              {isToday(date) ? 'today' : displayDate(date)}.
+              {mode === 'athlete'
+                ? `No workout assigned for ${isToday(date) ? 'today' : displayDate(date)}.`
+                : `${selectedAthlete?.name ?? 'This athlete'} has no workout assigned for ${isToday(date) ? 'today' : displayDate(date)}.`
+              }
             </p>
             {data?.nextSession && (
               <button
