@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 62
+- Completed: 63
 - In progress: 0
 
 ## Tasks
@@ -282,7 +282,7 @@
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows athletes with no logs in 3+ days
 
-- [ ] **Task 11.4**: Add upcoming meets section to dashboard
+- [x] **Task 11.4**: Add upcoming meets section to dashboard
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows meets in next 30 days with athlete count
 

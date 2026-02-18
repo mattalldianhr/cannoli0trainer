@@ -20,6 +20,8 @@ import {
   Calendar,
   AlertTriangle,
   Clock,
+  Trophy,
+  MapPin,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -134,11 +136,40 @@ async function getAthletesNeedingAttention() {
   }));
 }
 
+async function getUpcomingMeets() {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  const meets = await prisma.competitionMeet.findMany({
+    where: {
+      date: {
+        gte: now,
+        lte: thirtyDaysFromNow,
+      },
+    },
+    include: {
+      _count: { select: { entries: true } },
+    },
+    orderBy: { date: 'asc' },
+  });
+
+  return meets.map((meet) => ({
+    id: meet.id,
+    name: meet.name,
+    date: meet.date,
+    location: meet.location,
+    federation: meet.federation,
+    athleteCount: meet._count.entries,
+  }));
+}
+
 export default async function DashboardPage() {
-  const [stats, recentActivity, athletesNeedingAttention] = await Promise.all([
+  const [stats, recentActivity, athletesNeedingAttention, upcomingMeets] = await Promise.all([
     getDashboardStats(),
     getRecentActivity(),
     getAthletesNeedingAttention(),
+    getUpcomingMeets(),
   ]);
 
   const statCards = [
@@ -379,6 +410,98 @@ export default async function DashboardPage() {
                           ) : (
                             <span>No sessions</span>
                           )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Upcoming Meets Section */}
+        <Card className="mt-8">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5" />
+              Upcoming Meets
+            </CardTitle>
+            <Badge variant="secondary">
+              {upcomingMeets.length === 0 ? 'None scheduled' : `Next 30 days`}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            {upcomingMeets.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-sm mb-4">
+                  No meets scheduled in the next 30 days.
+                </p>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/meets" className="gap-1.5">
+                    <Plus className="h-4 w-4" />
+                    Schedule a Meet
+                  </Link>
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {upcomingMeets.map((meet) => {
+                  const daysUntil = Math.ceil(
+                    (meet.date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                  );
+
+                  return (
+                    <Link
+                      key={meet.id}
+                      href={`/meets/${meet.id}`}
+                      className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 text-sm font-medium">
+                          <Trophy className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{meet.name}</p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>
+                              {meet.date.toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                              })}
+                            </span>
+                            {meet.location && (
+                              <>
+                                <span>&middot;</span>
+                                <span className="flex items-center gap-0.5">
+                                  <MapPin className="h-3 w-3" />
+                                  {meet.location}
+                                </span>
+                              </>
+                            )}
+                            {meet.federation && (
+                              <>
+                                <span>&middot;</span>
+                                <span>{meet.federation}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {meet.athleteCount} {meet.athleteCount === 1 ? 'athlete' : 'athletes'}
+                        </Badge>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="h-3.5 w-3.5" />
+                          <span>
+                            {daysUntil === 0
+                              ? 'Today'
+                              : daysUntil === 1
+                                ? 'Tomorrow'
+                                : `${daysUntil} days`}
+                          </span>
                         </div>
                       </div>
                     </Link>
