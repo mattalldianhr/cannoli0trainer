@@ -16,6 +16,7 @@ import {
   Settings2,
   Save,
   Loader2,
+  StickyNote,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -475,12 +476,15 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="program-description">Description</Label>
+            <Label htmlFor="program-description">
+              <StickyNote className="h-3.5 w-3.5 inline mr-1" />
+              Description / Notes
+            </Label>
             <Textarea
               id="program-description"
               value={program.description}
               onChange={(e) => updateField('description', e.target.value)}
-              placeholder="Program description and goals..."
+              placeholder="Program description, goals, and coaching notes..."
               rows={3}
             />
           </div>
@@ -825,7 +829,11 @@ function DayCard({
             onClick={() => setShowNotes(!showNotes)}
             className={cn('h-7 text-xs', showNotes && 'text-primary')}
           >
+            <StickyNote className="h-3.5 w-3.5 mr-1" />
             Notes
+            {!showNotes && day.notes.length > 0 && (
+              <span className="ml-1 h-1.5 w-1.5 rounded-full bg-primary inline-block" />
+            )}
           </Button>
           <Button
             variant="ghost"
@@ -955,6 +963,11 @@ function ExerciseRow({ exercise, isFirst, isLast, onRemove, onDuplicate, onMoveU
         {prescriptionSummary && (
           <span className="text-xs text-muted-foreground shrink-0">{prescriptionSummary}</span>
         )}
+        {!expanded && exercise.notes.length > 0 && (
+          <span className="shrink-0 text-muted-foreground" title={exercise.notes}>
+            <StickyNote className="h-3.5 w-3.5" />
+          </span>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -1035,12 +1048,16 @@ function ExerciseRow({ exercise, isFirst, isLast, onRemove, onDuplicate, onMoveU
 
           {/* Notes */}
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Exercise Notes</Label>
-            <Input
+            <Label className="text-xs text-muted-foreground">
+              <StickyNote className="h-3 w-3 inline mr-1" />
+              Exercise Notes
+            </Label>
+            <Textarea
               value={exercise.notes}
               onChange={(e) => onUpdate({ notes: e.target.value })}
-              placeholder="e.g. Pause 2 sec at bottom"
-              className="h-8 text-xs"
+              placeholder="e.g. Pause 2 sec at bottom, keep elbows tucked"
+              rows={2}
+              className="text-xs resize-none"
             />
           </div>
         </div>

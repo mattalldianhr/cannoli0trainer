@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 118
+- Completed: 119
 - In progress: 0
-- Remaining: 61
+- Remaining: 60
 
 ## Tasks
 
@@ -640,7 +640,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/04-program-builder.md
   - Acceptance: Weeks as rows, days as columns, exercise count per cell, click to navigate.
 
-- [ ] **Task 23.2**: Surface notes fields at exercise, day, and program levels
+- [x] **Task 23.2**: Surface notes fields at exercise, day, and program levels
   - Spec: specs/04-program-builder.md
   - Acceptance: Program description, day notes, exercise notes. Note icon when collapsed with content. Persisted on save.
 
