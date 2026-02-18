@@ -36,6 +36,7 @@ import { RestTimer } from '@/components/training/RestTimer';
 import { cn } from '@/lib/utils';
 import { enqueue, type SetLogPayload } from '@/lib/offline-queue';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { calculateVelocityDrop } from '@/lib/vbt';
 
 interface SetLogData {
   id: string;
@@ -419,6 +420,40 @@ function PreviousPerformance({ sets }: { sets: PreviousPerf[] }) {
   );
 }
 
+function VelocityLossIndicator({ setLogs }: { setLogs: SetLogData[] }) {
+  const velocities = setLogs
+    .sort((a, b) => a.setNumber - b.setNumber)
+    .filter((s) => s.velocity != null)
+    .map((s) => s.velocity!);
+
+  if (velocities.length < 2) {
+    return (
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <TrendingUp className="h-3 w-3" />
+        <span>Velocity loss: N/A (need 2+ sets)</span>
+      </div>
+    );
+  }
+
+  const drop = calculateVelocityDrop(velocities);
+  if (drop == null) return null;
+
+  const isHigh = drop > 20;
+
+  return (
+    <div className={cn(
+      'flex items-center gap-1.5 text-xs',
+      isHigh ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground',
+    )}>
+      <TrendingUp className="h-3 w-3" />
+      <span>
+        Velocity loss: {drop.toFixed(1)}%
+        {isHigh && ' — High fatigue'}
+      </span>
+    </div>
+  );
+}
+
 function ExerciseCard({
   exercise,
   athleteId,
@@ -664,6 +699,10 @@ function ExerciseCard({
                     saving={saving}
                   />
                 ))}
+                {/* Velocity loss indicator — shown for exercises with velocity data */}
+                {showVelocity && exercise.setLogs.some((s) => s.velocity != null) && (
+                  <VelocityLossIndicator setLogs={exercise.setLogs} />
+                )}
               </div>
             )}
 

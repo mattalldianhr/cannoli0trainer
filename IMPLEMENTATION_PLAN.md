@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 123
+- Completed: 124
 - In progress: 0
-- Remaining: 56
+- Remaining: 55
 
 ## Tasks
 
@@ -664,7 +664,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 25: VBT Fatigue Tracking
 
-- [ ] **Task 25.1**: Implement within-session velocity loss display per exercise
+- [x] **Task 25.1**: Implement within-session velocity loss display per exercise
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Velocity drop % from set 1 to final set. Flag when >20%. "N/A" for <2 velocity sets.
 
