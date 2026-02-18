@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 53
+- Completed: 54
 - In progress: 0
 
 ## Tasks
@@ -242,7 +242,7 @@
 
 ### Priority 9: RPE/RIR Support Components
 
-- [ ] **Task 9.1**: Create RPESelector component with 1-10 scale (0.5 increments)
+- [x] **Task 9.1**: Create RPESelector component with 1-10 scale (0.5 increments)
   - Spec: specs/12-rpe-rir-support.md
   - Acceptance: Component renders scale, supports selection, shows RPE descriptions
 
