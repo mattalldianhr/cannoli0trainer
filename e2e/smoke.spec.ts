@@ -24,14 +24,14 @@ test.describe('Smoke Tests', () => {
     const searchInput = page.getByPlaceholder(/search/i);
     await expect(searchInput).toBeVisible();
 
-    // Should show exercises (800+ in DB, page likely paginates)
-    const exerciseItems = page.getByRole('listitem').or(page.locator('[data-testid="exercise-card"]'));
-    await expect(exerciseItems.first()).toBeVisible();
+    // Should show exercises (948 in DB)
+    const exerciseLinks = page.locator('a[href*="/exercises/"]');
+    await expect(exerciseLinks.first()).toBeVisible();
 
     // Search should filter results
     await searchInput.fill('squat');
     await page.waitForTimeout(500); // debounce
-    const filtered = page.getByRole('listitem').or(page.locator('[data-testid="exercise-card"]'));
+    const filtered = page.locator('a[href*="/exercises/"]');
     await expect(filtered.first()).toBeVisible();
   });
 
