@@ -1,0 +1,9 @@
+## Quick Spec Review — Iter 2 Summary
+
+- **Findings**: 0 issues
+  - Task 30.5 (inline form validation) completed cleanly — Zod schemas for all 5 forms, blur + submit validation, error UI
+  - Task 30.4 (toast notifications) also clean — 13 mutation components, correct exclusions
+  - Build passes, no errors or inconsistencies
+- **Specs updated**: None needed
+- **Carry-forward P2**: "Archived Programs" filter/tab on `/programs` page (from iter 23) — not blocking
+- **Continue building?** Yes

@@ -1,0 +1,10 @@
+## Quick Spec Review — Iter 32 Summary
+
+- **Findings**: 0 issues
+  - Task 30.3 (install sonner, create toast wrapper) completed cleanly — tsc + build pass, committed
+  - No errors, inconsistencies, or unexpected discoveries in the build log
+  - Review log for iter 32 is empty (likely review hadn't run yet)
+- **Specs updated**: None needed
+- **Carry-forward P2**: "Archived Programs" filter/tab on `/programs` page (from iter 23) — not blocking
+- **Progress**: ~149/179 tasks complete, ~30 remaining
+- **Continue building?** Yes

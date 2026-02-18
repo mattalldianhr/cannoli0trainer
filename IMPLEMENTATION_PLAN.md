@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 153
+- Completed: 154
 - In progress: 0
-- Remaining: 26
+- Remaining: 25
 
 ## Tasks
 
@@ -785,7 +785,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Zod schemas for all forms. Inline error messages on blur/submit. Red borders. User-friendly messages.
 
-- [ ] **Task 30.6**: Create shared ConfirmDialog component
+- [x] **Task 30.6**: Create shared ConfirmDialog component
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Radix AlertDialog wrapper. Destructive variant. Used for archive athlete, archive program, delete exercise, delete meet, unassign program.
 

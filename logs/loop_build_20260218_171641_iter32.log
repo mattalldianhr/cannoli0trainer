@@ -1,0 +1,9 @@
+**Task 30.3 complete.** Here's what was done:
+
+- Installed `sonner` npm package
+- Added `<Toaster position="bottom-right" />` to the root layout (`src/app/layout.tsx`), placed outside `ConditionalCoachChrome` so toasts render on both coach and athlete routes
+- Created `src/lib/toast.ts` exporting `showSuccess`, `showError`, and `showLoading` wrapper functions
+- Sonner automatically uses bottom-center positioning on mobile viewports
+- All validation passes (tsc, build)
+- Committed as `abf38bf`
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

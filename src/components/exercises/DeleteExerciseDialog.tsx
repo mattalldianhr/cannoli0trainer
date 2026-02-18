@@ -6,13 +6,14 @@ import { Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { showSuccess, showError } from '@/lib/toast';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from '@/components/ui/confirm-dialog';
 
 interface DeleteExerciseDialogProps {
   exerciseId: string;
@@ -69,18 +70,18 @@ export function DeleteExerciseDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
             Delete Exercise
-          </DialogTitle>
-          <DialogDescription>
+          </AlertDialogTitle>
+          <AlertDialogDescription>
             Are you sure you want to delete <strong>{exerciseName}</strong>? This
             action cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
 
         {error && (
           <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
@@ -101,15 +102,8 @@ export function DeleteExerciseDialog({
           </div>
         )}
 
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={deleting}
-          >
-            Cancel
-          </Button>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
           {usageCount === null && (
             <Button
               type="button"
@@ -121,8 +115,8 @@ export function DeleteExerciseDialog({
               {deleting ? 'Deleting...' : 'Delete Exercise'}
             </Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

@@ -1,0 +1,10 @@
+## Quick Spec Review — Iter 1 (new series) Summary
+
+- **Findings**: 0 issues
+  - Task 30.4 (toast notifications on mutations) completed cleanly — build passes, committed as `66f6a0b`
+  - 13 mutation components wired up with success/error toasts
+  - Correctly excluded high-frequency actions (TrainingLog set logging, ProgramBuilder auto-save) per spec
+  - No errors, inconsistencies, or unexpected discoveries
+- **Specs updated**: None needed
+- **Carry-forward P2**: "Archived Programs" filter/tab on `/programs` page (from iter 23) — not blocking
+- **Continue building?** Yes

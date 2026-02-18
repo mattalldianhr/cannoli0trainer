@@ -34,6 +34,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface AttemptResult {
   weight: number;
@@ -144,6 +145,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
   // Track saving state per entry
   const [savingEntries, setSavingEntries] = useState<Record<string, boolean>>({});
   const [deletingEntry, setDeletingEntry] = useState<string | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Results mode toggle per entry
   const [resultsMode, setResultsMode] = useState<Record<string, boolean>>({});
@@ -332,8 +334,6 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
   }
 
   async function handleRemoveAthlete(entryId: string) {
-    if (!confirm('Remove this athlete from the meet?')) return;
-
     setDeletingEntry(entryId);
     try {
       const res = await fetch(`/api/meets/${meet.id}/entries/${entryId}`, {
@@ -345,6 +345,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
       }
 
       showSuccess('Athlete removed from meet');
+      setRemoveTarget(null);
       router.refresh();
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to remove athlete');
@@ -520,7 +521,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => handleRemoveAthlete(entry.id)}
+                    onClick={() => setRemoveTarget({ id: entry.id, name: entry.athleteName })}
                     disabled={isDeleting}
                     className="text-destructive hover:text-destructive"
                   >
@@ -772,6 +773,23 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Remove Athlete Confirmation */}
+      <ConfirmDialog
+        open={!!removeTarget}
+        onOpenChange={(open) => !open && setRemoveTarget(null)}
+        title="Remove Athlete"
+        description={
+          <>
+            Remove <strong>{removeTarget?.name}</strong> from this meet? Their planned
+            attempts and results will be deleted.
+          </>
+        }
+        confirmLabel={deletingEntry ? 'Removing...' : 'Remove'}
+        variant="destructive"
+        loading={!!deletingEntry}
+        onConfirm={() => { if (removeTarget) handleRemoveAthlete(removeTarget.id); }}
+      />
     </div>
   );
 }

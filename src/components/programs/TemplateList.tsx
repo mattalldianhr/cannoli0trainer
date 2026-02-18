@@ -9,21 +9,13 @@ import {
   Calendar,
   Dumbbell,
   Archive,
-  Loader2,
   Copy,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { cn } from '@/lib/utils';
 import { showSuccess, showError } from '@/lib/toast';
 
@@ -239,26 +231,21 @@ export function TemplateList({ templates }: TemplateListProps) {
       )}
 
       {/* Archive Confirmation Dialog */}
-      <Dialog open={!!archiveTarget} onOpenChange={(open) => !open && setArchiveTarget(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Archive Template</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to archive &quot;{archiveTarget?.name}&quot;? It will be
-              hidden from the template list. Programs created from this template will not be affected.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setArchiveTarget(null)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleArchive} disabled={archiving}>
-              {archiving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Archive Template
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={!!archiveTarget}
+        onOpenChange={(open) => !open && setArchiveTarget(null)}
+        title="Archive Template"
+        description={
+          <>
+            Are you sure you want to archive &quot;{archiveTarget?.name}&quot;? It will be
+            hidden from the template list. Programs created from this template will not be affected.
+          </>
+        }
+        confirmLabel={archiving ? 'Archiving...' : 'Archive Template'}
+        variant="destructive"
+        loading={archiving}
+        onConfirm={handleArchive}
+      />
     </div>
   );
 }

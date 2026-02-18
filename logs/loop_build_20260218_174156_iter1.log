@@ -1,0 +1,13 @@
+**Task 30.4 complete.** Added success/error toasts to 13 mutation components across the app:
+
+- **Athletes**: AthleteList (reactivate), DeleteAthleteDialog (archive), BulkAssignDialog (bulk assign)
+- **Exercises**: ExerciseForm (create/update), DeleteExerciseDialog (delete with 409 conflict handling)
+- **Programs**: ArchiveProgram, SaveAsTemplate, TemplateList (archive), AssignAthletes
+- **Schedule**: WeeklyCalendar (replaced `alert()` calls with toasts for move/skip)
+- **Meets**: CreateMeetDialog, MeetDetail (add athlete, save attempts, remove athlete)
+- **Settings**: SettingsForm (save)
+
+Excluded per spec: TrainingLog set logging (too frequent), ProgramBuilder auto-save (too frequent).
+
+Build passes cleanly. Committed as `66f6a0b`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

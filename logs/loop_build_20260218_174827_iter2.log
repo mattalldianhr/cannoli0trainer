@@ -1,0 +1,21 @@
+**Task 30.5 complete.** Here's what was done:
+
+**New files:**
+- `src/lib/validations.ts` — Zod schemas for all 5 forms (athlete, exercise, settings, meet, athlete login) plus `validateForm()` and `validateField()` helpers
+- `src/components/ui/form-error.tsx` — Reusable inline error message component
+
+**Updated forms (6 files):**
+- **AddAthleteForm** — validates name (required), email (valid format), bodyweight (positive, max 500)
+- **EditAthleteForm** — same validation as AddAthleteForm
+- **ExerciseForm** — validates name (required), video URL (valid URL format)
+- **SettingsForm** — validates name (required), email (required + valid), rest timer (0-600)
+- **CreateMeetDialog** — validates name (required), date (required)
+- **Athlete login page** — validates email (required + valid format)
+
+**Validation behavior:**
+- Errors shown on blur (per-field) and on submit (all fields)
+- Red `border-destructive` on invalid inputs
+- User-friendly error messages below fields
+- `noValidate` on forms to use Zod instead of browser validation
+- Submit button disabled when errors exist
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
