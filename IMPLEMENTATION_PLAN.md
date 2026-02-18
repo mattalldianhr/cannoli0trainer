@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 121
+- Completed: 122
 - In progress: 0
-- Remaining: 58
+- Remaining: 57
 
 ## Tasks
 
@@ -654,7 +654,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Bar chart of set count per RPE bin, filterable by exercise. Accuracy metric from rpe-table reverse lookup.
 
-- [ ] **Task 24.2**: Build athlete comparison view (overlay 2-3 athletes on same chart)
+- [x] **Task 24.2**: Build athlete comparison view (overlay 2-3 athletes on same chart)
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Multi-select dropdown, overlaid color-coded trend lines, max 3 athletes.
 

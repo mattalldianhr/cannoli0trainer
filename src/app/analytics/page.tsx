@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { Container } from '@/components/layout/Container';
-import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
+import { AnalyticsPageClient } from '@/components/analytics/AnalyticsPageClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,9 +11,9 @@ export const metadata = {
 export default async function AnalyticsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ athleteId?: string }>;
+  searchParams: Promise<{ athleteId?: string; view?: string }>;
 }) {
-  const { athleteId } = await searchParams;
+  const { athleteId, view } = await searchParams;
 
   const athletes = await prisma.athlete.findMany({
     select: { id: true, name: true },
@@ -29,7 +29,11 @@ export default async function AnalyticsPage({
         </p>
       </div>
 
-      <AnalyticsDashboard athletes={athletes} initialAthleteId={athleteId} />
+      <AnalyticsPageClient
+        athletes={athletes}
+        initialAthleteId={athleteId}
+        initialView={view === 'compare' ? 'compare' : 'individual'}
+      />
     </Container>
   );
 }
