@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 22
+- Completed: 23
 - In progress: 0
 
 ## Tasks
@@ -106,7 +106,7 @@
   - Spec: specs/12-rpe-rir-support.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
   - Acceptance: Tests verify: `calculateOneRepMax(140, 5)` returns expected value for each formula (Epley, Brzycki). RPE table returns correct %1RM for known inputs (RPE 10 @ 1 rep = 100%, RPE 8 @ 5 reps = 76%). Wilks/DOTS return expected scores for known bodyweight+total combos.
 
-- [ ] **Task 3.4**: Integration test seed script — verify import counts match source data
+- [x] **Task 3.4**: Integration test seed script — verify import counts match source data
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: Test seeds a test database, then asserts: 5 athletes, 2,033 WorkoutSessions, 12,437 WorkoutExercises, 16,552 SetLogs, 1,806 MaxSnapshots (PRs), 136+ exercises. Per-athlete tonnage matches source totals. Uses Prisma test client with isolated database or transaction rollback.
 
