@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 25
+- Completed: 26
 - In progress: 0
 
 ## Tasks
@@ -120,7 +120,7 @@
 
 ### Priority 4: Core API Routes
 
-- [ ] **Task 4.1**: Create CRUD API routes for Coach (`/api/coaches`)
+- [x] **Task 4.1**: Create CRUD API routes for Coach (`/api/coaches`)
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: POST creates coach, GET returns coach profile
 
