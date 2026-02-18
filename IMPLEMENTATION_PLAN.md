@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 59
+- Completed: 60
 - In progress: 0
 
 ## Tasks
@@ -270,7 +270,7 @@
 
 ### Priority 11: Coach Dashboard
 
-- [ ] **Task 11.1**: Create dashboard page at `/dashboard` with overview stat cards
+- [x] **Task 11.1**: Create dashboard page at `/dashboard` with overview stat cards
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows total athletes, active programs, workouts this week
 
