@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 58
+- Completed: 59
 - In progress: 0
 
 ## Tasks
@@ -264,7 +264,7 @@
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Shows "Last: X lbs x Y reps" from most recent session
 
-- [ ] **Task 10.4**: Add workout completion summary card
+- [x] **Task 10.4**: Add workout completion summary card
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: After all exercises, shows total volume, sets, top RPE
 

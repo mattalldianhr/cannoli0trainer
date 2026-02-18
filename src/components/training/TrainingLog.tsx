@@ -17,6 +17,10 @@ import {
   Trash2,
   X,
   Check,
+  Trophy,
+  Weight,
+  Repeat,
+  TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -689,6 +693,60 @@ function ExerciseCard({
   );
 }
 
+function WorkoutSummary({ exercises }: { exercises: ExerciseData[] }) {
+  const totalSets = exercises.reduce((sum, ex) => sum + ex.setLogs.length, 0);
+  const totalReps = exercises.reduce(
+    (sum, ex) => sum + ex.setLogs.reduce((s, set) => s + set.reps, 0),
+    0,
+  );
+  const totalVolume = exercises.reduce(
+    (sum, ex) => sum + ex.setLogs.reduce((s, set) => s + set.weight * set.reps, 0),
+    0,
+  );
+  const topRPE = exercises.reduce(
+    (max, ex) => Math.max(max, ...ex.setLogs.map((s) => s.rpe ?? 0)),
+    0,
+  );
+  const exerciseCount = exercises.length;
+
+  const stats = [
+    { label: 'Exercises', value: String(exerciseCount), icon: Dumbbell },
+    { label: 'Sets', value: String(totalSets), icon: Repeat },
+    { label: 'Reps', value: String(totalReps), icon: TrendingUp },
+    { label: 'Volume', value: `${totalVolume.toLocaleString()} lbs`, icon: Weight },
+  ];
+
+  return (
+    <Card className="border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <Trophy className="h-5 w-5 text-green-600" />
+          <CardTitle className="text-lg">Workout Complete</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 gap-3">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-lg border border-border bg-background p-3 text-center"
+            >
+              <stat.icon className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
+              <p className="text-lg font-semibold tabular-nums">{stat.value}</p>
+              <p className="text-xs text-muted-foreground">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+        {topRPE > 0 && (
+          <div className="mt-3 text-center text-sm text-muted-foreground">
+            Top RPE: <span className="font-medium text-foreground">{topRPE}</span>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
   const [athleteId, setAthleteId] = useState(initialAthleteId ?? athletes[0]?.id ?? '');
   const [date, setDate] = useState(formatDate(new Date()));
@@ -855,6 +913,11 @@ export function TrainingLog({ athletes, initialAthleteId }: TrainingLogProps) {
               />
             ))}
           </div>
+
+          {/* Workout completion summary */}
+          {completionPercent === 100 && (
+            <WorkoutSummary exercises={exercises} />
+          )}
         </>
       )}
     </div>
