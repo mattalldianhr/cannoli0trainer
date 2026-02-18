@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 147
+- Completed: 148
 - In progress: 0
-- Remaining: 32
+- Remaining: 31
 
 ## Tasks
 
@@ -759,7 +759,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: SetLog unit defaults to coach's `defaultWeightUnit`. UI pre-selects. Per-set override still works.
 
-- [ ] **Task 29.5**: Wire default rest timer into training log
+- [x] **Task 29.5**: Wire default rest timer into training log
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Rest timer defaults to coach's `defaultRestTimerSeconds`. Per-session override still works.
 

@@ -109,6 +109,7 @@ interface TrainResponse {
   session: SessionData | null;
   exercises: ExerciseData[];
   defaultWeightUnit?: string;
+  defaultRestTimerSeconds?: number;
   message?: string;
   nextSession?: NextSessionData | null;
 }
@@ -473,12 +474,14 @@ function ExerciseCard({
   exercise,
   athleteId,
   weightUnit,
+  defaultRestTimerSeconds,
   onSetChange,
   onEnqueue,
 }: {
   exercise: ExerciseData;
   athleteId: string;
   weightUnit: string;
+  defaultRestTimerSeconds: number;
   onSetChange: () => void;
   onEnqueue?: () => void;
 }) {
@@ -539,7 +542,7 @@ function ExerciseCard({
   const [velocity, setVelocity] = useState(defaults.velocity);
 
   const nextSetNumber = completedSets + 1;
-  const restDuration = exercise.restTimeSeconds ?? 120;
+  const restDuration = exercise.restTimeSeconds ?? defaultRestTimerSeconds;
 
   const handleLogSet = async () => {
     const w = parseFloat(weight);
@@ -979,6 +982,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
   const session = data?.session;
   const exercises = data?.exercises ?? [];
   const weightUnit = data?.defaultWeightUnit ?? 'lbs';
+  const defaultRestTimer = data?.defaultRestTimerSeconds ?? 120;
   const totalExercises = exercises.length;
   const completedExercises = exercises.filter((ex) => {
     const total = ex.prescribedSets ? parseInt(ex.prescribedSets, 10) : 0;
@@ -1139,6 +1143,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
                 exercise={ex}
                 athleteId={athleteId}
                 weightUnit={weightUnit}
+                defaultRestTimerSeconds={defaultRestTimer}
                 onSetChange={fetchWorkout}
                 onEnqueue={handleEnqueue}
               />
