@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,6 +12,8 @@ import {
   Clock,
   Ban,
   Filter,
+  Move,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -91,12 +93,21 @@ function StatusIcon({ status, isSkipped }: { status: SessionData['status']; isSk
   }
 }
 
+interface MoveState {
+  sessionId: string;
+  athleteId: string;
+  currentDate: string;
+  title: string | null;
+}
+
 export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCalendarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filterAthleteId, setFilterAthleteId] = useState<string>(
     searchParams.get('athleteId') || 'all'
   );
+  const [moveState, setMoveState] = useState<MoveState | null>(null);
+  const [isMoving, setIsMoving] = useState(false);
 
   // Generate the 7 dates (Mon-Sun) for this week
   const weekDates = useMemo(() => {
@@ -150,8 +161,77 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
     router.push(`/schedule?${params.toString()}`);
   }
 
+  // Start a move operation: select a session to move
+  const handleStartMove = useCallback((session: SessionData, athleteId: string) => {
+    if (session.status !== 'NOT_STARTED' || session.isSkipped) return;
+    setMoveState({
+      sessionId: session.id,
+      athleteId,
+      currentDate: session.date,
+      title: session.title,
+    });
+  }, []);
+
+  // Cancel the move
+  const handleCancelMove = useCallback(() => {
+    setMoveState(null);
+  }, []);
+
+  // Execute the move: drop session on target date
+  const handleExecuteMove = useCallback(async (targetDate: string) => {
+    if (!moveState) return;
+    if (targetDate === moveState.currentDate) {
+      setMoveState(null);
+      return;
+    }
+
+    setIsMoving(true);
+    try {
+      const res = await fetch(`/api/schedule/${moveState.sessionId}/move`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newDate: targetDate }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || 'Failed to move workout');
+        return;
+      }
+
+      // Refresh the page data
+      router.refresh();
+    } catch {
+      alert('Failed to move workout');
+    } finally {
+      setMoveState(null);
+      setIsMoving(false);
+    }
+  }, [moveState, router]);
+
   return (
     <div className="space-y-4">
+      {/* Move mode banner */}
+      {moveState && (
+        <div className="flex items-center gap-3 rounded-lg border border-blue-300 bg-blue-50 dark:bg-blue-950/20 p-3 text-sm">
+          <Move className="h-4 w-4 text-blue-600 shrink-0" />
+          <span className="text-blue-800 dark:text-blue-200">
+            Moving <strong>{moveState.title || 'Workout'}</strong> &mdash; click a cell in the same row to move it there{isMoving ? ' ...' : ', or'}
+          </span>
+          {!isMoving && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCancelMove}
+              className="ml-auto text-blue-700 hover:text-blue-900"
+            >
+              <X className="h-3.5 w-3.5 mr-1" />
+              Cancel
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Week navigation + filter bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
@@ -241,6 +321,8 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
                 ) : (
                   displayedAthletes.map((athlete) => {
                     const athleteSessions = sessionMap.get(athlete.id);
+                    const isMovingThisAthlete = moveState?.athleteId === athlete.id;
+
                     return (
                       <tr key={athlete.id} className="border-b last:border-b-0 hover:bg-muted/30">
                         <td className="sticky left-0 z-10 bg-background px-4 py-3">
@@ -254,17 +336,43 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
                         {weekDates.map((date) => {
                           const session = athleteSessions?.get(date);
                           const isToday = date === today;
+                          const isSelectedForMove = moveState?.sessionId === session?.id;
+                          const isMoveTarget = isMovingThisAthlete && !isSelectedForMove;
+                          const canSwap = isMoveTarget && session?.status === 'NOT_STARTED' && !session?.isSkipped;
+                          const canDropEmpty = isMoveTarget && !session;
 
                           return (
                             <td
                               key={date}
                               className={cn(
                                 'px-2 py-2 text-center align-top',
-                                isToday && 'bg-primary/5'
+                                isToday && 'bg-primary/5',
+                                isSelectedForMove && 'bg-blue-100 dark:bg-blue-900/30',
+                                (canSwap || canDropEmpty) && 'cursor-pointer'
                               )}
+                              onClick={
+                                canDropEmpty || canSwap
+                                  ? () => handleExecuteMove(date)
+                                  : undefined
+                              }
                             >
                               {session ? (
-                                <SessionCell session={session} athleteId={athlete.id} />
+                                <SessionCell
+                                  session={session}
+                                  athleteId={athlete.id}
+                                  isSelected={isSelectedForMove}
+                                  isMoveTarget={canSwap}
+                                  isMoving={isMoving}
+                                  onStartMove={handleStartMove}
+                                  moveActive={!!moveState}
+                                />
+                              ) : (canDropEmpty) ? (
+                                <div className={cn(
+                                  'py-2 rounded-md border-2 border-dashed border-blue-300 text-xs text-blue-500 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/30',
+                                  isMoving && 'pointer-events-none opacity-50'
+                                )}>
+                                  Move here
+                                </div>
                               ) : (
                                 <div className="py-2 text-xs text-muted-foreground/50">
                                   &mdash;
@@ -297,12 +405,33 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
         <span className="flex items-center gap-1">
           <Ban className="h-3 w-3" /> Skipped
         </span>
+        <span className="flex items-center gap-1">
+          <Move className="h-3 w-3" /> Click a workout to move it
+        </span>
       </div>
     </div>
   );
 }
 
-function SessionCell({ session, athleteId }: { session: SessionData; athleteId: string }) {
+interface SessionCellProps {
+  session: SessionData;
+  athleteId: string;
+  isSelected: boolean;
+  isMoveTarget: boolean;
+  isMoving: boolean;
+  onStartMove: (session: SessionData, athleteId: string) => void;
+  moveActive: boolean;
+}
+
+function SessionCell({
+  session,
+  athleteId,
+  isSelected,
+  isMoveTarget,
+  isMoving,
+  onStartMove,
+  moveActive,
+}: SessionCellProps) {
   const statusColors = {
     NOT_STARTED: 'border-border bg-muted/30',
     PARTIALLY_COMPLETED: 'border-amber-300 bg-amber-50 dark:bg-amber-950/20',
@@ -313,14 +442,54 @@ function SessionCell({ session, athleteId }: { session: SessionData; athleteId: 
     ? 'border-border bg-muted/20 opacity-60'
     : statusColors[session.status];
 
-  return (
-    <Link
-      href={`/athletes/${athleteId}`}
-      className={cn(
-        'block rounded-md border p-1.5 text-left transition-colors hover:shadow-sm',
-        bgClass
-      )}
-    >
+  const canMove = session.status === 'NOT_STARTED' && !session.isSkipped;
+
+  // When a move is active and this is a valid swap target, make it clickable
+  if (isMoveTarget) {
+    return (
+      <div
+        className={cn(
+          'rounded-md border-2 border-dashed p-1.5 text-left transition-colors',
+          canMove
+            ? 'border-blue-300 bg-blue-50/50 dark:bg-blue-950/20 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30'
+            : bgClass,
+          isMoving && 'pointer-events-none opacity-50'
+        )}
+      >
+        <div className="flex items-center gap-1 mb-0.5">
+          <StatusIcon status={session.status} isSkipped={session.isSkipped} />
+          {canMove && <span className="text-[10px] text-blue-600 font-medium">Swap</span>}
+        </div>
+        <p className={cn(
+          'text-xs font-medium truncate',
+          session.isSkipped && 'line-through'
+        )}>
+          {session.title || 'Workout'}
+        </p>
+      </div>
+    );
+  }
+
+  // When this session is selected for moving
+  if (isSelected) {
+    return (
+      <div
+        className="rounded-md border-2 border-blue-500 bg-blue-100 dark:bg-blue-900/40 p-1.5 text-left ring-2 ring-blue-300"
+      >
+        <div className="flex items-center gap-1 mb-0.5">
+          <Move className="h-3 w-3 text-blue-600" />
+          <span className="text-[10px] text-blue-600 font-medium">Moving...</span>
+        </div>
+        <p className="text-xs font-medium truncate text-blue-800 dark:text-blue-200">
+          {session.title || 'Workout'}
+        </p>
+      </div>
+    );
+  }
+
+  // Normal state: clickable link, but NOT_STARTED sessions also show a move handle
+  const content = (
+    <>
       <div className="flex items-center gap-1 mb-0.5">
         <StatusIcon status={session.status} isSkipped={session.isSkipped} />
         {session.status === 'FULLY_COMPLETED' && !session.isSkipped && (
@@ -332,6 +501,19 @@ function SessionCell({ session, athleteId }: { session: SessionData; athleteId: 
           <span className="text-[10px] text-amber-600 font-medium">
             {Math.round(session.completionPercentage)}%
           </span>
+        )}
+        {canMove && !moveActive && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onStartMove(session, athleteId);
+            }}
+            className="ml-auto p-0.5 rounded hover:bg-muted transition-colors"
+            title="Move this workout"
+          >
+            <Move className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+          </button>
         )}
       </div>
       <p className={cn(
@@ -345,6 +527,18 @@ function SessionCell({ session, athleteId }: { session: SessionData; athleteId: 
           W{session.weekNumber}D{session.dayNumber}
         </p>
       )}
+    </>
+  );
+
+  return (
+    <Link
+      href={`/athletes/${athleteId}`}
+      className={cn(
+        'block rounded-md border p-1.5 text-left transition-colors hover:shadow-sm',
+        bgClass
+      )}
+    >
+      {content}
     </Link>
   );
 }

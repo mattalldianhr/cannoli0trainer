@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 85
+- Completed: 86
 - In progress: 0
-- Remaining: 94 (7 original + 97 new from spec review)
+- Remaining: 93 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -499,7 +499,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: GET `/api/schedule?startDate=...&endDate=...&athleteId=all` returns athletes with their sessions for the date range. Supports filtering by athleteId.
 
-- [ ] **Task 17.10**: Implement manual workout move on calendar
+- [x] **Task 17.10**: Implement manual workout move on calendar
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Coach can move a workout from one date to another via the calendar UI. Moving updates the WorkoutSession's `date` field and sets `isManuallyScheduled = true`. If the target date already has a session, swap the two sessions' dates.
 
