@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 21
+- Completed: 22
 - In progress: 0
 
 ## Tasks
@@ -102,7 +102,7 @@
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: Tests verify: prescribed (placeholder) vs actual (value) extraction, superset grouping mapping, exercise type code mapping (L→Lift, S→SAQ+C, etc.), workingMax/generatedMax→MaxSnapshot conversion, RPE extraction from additionalInformation. Uses real sample data from export.
 
-- [ ] **Task 3.3**: Unit test 1RM calculation library and RPE/RIR lookup table
+- [x] **Task 3.3**: Unit test 1RM calculation library and RPE/RIR lookup table
   - Spec: specs/12-rpe-rir-support.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
   - Acceptance: Tests verify: `calculateOneRepMax(140, 5)` returns expected value for each formula (Epley, Brzycki). RPE table returns correct %1RM for known inputs (RPE 10 @ 1 rep = 100%, RPE 8 @ 5 reps = 76%). Wilks/DOTS return expected scores for known bodyweight+total combos.
 
