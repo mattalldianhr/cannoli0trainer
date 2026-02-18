@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 90
+- Completed: 91
 - In progress: 0
-- Remaining: 89 (7 original + 97 new from spec review)
+- Remaining: 88 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -521,7 +521,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 18: Authentication & Athlete Portal
 
-- [ ] **Task 18.1**: Install NextAuth v5, Prisma adapter, and Resend; configure auth
+- [x] **Task 18.1**: Install NextAuth v5, Prisma adapter, and Resend; configure auth
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `next-auth@5`, `@auth/prisma-adapter`, `resend` installed. `src/lib/auth.ts` exports auth config. API route at `src/app/api/auth/[...nextauth]/route.ts`. `.env.example` documents all auth env vars. `npm run build` passes.
 
