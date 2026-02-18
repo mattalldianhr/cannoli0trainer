@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 130
+- Completed: 131
 - In progress: 0
-- Remaining: 49
+- Remaining: 48
 
 ## Tasks
 
@@ -701,7 +701,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 28: Infrastructure & Data Integrity
 
-- [ ] **Task 28.1**: Create Notification model and database migration
+- [x] **Task 28.1**: Create Notification model and database migration
   - Spec: specs/14-notifications.md
   - Acceptance: `Notification` model with recipientId, recipientType, type, title, body, isRead. Migration runs. Indexed.
 

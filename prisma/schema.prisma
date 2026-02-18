@@ -55,6 +55,17 @@ enum MaxSnapshotSource {
   IMPORT
 }
 
+enum NotificationRecipientType {
+  COACH
+  ATHLETE
+}
+
+enum NotificationType {
+  PROGRAM_ASSIGNED
+  WORKOUT_COMPLETED
+  CHECK_IN_REMINDER
+}
+
 // --- NextAuth Models ---
 
 model User {
@@ -403,4 +414,18 @@ model MaxSnapshot {
   @@index([exerciseId])
   @@index([athleteId, exerciseId])
   @@index([athleteId, date])
+}
+
+model Notification {
+  id            String                    @id @default(uuid())
+  recipientId   String
+  recipientType NotificationRecipientType
+  type          NotificationType
+  title         String
+  body          String                    @db.Text
+  isRead        Boolean                   @default(false)
+  createdAt     DateTime                  @default(now())
+
+  @@index([recipientId, recipientType])
+  @@index([recipientId, isRead])
 }

@@ -1,0 +1,14 @@
+Task 27.3 is complete. Here's a summary of what was implemented:
+
+**New file:**
+- `src/components/shared/RPEWithRIR.tsx` — Shared component and `formatRPEWithRIR()` string helper that displays "RPE 8 / 2 RIR" format with half-increment support (e.g., RPE 8.5 / 1.5 RIR) and range support (e.g., RPE 7-8 / 2-3 RIR)
+
+**Updated files (6 components across all RPE display surfaces):**
+1. **ProgramBuilder.tsx** — `formatPrescription()` now shows RIR alongside RPE/autoregulated prescriptions; `RPEHint` shows RIR equivalent; autoregulated summary text includes RIR
+2. **TrainingLog.tsx** — `prescriptionLabel()` adds RIR co-display for RPE prescriptions and enhanced autoregulated formatting; `SetLogRow` display shows "RPE 8 / 2 RIR" on logged sets; RPE input label dynamically shows RIR when a value is selected
+3. **programs/[id]/page.tsx** — `formatExerciseSummary()` adds RIR co-display and improved autoregulated format with backoff
+4. **AnalyticsDashboard.tsx** — "Avg RPE" stat card renamed to "Avg RPE / RIR" with RIR average subtitle
+5. **RPEHistoryChart.tsx** — Scatter tooltip shows "RPE 8 / 2 RIR"; trend line tooltip shows "RPE X.X / Y.Y RIR"
+
+All validation passed (tsc, build). Committed as `c366974`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
