@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 91
+- Completed: 92
 - In progress: 0
-- Remaining: 88 (7 original + 97 new from spec review)
+- Remaining: 87 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -525,7 +525,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `next-auth@5`, `@auth/prisma-adapter`, `resend` installed. `src/lib/auth.ts` exports auth config. API route at `src/app/api/auth/[...nextauth]/route.ts`. `.env.example` documents all auth env vars. `npm run build` passes.
 
-- [ ] **Task 18.2**: Add NextAuth models to Prisma schema and link Athlete to User
+- [x] **Task 18.2**: Add NextAuth models to Prisma schema and link Athlete to User
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `User`, `Account`, `Session`, `VerificationToken` models added. `Athlete` gets optional `userId String? @unique`. Migration runs.
 
