@@ -54,12 +54,14 @@ export async function GET(
       complianceData,
       rpeData,
       bodyweightData,
+      vbtData,
     ] = await Promise.all([
       getE1RMTrends(athleteId, dateRange, exerciseId),
       getVolumeByWeek(athleteId, dateRange),
       getCompliance(athleteId, dateRange, hasDateRange),
       getRPEDistribution(athleteId, dateRange),
       getBodyweightTrend(athleteId, dateRange),
+      getVBTData(athleteId, dateRange),
     ]);
 
     return NextResponse.json({
@@ -74,6 +76,7 @@ export async function GET(
       compliance: complianceData,
       rpeDistribution: rpeData,
       bodyweightTrend: bodyweightData,
+      vbt: vbtData,
     });
   } catch (error) {
     console.error('Failed to fetch analytics:', error);
@@ -381,6 +384,145 @@ async function getBodyweightTrend(
     weight: log.weight,
     unit: log.unit,
   }));
+}
+
+/**
+ * Get VBT (velocity-based training) data.
+ * Returns all sets with velocity data, grouped by exercise, plus
+ * the latest e1RM per exercise (for velocity profile bucketing).
+ */
+async function getVBTData(
+  athleteId: string,
+  dateRange: { gte?: Date; lte?: Date }
+) {
+  const where: Record<string, unknown> = {
+    athleteId,
+    velocity: { not: null },
+  };
+  if (dateRange.gte || dateRange.lte) {
+    where.completedAt = dateRange;
+  }
+
+  const velocitySets = await prisma.setLog.findMany({
+    where,
+    select: {
+      weight: true,
+      velocity: true,
+      reps: true,
+      rpe: true,
+      completedAt: true,
+      setNumber: true,
+      workoutExercise: {
+        select: {
+          exerciseId: true,
+          exercise: { select: { id: true, name: true } },
+        },
+      },
+    },
+    orderBy: { completedAt: 'asc' },
+  });
+
+  if (velocitySets.length === 0) {
+    return { hasData: false, exercises: [], byExercise: {} };
+  }
+
+  // Group by exercise
+  const byExercise: Record<string, {
+    exerciseId: string;
+    exerciseName: string;
+    dataPoints: { weight: number; velocity: number; date: string; reps?: number; rpe?: number }[];
+    sessions: Record<string, { weight: number; velocity: number; setNumber: number }[]>;
+  }> = {};
+
+  for (const set of velocitySets) {
+    const eid = set.workoutExercise.exerciseId;
+    if (!byExercise[eid]) {
+      byExercise[eid] = {
+        exerciseId: eid,
+        exerciseName: set.workoutExercise.exercise.name,
+        dataPoints: [],
+        sessions: {},
+      };
+    }
+
+    const date = set.completedAt.toISOString().split('T')[0];
+
+    byExercise[eid].dataPoints.push({
+      weight: set.weight,
+      velocity: set.velocity!,
+      date,
+      reps: set.reps,
+      rpe: set.rpe ?? undefined,
+    });
+
+    // Group sets by session date for fatigue (velocity drop) calculation
+    if (!byExercise[eid].sessions[date]) {
+      byExercise[eid].sessions[date] = [];
+    }
+    byExercise[eid].sessions[date].push({
+      weight: set.weight,
+      velocity: set.velocity!,
+      setNumber: set.setNumber,
+    });
+  }
+
+  // Get latest e1RM per exercise for velocity profile bucketing
+  const exerciseIds = Object.keys(byExercise);
+  const latestMaxes = await prisma.maxSnapshot.findMany({
+    where: {
+      athleteId,
+      exerciseId: { in: exerciseIds },
+    },
+    orderBy: { date: 'desc' },
+    distinct: ['exerciseId'],
+    select: {
+      exerciseId: true,
+      workingMax: true,
+      generatedMax: true,
+    },
+  });
+
+  const e1rmByExercise: Record<string, number> = {};
+  for (const max of latestMaxes) {
+    e1rmByExercise[max.exerciseId] = max.generatedMax ?? max.workingMax;
+  }
+
+  const exercises = Object.values(byExercise).map((ex) => ({
+    exerciseId: ex.exerciseId,
+    exerciseName: ex.exerciseName,
+    dataPointCount: ex.dataPoints.length,
+    sessionCount: Object.keys(ex.sessions).length,
+  }));
+
+  // Convert sessions to arrays sorted by set number for fatigue calculation
+  const serialized: Record<string, {
+    exerciseId: string;
+    exerciseName: string;
+    dataPoints: { weight: number; velocity: number; date: string; reps?: number; rpe?: number }[];
+    sessionVelocities: { date: string; velocities: number[] }[];
+    estimated1RM: number | null;
+  }> = {};
+
+  for (const [eid, ex] of Object.entries(byExercise)) {
+    serialized[eid] = {
+      exerciseId: ex.exerciseId,
+      exerciseName: ex.exerciseName,
+      dataPoints: ex.dataPoints,
+      sessionVelocities: Object.entries(ex.sessions)
+        .map(([date, sets]) => ({
+          date,
+          velocities: sets.sort((a, b) => a.setNumber - b.setNumber).map((s) => s.velocity),
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date)),
+      estimated1RM: e1rmByExercise[eid] ?? null,
+    };
+  }
+
+  return {
+    hasData: true,
+    exercises,
+    byExercise: serialized,
+  };
 }
 
 /**

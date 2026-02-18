@@ -1,11 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BaseLineChart } from '@/components/charts/BaseLineChart';
 import { BaseBarChart } from '@/components/charts/BaseBarChart';
+import { LoadVelocityChart } from '@/components/charts/LoadVelocityChart';
+import { VelocityProfileTable } from '@/components/charts/VelocityProfileTable';
+import { PreparednessIndicator } from '@/components/charts/PreparednessIndicator';
+import {
+  buildVelocityProfile,
+  calculatePreparedness,
+  calculateVelocityDrop,
+} from '@/lib/vbt';
 import {
   TrendingUp,
   Dumbbell,
@@ -14,6 +22,7 @@ import {
   Scale,
   Loader2,
   Download,
+  Gauge,
 } from 'lucide-react';
 
 interface Athlete {
@@ -57,6 +66,27 @@ interface BodyweightPoint {
   unit: string;
 }
 
+interface VBTExercise {
+  exerciseId: string;
+  exerciseName: string;
+  dataPointCount: number;
+  sessionCount: number;
+}
+
+interface VBTExerciseData {
+  exerciseId: string;
+  exerciseName: string;
+  dataPoints: { weight: number; velocity: number; date: string; reps?: number; rpe?: number }[];
+  sessionVelocities: { date: string; velocities: number[] }[];
+  estimated1RM: number | null;
+}
+
+interface VBTData {
+  hasData: boolean;
+  exercises: VBTExercise[];
+  byExercise: Record<string, VBTExerciseData>;
+}
+
 interface AnalyticsData {
   athleteId: string;
   athleteName: string;
@@ -65,6 +95,7 @@ interface AnalyticsData {
   compliance: Compliance;
   rpeDistribution: RPEDistribution;
   bodyweightTrend: BodyweightPoint[];
+  vbt: VBTData;
 }
 
 const DATE_RANGES = [
@@ -99,6 +130,7 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [vbtExerciseId, setVbtExerciseId] = useState<string>('');
 
   const fetchAnalytics = useCallback(async () => {
     if (!selectedAthleteId) return;
@@ -149,6 +181,74 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
 
     window.location.href = `/api/analytics/${selectedAthleteId}/export?${params.toString()}`;
   }, [selectedAthleteId, dateRange]);
+
+  // Auto-select the first VBT exercise when data changes
+  useEffect(() => {
+    if (data?.vbt?.hasData && data.vbt.exercises.length > 0) {
+      setVbtExerciseId((prev) => {
+        if (prev && data.vbt.byExercise[prev]) return prev;
+        return data.vbt.exercises[0].exerciseId;
+      });
+    } else {
+      setVbtExerciseId('');
+    }
+  }, [data]);
+
+  // Compute VBT derived data for the selected exercise
+  const vbtComputed = useMemo(() => {
+    if (!data?.vbt?.hasData || !vbtExerciseId || !data.vbt.byExercise[vbtExerciseId]) {
+      return null;
+    }
+
+    const exerciseData = data.vbt.byExercise[vbtExerciseId];
+    const dataPoints = exerciseData.dataPoints;
+    const e1rm = exerciseData.estimated1RM;
+
+    // Velocity profile (requires e1RM for %1RM bucketing)
+    const velocityProfile = e1rm ? buildVelocityProfile(dataPoints, e1rm) : [];
+
+    // Preparedness: compare latest session to older sessions
+    const sessions = exerciseData.sessionVelocities;
+    let preparedness = null;
+    if (sessions.length >= 2) {
+      const latestSession = sessions[sessions.length - 1];
+      const baselineSessions = sessions.slice(0, -1);
+
+      const recentDataPoints = latestSession.velocities.map((v, i) => ({
+        weight: dataPoints.find(
+          (dp) => dp.date === latestSession.date
+        )?.weight ?? 0,
+        velocity: v,
+        date: latestSession.date,
+      }));
+
+      // Build baseline data from all prior sessions
+      const baselineDataPoints = baselineSessions.flatMap((s) =>
+        s.velocities.map((v) => {
+          const matching = dataPoints.find((dp) => dp.date === s.date);
+          return {
+            weight: matching?.weight ?? 0,
+            velocity: v,
+            date: s.date,
+          };
+        })
+      );
+
+      preparedness = calculatePreparedness(recentDataPoints, baselineDataPoints);
+    }
+
+    // Velocity drop for the latest session
+    const latestSession = sessions.length > 0 ? sessions[sessions.length - 1] : null;
+    const velocityDrop = latestSession ? calculateVelocityDrop(latestSession.velocities) : null;
+
+    return {
+      exerciseData,
+      velocityProfile,
+      preparedness,
+      velocityDrop,
+      latestSessionDate: latestSession?.date ?? null,
+    };
+  }, [data, vbtExerciseId]);
 
   if (athletes.length === 0) {
     return (
@@ -431,6 +531,105 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
                   height={250}
                   formatXAxis={formatDate}
                 />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* VBT Analytics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Gauge className="h-5 w-5" />
+                Velocity-Based Training
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!data.vbt?.hasData ? (
+                <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">
+                  No velocity data yet. Log velocity (m/s) per set in the training log to see VBT analytics.
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Exercise selector */}
+                  <div className="flex items-center gap-3">
+                    <label htmlFor="vbt-exercise-select" className="text-sm font-medium whitespace-nowrap">
+                      Exercise:
+                    </label>
+                    <select
+                      id="vbt-exercise-select"
+                      value={vbtExerciseId}
+                      onChange={(e) => setVbtExerciseId(e.target.value)}
+                      className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
+                      {data.vbt.exercises.map((ex) => (
+                        <option key={ex.exerciseId} value={ex.exerciseId}>
+                          {ex.exerciseName} ({ex.dataPointCount} sets, {ex.sessionCount} sessions)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {vbtComputed && (
+                    <>
+                      {/* Load-Velocity Scatter Chart */}
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">Load-Velocity Profile</h4>
+                        <LoadVelocityChart
+                          data={vbtComputed.exerciseData.dataPoints}
+                          height={350}
+                        />
+                      </div>
+
+                      {/* Preparedness + Fatigue row */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h4 className="text-sm font-medium mb-3">Preparedness</h4>
+                          <PreparednessIndicator result={vbtComputed.preparedness} />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium mb-3">Session Fatigue</h4>
+                          {vbtComputed.velocityDrop !== null ? (
+                            <div className="rounded-md border p-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm text-muted-foreground">
+                                  Velocity drop (last session)
+                                </span>
+                                <span className="text-sm font-medium tabular-nums">
+                                  {vbtComputed.latestSessionDate && formatDate(vbtComputed.latestSessionDate)}
+                                </span>
+                              </div>
+                              <div className="text-2xl font-bold tabular-nums">
+                                {vbtComputed.velocityDrop.toFixed(1)}%
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Velocity decrease from set 1 to final set
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center text-muted-foreground text-sm py-8">
+                              Need 2+ sets in a session to calculate fatigue.
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Velocity Profile Table */}
+                      {vbtComputed.velocityProfile.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium mb-3">
+                            Velocity Profile
+                            {vbtComputed.exerciseData.estimated1RM && (
+                              <span className="text-muted-foreground font-normal ml-2">
+                                (est. 1RM: {vbtComputed.exerciseData.estimated1RM.toFixed(1)} kg)
+                              </span>
+                            )}
+                          </h4>
+                          <VelocityProfileTable rows={vbtComputed.velocityProfile} />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>

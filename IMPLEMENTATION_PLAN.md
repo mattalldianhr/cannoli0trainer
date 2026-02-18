@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 71
+- Completed: 72
 - In progress: 0
 
 ## Tasks
@@ -325,7 +325,7 @@
   - Spec: specs/08-vbt-integration.md
   - Acceptance: Table shows avg velocity at different %1RM, indicator compares to baseline
 
-- [ ] **Task 13.3**: Add VBT section to analytics page
+- [x] **Task 13.3**: Add VBT section to analytics page
   - Spec: specs/08-vbt-integration.md
   - Acceptance: VBT charts render when velocity data exists, empty state otherwise
 
