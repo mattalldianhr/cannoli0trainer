@@ -4,6 +4,7 @@ import { generateSchedule, type WorkoutInput } from '@/lib/scheduling/generate-s
 import { persistSchedule } from '@/lib/scheduling/persist-schedule';
 import { detectConflicts, type ConflictingSession } from '@/lib/scheduling/detect-conflicts';
 import { deactivateAssignment, deleteAssignment } from '@/lib/scheduling/cleanup-assignment';
+import { notifyProgramAssignment } from '@/lib/notifications';
 
 export async function POST(
   request: Request,
@@ -56,10 +57,10 @@ export async function POST(
       );
     }
 
-    // Verify all athletes exist
+    // Verify all athletes exist (include email+name for notifications)
     const athletes = await prisma.athlete.findMany({
       where: { id: { in: resolvedAthleteIds } },
-      select: { id: true },
+      select: { id: true, email: true, name: true },
     });
     const foundIds = new Set(athletes.map((a) => a.id));
     const missingIds = resolvedAthleteIds.filter((id: string) => !foundIds.has(id));
@@ -201,6 +202,18 @@ export async function POST(
     }
 
     const totalSessionsCreated = schedulingResults.reduce((sum, r) => sum + r.created, 0);
+
+    // Fire-and-forget: send email notifications to assigned athletes
+    for (const athlete of athletes) {
+      if (athlete.email) {
+        notifyProgramAssignment({
+          athleteEmail: athlete.email,
+          athleteName: athlete.name,
+          programName: program.name,
+          startDate: startDate ?? null,
+        }).catch(() => {}); // already logged internally
+      }
+    }
 
     return NextResponse.json({
       programId,

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 100
+- Completed: 101
 - In progress: 0
-- Remaining: 79 (7 original + 97 new from spec review)
+- Remaining: 78 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -561,7 +561,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Reverse-chronological WorkoutSession list, tap to expand, pagination (20 per page).
 
-- [ ] **Task 18.11**: Send email notification on program assignment
+- [x] **Task 18.11**: Send email notification on program assignment
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Resend email with program name, start date, link to `/athlete/train`. Fire-and-forget.
 
