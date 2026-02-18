@@ -340,9 +340,10 @@ model MeetEntry {
   deadlift1   Float?
   deadlift2   Float?
   deadlift3   Float?
-  openers     Json?
-  warmupPlan  Json?
-  notes       String? @db.Text
+  openers        Json?
+  warmupPlan     Json?
+  attemptResults Json?
+  notes          String? @db.Text
 
   meet    CompetitionMeet @relation(fields: [meetId], references: [id], onDelete: Cascade)
   athlete Athlete         @relation(fields: [athleteId], references: [id], onDelete: Cascade)

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 125
+- Completed: 126
 - In progress: 0
-- Remaining: 54
+- Remaining: 53
 
 ## Tasks
 
@@ -674,7 +674,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 26: Competition Results Enhancements
 
-- [ ] **Task 26.1**: Build post-meet results entry UI with make/miss per attempt
+- [x] **Task 26.1**: Build post-meet results entry UI with make/miss per attempt
   - Spec: specs/09-competition-prep.md
   - Acceptance: 3 attempts per lift per athlete with good/miss toggle. Auto-calculate best attempt and total. Results in MeetEntry `attemptResults` JSON.
 

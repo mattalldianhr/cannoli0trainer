@@ -130,6 +130,7 @@ export default async function MeetDetailPage({
       deadlift2: entry.deadlift2,
       deadlift3: entry.deadlift3,
       notes: entry.notes,
+      attemptResults: entry.attemptResults as Record<string, { weight: number; good: boolean }[]> | null,
       estimatedMaxes: maxesByAthlete[entry.athleteId] ?? {},
     })),
   };

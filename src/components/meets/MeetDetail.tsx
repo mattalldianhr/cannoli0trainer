@@ -13,6 +13,9 @@ import {
   Loader2,
   Trash2,
   Save,
+  Check,
+  X,
+  ClipboardList,
 } from 'lucide-react';
 import { WarmupCalculator } from '@/components/meets/WarmupCalculator';
 import { FlightTracker } from '@/components/meets/FlightTracker';
@@ -30,6 +33,13 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 
+interface AttemptResult {
+  weight: number;
+  good: boolean;
+}
+
+type AttemptResults = Record<string, AttemptResult[]>;
+
 interface MeetEntryData {
   id: string;
   athleteId: string;
@@ -46,6 +56,7 @@ interface MeetEntryData {
   deadlift2: number | null;
   deadlift3: number | null;
   notes: string | null;
+  attemptResults: AttemptResults | null;
   estimatedMaxes: {
     squat?: number;
     bench?: number;
@@ -97,7 +108,23 @@ function getAttemptKey(lift: Lift, attempt: number): string {
   return `${lift}${attempt}`;
 }
 
-function bestAttempt(entry: MeetEntryData, lift: Lift): number | null {
+function bestAttempt(
+  entry: MeetEntryData,
+  lift: Lift,
+  localResults?: AttemptResults
+): number | null {
+  const results = localResults?.[lift] ?? entry.attemptResults?.[lift];
+  if (results && results.length > 0) {
+    const hasAnyResult = results.some((r) => r.weight > 0);
+    if (hasAnyResult) {
+      // Use only successful (good) attempts
+      const goodAttempts = results
+        .filter((r) => r.good && r.weight > 0)
+        .map((r) => r.weight);
+      return goodAttempts.length > 0 ? Math.max(...goodAttempts) : null;
+    }
+  }
+  // Fallback: all planned attempts (no make/miss data yet)
   const vals = ATTEMPTS.map(
     (a) => entry[`${lift}${a}` as keyof MeetEntryData] as number | null
   ).filter((v): v is number => v != null);
@@ -116,6 +143,9 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
   const [savingEntries, setSavingEntries] = useState<Record<string, boolean>>({});
   const [deletingEntry, setDeletingEntry] = useState<string | null>(null);
 
+  // Results mode toggle per entry
+  const [resultsMode, setResultsMode] = useState<Record<string, boolean>>({});
+
   // Local attempt values for editing
   const [attemptValues, setAttemptValues] = useState<
     Record<string, Record<string, string>>
@@ -126,9 +156,26 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
       for (const lift of LIFTS) {
         for (const attempt of ATTEMPTS) {
           const key = getAttemptKey(lift, attempt);
-          const val = entry[`${lift}${attempt}` as keyof MeetEntryData] as number | null;
+          // If attemptResults exist with a nonzero weight, use those; otherwise use planned
+          const results = entry.attemptResults?.[lift];
+          const resultWeight = results?.[attempt - 1]?.weight;
+          const plannedVal = entry[`${lift}${attempt}` as keyof MeetEntryData] as number | null;
+          const val = resultWeight && resultWeight > 0 ? resultWeight : plannedVal;
           initial[entry.id][key] = val != null ? String(val) : '';
         }
+      }
+    }
+    return initial;
+  });
+
+  // Local attempt results (make/miss) per entry
+  const [localAttemptResults, setLocalAttemptResults] = useState<
+    Record<string, AttemptResults>
+  >(() => {
+    const initial: Record<string, AttemptResults> = {};
+    for (const entry of meet.entries) {
+      if (entry.attemptResults) {
+        initial[entry.id] = { ...entry.attemptResults };
       }
     }
     return initial;
@@ -139,6 +186,53 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
       ...prev,
       [entryId]: { ...prev[entryId], [key]: value },
     }));
+  }
+
+  function toggleAttemptResult(entryId: string, lift: Lift, attemptIndex: number) {
+    setLocalAttemptResults((prev) => {
+      const entryResults = prev[entryId] ?? {};
+      const liftResults = [...(entryResults[lift] ?? [])];
+
+      // Get the current weight from attempt values
+      const key = getAttemptKey(lift, attemptIndex + 1);
+      const vals = attemptValues[entryId] ?? {};
+      const weight = vals[key] ? parseFloat(vals[key]) : 0;
+      if (!weight) return prev; // Can't toggle without a weight
+
+      // Ensure array is long enough
+      while (liftResults.length <= attemptIndex) {
+        liftResults.push({ weight: 0, good: false });
+      }
+
+      const current = liftResults[attemptIndex];
+      if (current.weight === 0 && !current.good) {
+        // First click: mark as good
+        liftResults[attemptIndex] = { weight, good: true };
+      } else if (current.good) {
+        // Was good, switch to miss
+        liftResults[attemptIndex] = { weight, good: false };
+      } else {
+        // Was miss, clear the result
+        liftResults[attemptIndex] = { weight: 0, good: false };
+      }
+
+      return {
+        ...prev,
+        [entryId]: { ...entryResults, [lift]: liftResults },
+      };
+    });
+  }
+
+  function getAttemptResultStatus(
+    entryId: string,
+    lift: Lift,
+    attemptIndex: number
+  ): 'good' | 'miss' | 'none' {
+    const results = localAttemptResults[entryId]?.[lift];
+    if (!results || !results[attemptIndex]) return 'none';
+    const r = results[attemptIndex];
+    if (r.weight === 0) return 'none';
+    return r.good ? 'good' : 'miss';
   }
 
   async function handleAddAthlete(e: React.FormEvent) {
@@ -179,13 +273,38 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
 
     try {
       const vals = attemptValues[entryId] ?? {};
-      const payload: Record<string, number | null> = {};
+      const payload: Record<string, unknown> = {};
       for (const lift of LIFTS) {
         for (const attempt of ATTEMPTS) {
           const key = getAttemptKey(lift, attempt);
           const raw = vals[key];
           payload[key] = raw ? parseFloat(raw) : null;
         }
+      }
+
+      // Include attemptResults if results mode is active or results already exist
+      const entryResultsExist = localAttemptResults[entryId];
+      if (resultsMode[entryId] || entryResultsExist) {
+        // Build attemptResults from current weight values + good/miss status
+        const attemptResultsPayload: AttemptResults = {};
+        for (const lift of LIFTS) {
+          const liftResults: AttemptResult[] = [];
+          for (const attempt of ATTEMPTS) {
+            const key = getAttemptKey(lift, attempt);
+            const weight = vals[key] ? parseFloat(vals[key]) : 0;
+            const status = getAttemptResultStatus(entryId, lift, attempt - 1);
+            if (weight > 0 && status !== 'none') {
+              liftResults.push({ weight, good: status === 'good' });
+            } else if (weight > 0) {
+              // Weight entered but no result marked — keep weight, default to unset
+              liftResults.push({ weight, good: false });
+            } else {
+              liftResults.push({ weight: 0, good: false });
+            }
+          }
+          attemptResultsPayload[lift] = liftResults;
+        }
+        payload.attemptResults = attemptResultsPayload;
       }
 
       const res = await fetch(`/api/meets/${meet.id}/entries/${entryId}`, {
@@ -228,10 +347,13 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
   }
 
   // Calculate total for an entry
-  function getTotal(entry: MeetEntryData): number | null {
-    const sq = bestAttempt(entry, 'squat');
-    const bp = bestAttempt(entry, 'bench');
-    const dl = bestAttempt(entry, 'deadlift');
+  function getTotal(
+    entry: MeetEntryData,
+    localResults?: AttemptResults
+  ): number | null {
+    const sq = bestAttempt(entry, 'squat', localResults);
+    const bp = bestAttempt(entry, 'bench', localResults);
+    const dl = bestAttempt(entry, 'deadlift', localResults);
     if (sq == null && bp == null && dl == null) return null;
     return (sq ?? 0) + (bp ?? 0) + (dl ?? 0);
   }
@@ -330,9 +452,12 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
       {/* Athlete Entry Cards */}
       {meet.entries.map((entry) => {
         const vals = attemptValues[entry.id] ?? {};
-        const total = getTotal(entry);
+        const entryLocalResults = localAttemptResults[entry.id];
+        const total = getTotal(entry, entryLocalResults);
         const isSaving = savingEntries[entry.id];
         const isDeleting = deletingEntry === entry.id;
+        const hasExistingResults = entry.attemptResults != null;
+        const isResultsMode = resultsMode[entry.id] ?? hasExistingResults;
 
         return (
           <Card key={entry.id}>
@@ -360,6 +485,19 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant={isResultsMode ? 'default' : 'outline'}
+                    onClick={() =>
+                      setResultsMode((prev) => ({
+                        ...prev,
+                        [entry.id]: !prev[entry.id],
+                      }))
+                    }
+                  >
+                    <ClipboardList className="h-4 w-4 mr-1" />
+                    Results
+                  </Button>
                   <Button
                     size="sm"
                     onClick={() => handleSaveAttempts(entry.id)}
@@ -415,7 +553,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                   <tbody>
                     {LIFTS.map((lift) => {
                       const e1rm = entry.estimatedMaxes[lift];
-                      const best = bestAttempt(entry, lift);
+                      const best = bestAttempt(entry, lift, entryLocalResults);
 
                       return (
                         <tr key={lift} className="border-b last:border-b-0">
@@ -430,6 +568,11 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                             const pct = e1rm && vals[key]
                               ? Math.round((parseFloat(vals[key]) / e1rm) * 100)
                               : null;
+                            const resultStatus = getAttemptResultStatus(
+                              entry.id,
+                              lift,
+                              attempt - 1
+                            );
 
                             return (
                               <td key={attempt} className="py-3 px-2">
@@ -437,17 +580,60 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                                   <Input
                                     type="number"
                                     step="0.5"
-                                    className="w-20 text-center h-8 text-sm"
+                                    className={`w-20 text-center h-8 text-sm ${
+                                      isResultsMode && resultStatus === 'good'
+                                        ? 'border-green-500 bg-green-50 dark:bg-green-950'
+                                        : isResultsMode && resultStatus === 'miss'
+                                          ? 'border-red-500 bg-red-50 dark:bg-red-950'
+                                          : ''
+                                    }`}
                                     placeholder="kg"
                                     value={vals[key] ?? ''}
                                     onChange={(e) =>
                                       setAttemptValue(entry.id, key, e.target.value)
                                     }
                                   />
-                                  {pct != null && (
-                                    <span className="text-[10px] text-muted-foreground">
-                                      {pct}%
-                                    </span>
+                                  {isResultsMode && vals[key] ? (
+                                    <div className="flex items-center gap-1 mt-0.5">
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          toggleAttemptResult(
+                                            entry.id,
+                                            lift,
+                                            attempt - 1
+                                          )
+                                        }
+                                        className={`rounded-full p-0.5 transition-colors ${
+                                          resultStatus === 'good'
+                                            ? 'bg-green-500 text-white'
+                                            : resultStatus === 'miss'
+                                              ? 'bg-red-500 text-white'
+                                              : 'bg-muted text-muted-foreground hover:bg-muted-foreground/20'
+                                        }`}
+                                        title={
+                                          resultStatus === 'good'
+                                            ? 'Good lift — click to mark miss'
+                                            : resultStatus === 'miss'
+                                              ? 'No lift — click to clear'
+                                              : 'Click to mark good lift'
+                                        }
+                                      >
+                                        {resultStatus === 'good' ? (
+                                          <Check className="h-3 w-3" />
+                                        ) : resultStatus === 'miss' ? (
+                                          <X className="h-3 w-3" />
+                                        ) : (
+                                          <Check className="h-3 w-3" />
+                                        )}
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    pct != null && (
+                                      <span className="text-[10px] text-muted-foreground">
+                                        {pct}%
+                                      </span>
+                                    )
                                   )}
                                 </div>
                               </td>
@@ -505,32 +691,66 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                     <th className="text-center py-2 px-3 font-medium">Bench</th>
                     <th className="text-center py-2 px-3 font-medium">Deadlift</th>
                     <th className="text-center py-2 px-3 font-medium">Total</th>
+                    <th className="text-center py-2 px-3 font-medium text-muted-foreground text-xs">
+                      Attempts
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {meet.entries
                     .filter((e) => getTotal(e) != null)
                     .sort((a, b) => (getTotal(b) ?? 0) - (getTotal(a) ?? 0))
-                    .map((entry) => (
-                      <tr key={entry.id} className="border-b last:border-b-0">
-                        <td className="py-2 pr-4 font-medium">{entry.athleteName}</td>
-                        <td className="py-2 px-3 text-center text-muted-foreground">
-                          {entry.weightClass ?? '-'}
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          {formatKg(bestAttempt(entry, 'squat'))}
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          {formatKg(bestAttempt(entry, 'bench'))}
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          {formatKg(bestAttempt(entry, 'deadlift'))}
-                        </td>
-                        <td className="py-2 px-3 text-center font-bold">
-                          {formatKg(getTotal(entry))}
-                        </td>
-                      </tr>
-                    ))}
+                    .map((entry) => {
+                      const results = entry.attemptResults;
+                      const madeCount = results
+                        ? LIFTS.reduce(
+                            (sum, lift) =>
+                              sum +
+                              (results[lift]?.filter(
+                                (r: AttemptResult) => r.good && r.weight > 0
+                              ).length ?? 0),
+                            0
+                          )
+                        : null;
+                      const totalAttempts = results
+                        ? LIFTS.reduce(
+                            (sum, lift) =>
+                              sum +
+                              (results[lift]?.filter(
+                                (r: AttemptResult) => r.weight > 0
+                              ).length ?? 0),
+                            0
+                          )
+                        : null;
+
+                      return (
+                        <tr key={entry.id} className="border-b last:border-b-0">
+                          <td className="py-2 pr-4 font-medium">
+                            {entry.athleteName}
+                          </td>
+                          <td className="py-2 px-3 text-center text-muted-foreground">
+                            {entry.weightClass ?? '-'}
+                          </td>
+                          <td className="py-2 px-3 text-center">
+                            {formatKg(bestAttempt(entry, 'squat'))}
+                          </td>
+                          <td className="py-2 px-3 text-center">
+                            {formatKg(bestAttempt(entry, 'bench'))}
+                          </td>
+                          <td className="py-2 px-3 text-center">
+                            {formatKg(bestAttempt(entry, 'deadlift'))}
+                          </td>
+                          <td className="py-2 px-3 text-center font-bold">
+                            {formatKg(getTotal(entry))}
+                          </td>
+                          <td className="py-2 px-3 text-center text-muted-foreground text-xs">
+                            {madeCount != null && totalAttempts != null
+                              ? `${madeCount}/${totalAttempts}`
+                              : '-'}
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

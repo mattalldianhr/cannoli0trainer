@@ -30,6 +30,7 @@ export async function PUT(
         ...(body.deadlift2 !== undefined && { deadlift2: body.deadlift2 }),
         ...(body.deadlift3 !== undefined && { deadlift3: body.deadlift3 }),
         ...(body.notes !== undefined && { notes: body.notes }),
+        ...(body.attemptResults !== undefined && { attemptResults: body.attemptResults }),
       },
       include: {
         athlete: { select: { id: true, name: true, weightClass: true, bodyweight: true } },
