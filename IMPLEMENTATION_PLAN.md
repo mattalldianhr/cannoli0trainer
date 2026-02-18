@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 11
+- Completed: 12
 - In progress: 0
 
 ## Tasks
@@ -53,7 +53,7 @@
 
 ### Priority 2: Data Seeding (Real Data)
 
-- [ ] **Task 2.1**: Download and import free-exercise-db (800+ exercises) into seed script
+- [x] **Task 2.1**: Download and import free-exercise-db (800+ exercises) into seed script
   - Spec: specs/05-exercise-library.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
   - Acceptance: `npx prisma db seed` creates 800+ exercises with name, category, force, level, mechanic, equipment, primaryMuscles, secondaryMuscles, instructions, images
   - Data source: https://github.com/yuhonas/free-exercise-db (Unlicense/Public Domain)
@@ -381,6 +381,9 @@
 ## Discoveries
 
 _Updated by Ralph during planning review (2026-02-17)_
+
+### Exercise Model Extended for free-exercise-db (2026-02-18)
+Exercise model `coachId` made optional (nullable) so library exercises from free-exercise-db don't require a coach. Added fields: `force`, `level`, `mechanic`, `equipment`, `primaryMuscles` (Json), `secondaryMuscles` (Json), `instructions` (Json), `images` (Json). Added indexes on `name` and `category` for search/filter. 873 exercises seeded — categories: strength (581), stretching (123), plyometrics (61), powerlifting (38), olympic weightlifting (35), strongman (21), cardio (14).
 
 ### DATABASE_URL Fix (2026-02-18)
 The `.env` file had `DATABASE_URL="postgresql://localhost:5432/cannoli_trainer"` (missing username). Fixed to `postgresql://mattalldian@localhost:5432/cannoli_trainer`. The `cannoli_trainer` database was auto-created by `prisma migrate dev`.

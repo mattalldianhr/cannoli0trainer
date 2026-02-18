@@ -165,21 +165,31 @@ model Workout {
 }
 
 model Exercise {
-  id        String   @id @default(uuid())
-  coachId   String
-  name      String
-  category  String
-  videoUrl  String?
-  cues      String?  @db.Text
-  tags      Json     @default("[]")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String   @id @default(uuid())
+  coachId          String?
+  name             String
+  category         String
+  force            String?
+  level            String?
+  mechanic         String?
+  equipment        String?
+  primaryMuscles   Json     @default("[]")
+  secondaryMuscles Json     @default("[]")
+  instructions     Json     @default("[]")
+  images           Json     @default("[]")
+  videoUrl         String?
+  cues             String?  @db.Text
+  tags             Json     @default("[]")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  coach            Coach             @relation(fields: [coachId], references: [id])
+  coach            Coach?            @relation(fields: [coachId], references: [id])
   workoutExercises WorkoutExercise[]
   maxSnapshots     MaxSnapshot[]
 
   @@index([coachId])
+  @@index([name])
+  @@index([category])
 }
 
 model WorkoutExercise {
