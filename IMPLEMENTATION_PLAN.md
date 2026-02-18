@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 126
+- Completed: 127
 - In progress: 0
-- Remaining: 53
+- Remaining: 52
 
 ## Tasks
 
@@ -678,7 +678,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/09-competition-prep.md
   - Acceptance: 3 attempts per lift per athlete with good/miss toggle. Auto-calculate best attempt and total. Results in MeetEntry `attemptResults` JSON.
 
-- [ ] **Task 26.2**: Build meet results summary with DOTS and Wilks scores
+- [x] **Task 26.2**: Build meet results summary with DOTS and Wilks scores
   - Spec: specs/09-competition-prep.md
   - Acceptance: Results card per athlete with best attempts, total, DOTS, Wilks. Uses `powerlifting-formulas` package. Handles missed lifts.
 

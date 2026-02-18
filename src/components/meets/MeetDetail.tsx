@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { WarmupCalculator } from '@/components/meets/WarmupCalculator';
 import { FlightTracker } from '@/components/meets/FlightTracker';
+import { MeetResultsSummary } from '@/components/meets/MeetResultsSummary';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -674,89 +675,8 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
         );
       })}
 
-      {/* Summary Card (when there are entries with attempts) */}
-      {meet.entries.some((e) => getTotal(e) != null) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Results Summary</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 pr-4 font-medium">Athlete</th>
-                    <th className="text-center py-2 px-3 font-medium">Class</th>
-                    <th className="text-center py-2 px-3 font-medium">Squat</th>
-                    <th className="text-center py-2 px-3 font-medium">Bench</th>
-                    <th className="text-center py-2 px-3 font-medium">Deadlift</th>
-                    <th className="text-center py-2 px-3 font-medium">Total</th>
-                    <th className="text-center py-2 px-3 font-medium text-muted-foreground text-xs">
-                      Attempts
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {meet.entries
-                    .filter((e) => getTotal(e) != null)
-                    .sort((a, b) => (getTotal(b) ?? 0) - (getTotal(a) ?? 0))
-                    .map((entry) => {
-                      const results = entry.attemptResults;
-                      const madeCount = results
-                        ? LIFTS.reduce(
-                            (sum, lift) =>
-                              sum +
-                              (results[lift]?.filter(
-                                (r: AttemptResult) => r.good && r.weight > 0
-                              ).length ?? 0),
-                            0
-                          )
-                        : null;
-                      const totalAttempts = results
-                        ? LIFTS.reduce(
-                            (sum, lift) =>
-                              sum +
-                              (results[lift]?.filter(
-                                (r: AttemptResult) => r.weight > 0
-                              ).length ?? 0),
-                            0
-                          )
-                        : null;
-
-                      return (
-                        <tr key={entry.id} className="border-b last:border-b-0">
-                          <td className="py-2 pr-4 font-medium">
-                            {entry.athleteName}
-                          </td>
-                          <td className="py-2 px-3 text-center text-muted-foreground">
-                            {entry.weightClass ?? '-'}
-                          </td>
-                          <td className="py-2 px-3 text-center">
-                            {formatKg(bestAttempt(entry, 'squat'))}
-                          </td>
-                          <td className="py-2 px-3 text-center">
-                            {formatKg(bestAttempt(entry, 'bench'))}
-                          </td>
-                          <td className="py-2 px-3 text-center">
-                            {formatKg(bestAttempt(entry, 'deadlift'))}
-                          </td>
-                          <td className="py-2 px-3 text-center font-bold">
-                            {formatKg(getTotal(entry))}
-                          </td>
-                          <td className="py-2 px-3 text-center text-muted-foreground text-xs">
-                            {madeCount != null && totalAttempts != null
-                              ? `${madeCount}/${totalAttempts}`
-                              : '-'}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Meet Results Summary with DOTS/Wilks scores */}
+      <MeetResultsSummary entries={meet.entries} />
 
       {/* Add Athlete Dialog */}
       <Dialog
