@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 23
+- Completed: 24
 - In progress: 0
 
 ## Tasks
@@ -110,7 +110,7 @@
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: Test seeds a test database, then asserts: 5 athletes, 2,033 WorkoutSessions, 12,437 WorkoutExercises, 16,552 SetLogs, 1,806 MaxSnapshots (PRs), 136+ exercises. Per-athlete tonnage matches source totals. Uses Prisma test client with isolated database or transaction rollback.
 
-- [ ] **Task 3.5**: Integration test API routes with seeded data (CRUD operations)
+- [x] **Task 3.5**: Integration test API routes with seeded data (CRUD operations)
   - Spec: specs/02-coach-dashboard.md, specs/03-athlete-management.md
   - Acceptance: Tests hit API routes against seeded database: GET `/api/athletes` returns 5 athletes, GET `/api/athletes/[id]` returns correct profile, GET `/api/exercises` returns 800+ exercises with search filtering, POST/PUT/DELETE operations work and persist. Uses Next.js test server or direct route handler calls.
 
