@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ConditionalCoachChrome } from "@/components/layout/ConditionalCoachChrome";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Cannoli Trainer",
@@ -41,6 +42,12 @@ export default function RootLayout({
         <ConditionalCoachChrome>
           {children}
         </ConditionalCoachChrome>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            className: "text-sm",
+          }}
+        />
       </body>
     </html>
   );

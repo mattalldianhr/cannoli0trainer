@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 150
+- Completed: 151
 - In progress: 0
-- Remaining: 29
+- Remaining: 28
 
 ## Tasks
 
@@ -773,7 +773,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Dashboard, athletes, programs, exercises, analytics, meets, and athlete/train all have appropriate empty states with CTAs.
 
-- [ ] **Task 30.3**: Install toast library and create toast wrapper
+- [x] **Task 30.3**: Install toast library and create toast wrapper
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: `sonner` installed. `<Toaster />` in root layout. `src/lib/toast.ts` exports `showSuccess`, `showError`, `showLoading`. Bottom-right desktop, bottom-center mobile.
 
