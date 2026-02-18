@@ -23,6 +23,7 @@ import {
   Trophy,
   MapPin,
 } from 'lucide-react';
+import { QuickActionFab } from '@/components/dashboard/QuickActionFab';
 
 export const dynamic = 'force-dynamic';
 
@@ -208,7 +209,7 @@ export default async function DashboardPage() {
             Overview of your coaching practice
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="hidden sm:flex gap-2">
           <Button asChild size="sm">
             <Link href="/programs/new" className="gap-1.5">
               <Plus className="h-4 w-4" />
@@ -513,6 +514,8 @@ export default async function DashboardPage() {
         </Card>
         </>
       )}
+
+      <QuickActionFab />
     </Container>
   );
 }

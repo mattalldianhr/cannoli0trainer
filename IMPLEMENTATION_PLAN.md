@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 115
+- Completed: 116
 - In progress: 0
-- Remaining: 64
+- Remaining: 63
 
 ## Tasks
 
@@ -626,7 +626,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 22: Dashboard Quick Actions & Loading States
 
-- [ ] **Task 22.1**: Build quick action buttons (create program, add athlete, view analytics)
+- [x] **Task 22.1**: Build quick action buttons (create program, add athlete, view analytics)
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: CTA buttons/FAB with links to key pages. Visible on mobile.
 
