@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 60
+- Completed: 61
 - In progress: 0
 
 ## Tasks
@@ -274,7 +274,7 @@
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows total athletes, active programs, workouts this week
 
-- [ ] **Task 11.2**: Add recent activity feed to dashboard
+- [x] **Task 11.2**: Add recent activity feed to dashboard
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows last 7 days of athlete training logs grouped by day
 

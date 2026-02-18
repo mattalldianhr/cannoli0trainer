@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -15,6 +16,8 @@ import {
   Plus,
   UserPlus,
   BarChart3,
+  Activity,
+  Calendar,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -65,8 +68,41 @@ async function getDashboardStats() {
   };
 }
 
+async function getRecentActivity() {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  sevenDaysAgo.setHours(0, 0, 0, 0);
+
+  const sessions = await prisma.workoutSession.findMany({
+    where: {
+      date: { gte: sevenDaysAgo },
+    },
+    include: {
+      athlete: { select: { id: true, name: true } },
+    },
+    orderBy: { date: 'desc' },
+  });
+
+  // Group sessions by date
+  const grouped = new Map<string, typeof sessions>();
+  for (const session of sessions) {
+    const dateKey = session.date.toISOString().split('T')[0];
+    const group = grouped.get(dateKey);
+    if (group) {
+      group.push(session);
+    } else {
+      grouped.set(dateKey, [session]);
+    }
+  }
+
+  return grouped;
+}
+
 export default async function DashboardPage() {
-  const stats = await getDashboardStats();
+  const [stats, recentActivity] = await Promise.all([
+    getDashboardStats(),
+    getRecentActivity(),
+  ]);
 
   const statCards = [
     {
@@ -143,6 +179,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       ) : (
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map((card) => {
             const Icon = card.icon;
@@ -170,6 +207,90 @@ export default async function DashboardPage() {
             return <div key={card.title}>{content}</div>;
           })}
         </div>
+
+        {/* Recent Activity Feed */}
+        <Card className="mt-8">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Recent Activity
+            </CardTitle>
+            <Badge variant="secondary">{recentActivity.size > 0 ? 'Last 7 days' : 'No activity'}</Badge>
+          </CardHeader>
+          <CardContent>
+            {recentActivity.size === 0 ? (
+              <p className="text-muted-foreground text-sm text-center py-8">
+                No training sessions in the last 7 days.
+              </p>
+            ) : (
+              <div className="space-y-6">
+                {Array.from(recentActivity.entries()).map(([dateKey, sessions]) => {
+                  const date = new Date(dateKey + 'T00:00:00');
+                  const isToday = dateKey === new Date().toISOString().split('T')[0];
+                  const isYesterday = (() => {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    return dateKey === yesterday.toISOString().split('T')[0];
+                  })();
+
+                  const dateLabel = isToday
+                    ? 'Today'
+                    : isYesterday
+                      ? 'Yesterday'
+                      : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+                  return (
+                    <div key={dateKey}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-medium text-muted-foreground">{dateLabel}</h3>
+                        <Badge variant="outline" className="text-xs">
+                          {sessions.length} {sessions.length === 1 ? 'session' : 'sessions'}
+                        </Badge>
+                      </div>
+                      <div className="space-y-2 ml-6">
+                        {sessions.map((session) => (
+                          <Link
+                            key={session.id}
+                            href={`/athletes/${session.athleteId}`}
+                            className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
+                                {session.athlete.name.charAt(0)}
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium">{session.athlete.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {session.title || 'Training session'}
+                                  {session.totalItems > 0 && (
+                                    <> &middot; {session.completedItems}/{session.totalItems} exercises</>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {session.totalItems > 0 && (
+                                <Badge
+                                  variant={session.completionPercentage >= 100 ? 'default' : 'secondary'}
+                                  className="text-xs"
+                                >
+                                  {Math.round(session.completionPercentage)}%
+                                </Badge>
+                              )}
+                              <Dumbbell className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        </>
       )}
     </Container>
   );
