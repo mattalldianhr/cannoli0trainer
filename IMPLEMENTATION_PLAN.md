@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 120
+- Completed: 121
 - In progress: 0
-- Remaining: 59
+- Remaining: 58
 
 ## Tasks
 
@@ -650,7 +650,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 24: Analytics Enhancements
 
-- [ ] **Task 24.1**: Build RPE distribution histogram and RPE accuracy metric
+- [x] **Task 24.1**: Build RPE distribution histogram and RPE accuracy metric
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Bar chart of set count per RPE bin, filterable by exercise. Accuracy metric from rpe-table reverse lookup.
 

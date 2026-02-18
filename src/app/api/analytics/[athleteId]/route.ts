@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { estimateOneRMFromRPE } from '@/lib/rpe-table';
+import { calculateRpeAccuracy, type RPEAccuracyInput } from '@/lib/analytics/rpe-accuracy';
 
 /**
  * GET /api/analytics/[athleteId]
@@ -16,6 +17,7 @@ import { estimateOneRMFromRPE } from '@/lib/rpe-table';
  * - from: ISO date string (start of range)
  * - to: ISO date string (end of range)
  * - exerciseId: filter 1RM trends to a specific exercise
+ * - rpeExerciseId: filter RPE distribution to a specific exercise
  */
 export async function GET(
   request: NextRequest,
@@ -27,6 +29,7 @@ export async function GET(
     const from = searchParams.get('from');
     const to = searchParams.get('to');
     const exerciseId = searchParams.get('exerciseId');
+    const rpeExerciseId = searchParams.get('rpeExerciseId');
 
     // Validate athlete exists
     const athlete = await prisma.athlete.findUnique({
@@ -59,10 +62,13 @@ export async function GET(
       getE1RMTrends(athleteId, dateRange, exerciseId),
       getVolumeByWeek(athleteId, dateRange),
       getCompliance(athleteId, dateRange, hasDateRange),
-      getRPEDistribution(athleteId, dateRange),
+      getRPEDistribution(athleteId, dateRange, rpeExerciseId),
       getBodyweightTrend(athleteId, dateRange),
       getVBTData(athleteId, dateRange),
     ]);
+
+    // RPE accuracy requires MaxSnapshot e1RM data — computed from the RPE sets
+    const rpeAccuracy = await getRPEAccuracy(athleteId, dateRange, rpeExerciseId);
 
     return NextResponse.json({
       athleteId,
@@ -75,6 +81,7 @@ export async function GET(
       volumeByWeek: volumeData,
       compliance: complianceData,
       rpeDistribution: rpeData,
+      rpeAccuracy,
       bodyweightTrend: bodyweightData,
       vbt: vbtData,
     });
@@ -298,10 +305,12 @@ async function getCompliance(
 
 /**
  * Get RPE distribution and average RPE per week.
+ * Optionally filtered by exercise.
  */
 async function getRPEDistribution(
   athleteId: string,
-  dateRange: { gte?: Date; lte?: Date }
+  dateRange: { gte?: Date; lte?: Date },
+  rpeExerciseId: string | null
 ) {
   const where: Record<string, unknown> = {
     athleteId,
@@ -310,15 +319,34 @@ async function getRPEDistribution(
   if (dateRange.gte || dateRange.lte) {
     where.completedAt = dateRange;
   }
+  if (rpeExerciseId) {
+    where.workoutExercise = { exerciseId: rpeExerciseId };
+  }
 
   const sets = await prisma.setLog.findMany({
     where,
     select: {
       rpe: true,
       completedAt: true,
+      workoutExercise: {
+        select: {
+          exerciseId: true,
+          exercise: { select: { id: true, name: true } },
+        },
+      },
     },
     orderBy: { completedAt: 'asc' },
   });
+
+  // Build list of exercises with RPE data (for the filter dropdown)
+  const exerciseMap: Record<string, { id: string; name: string; count: number }> = {};
+  for (const set of sets) {
+    const eid = set.workoutExercise.exerciseId;
+    if (!exerciseMap[eid]) {
+      exerciseMap[eid] = { id: eid, name: set.workoutExercise.exercise.name, count: 0 };
+    }
+    exerciseMap[eid].count += 1;
+  }
 
   // Overall distribution: count per RPE value
   const distribution: Record<number, number> = {};
@@ -354,7 +382,93 @@ async function getRPEDistribution(
     weeklyTrend: Object.values(weekMap)
       .map(({ weekStart, avgRPE, count }) => ({ weekStart, avgRPE, setCount: count }))
       .sort((a, b) => a.weekStart.localeCompare(b.weekStart)),
+    exercises: Object.values(exerciseMap).sort((a, b) => b.count - a.count),
   };
+}
+
+/**
+ * Get RPE accuracy: compare reported RPE to estimated RPE based on load/reps relative to known e1RM.
+ * Requires MaxSnapshot data for the exercise.
+ */
+async function getRPEAccuracy(
+  athleteId: string,
+  dateRange: { gte?: Date; lte?: Date },
+  rpeExerciseId: string | null
+) {
+  // Get sets with RPE, weight, and reps
+  const setWhere: Record<string, unknown> = {
+    athleteId,
+    rpe: { not: null },
+    weight: { gt: 0 },
+    reps: { gte: 1 },
+  };
+  if (dateRange.gte || dateRange.lte) {
+    setWhere.completedAt = dateRange;
+  }
+  if (rpeExerciseId) {
+    setWhere.workoutExercise = { exerciseId: rpeExerciseId };
+  }
+
+  const sets = await prisma.setLog.findMany({
+    where: setWhere,
+    select: {
+      rpe: true,
+      weight: true,
+      reps: true,
+      completedAt: true,
+      workoutExercise: {
+        select: {
+          exerciseId: true,
+          exercise: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: { completedAt: 'asc' },
+    take: 2000,
+  });
+
+  if (sets.length === 0) return null;
+
+  // Get latest e1RM per exercise from MaxSnapshot
+  const exerciseIds = [...new Set(sets.map(s => s.workoutExercise.exerciseId))];
+  const latestMaxes = await prisma.maxSnapshot.findMany({
+    where: {
+      athleteId,
+      exerciseId: { in: exerciseIds },
+    },
+    orderBy: { date: 'desc' },
+    distinct: ['exerciseId'],
+    select: {
+      exerciseId: true,
+      workingMax: true,
+      generatedMax: true,
+    },
+  });
+
+  const e1rmByExercise: Record<string, number> = {};
+  for (const max of latestMaxes) {
+    e1rmByExercise[max.exerciseId] = max.generatedMax ?? max.workingMax;
+  }
+
+  // Build inputs for the accuracy calculator
+  const inputs: RPEAccuracyInput[] = [];
+  for (const set of sets) {
+    const eid = set.workoutExercise.exerciseId;
+    const e1rm = e1rmByExercise[eid];
+    if (!e1rm || set.rpe === null) continue;
+
+    inputs.push({
+      reportedRPE: set.rpe,
+      weight: set.weight,
+      reps: set.reps,
+      e1RM: e1rm,
+      date: set.completedAt.toISOString().split('T')[0],
+      exerciseId: eid,
+      exerciseName: set.workoutExercise.exercise.name,
+    });
+  }
+
+  return calculateRpeAccuracy(inputs);
 }
 
 /**

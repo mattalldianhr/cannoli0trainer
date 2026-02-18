@@ -58,6 +58,13 @@ interface RPEDistribution {
   averageRPE: number | null;
   distribution: { rpe: number; count: number }[];
   weeklyTrend: { weekStart: string; avgRPE: number; setCount: number }[];
+  exercises: { id: string; name: string; count: number }[];
+}
+
+interface RPEAccuracyData {
+  averageDeviation: number;
+  setsAnalyzed: number;
+  weeklyTrend: { weekStart: string; avgDeviation: number; setsAnalyzed: number }[];
 }
 
 interface BodyweightPoint {
@@ -94,6 +101,7 @@ interface AnalyticsData {
   volumeByWeek: VolumeWeek[];
   compliance: Compliance;
   rpeDistribution: RPEDistribution;
+  rpeAccuracy: RPEAccuracyData | null;
   bodyweightTrend: BodyweightPoint[];
   vbt: VBTData;
 }
@@ -131,6 +139,7 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [vbtExerciseId, setVbtExerciseId] = useState<string>('');
+  const [rpeExerciseId, setRpeExerciseId] = useState<string>('');
 
   const fetchAnalytics = useCallback(async () => {
     if (!selectedAthleteId) return;
@@ -148,6 +157,9 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
         params.set('from', from.toISOString().split('T')[0]);
       }
       params.set('to', new Date().toISOString().split('T')[0]);
+      if (rpeExerciseId) {
+        params.set('rpeExerciseId', rpeExerciseId);
+      }
 
       const res = await fetch(`/api/analytics/${selectedAthleteId}?${params.toString()}`);
       if (!res.ok) {
@@ -160,11 +172,16 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
     } finally {
       setLoading(false);
     }
-  }, [selectedAthleteId, dateRange]);
+  }, [selectedAthleteId, dateRange, rpeExerciseId]);
 
   useEffect(() => {
     fetchAnalytics();
   }, [fetchAnalytics]);
+
+  // Reset RPE exercise filter when athlete changes
+  useEffect(() => {
+    setRpeExerciseId('');
+  }, [selectedAthleteId]);
 
   const handleExportCSV = useCallback(() => {
     if (!selectedAthleteId) return;
@@ -467,13 +484,29 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
             </CardContent>
           </Card>
 
-          {/* RPE Distribution */}
+          {/* RPE Distribution & Accuracy */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                RPE Distribution
-              </CardTitle>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  RPE Distribution
+                </CardTitle>
+                {data.rpeDistribution.exercises && data.rpeDistribution.exercises.length > 0 && (
+                  <select
+                    value={rpeExerciseId}
+                    onChange={(e) => setRpeExerciseId(e.target.value)}
+                    className="rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  >
+                    <option value="">All Exercises</option>
+                    {data.rpeDistribution.exercises.map((ex) => (
+                      <option key={ex.id} value={ex.id}>
+                        {ex.name} ({ex.count} sets)
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               {data.rpeDistribution.totalSetsWithRPE === 0 ? (
@@ -482,6 +515,34 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {/* RPE Accuracy Metric */}
+                  {data.rpeAccuracy && (
+                    <div className="rounded-md border p-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="text-sm font-medium">RPE Accuracy</h4>
+                        <Badge variant="outline" className="text-xs">
+                          {data.rpeAccuracy.setsAnalyzed} sets analyzed
+                        </Badge>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-bold tabular-nums">
+                          {data.rpeAccuracy.averageDeviation === 0
+                            ? 'Perfect'
+                            : `±${data.rpeAccuracy.averageDeviation}`}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {data.rpeAccuracy.averageDeviation === 0
+                            ? 'match'
+                            : 'RPE avg deviation'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Compares self-reported RPE to estimated RPE based on load/reps relative to known 1RM
+                      </p>
+                    </div>
+                  )}
+
+                  {/* RPE Histogram */}
                   <BaseBarChart
                     data={data.rpeDistribution.distribution.map((d) => ({
                       rpe: String(d.rpe),
@@ -493,6 +554,23 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
                     yAxisLabel="Sets"
                     height={200}
                   />
+
+                  {/* RPE Accuracy Trend */}
+                  {data.rpeAccuracy && data.rpeAccuracy.weeklyTrend.length > 1 && (
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">RPE Accuracy Trend</h4>
+                      <BaseLineChart
+                        data={data.rpeAccuracy.weeklyTrend.map(w => ({ ...w }))}
+                        lines={[{ dataKey: 'avgDeviation', label: 'Avg Deviation', color: '#dc2626' }]}
+                        xAxisKey="weekStart"
+                        yAxisLabel="RPE ±"
+                        height={200}
+                        formatXAxis={formatWeek}
+                      />
+                    </div>
+                  )}
+
+                  {/* Weekly Avg RPE */}
                   <div>
                     <h4 className="text-sm font-medium mb-2">Weekly Avg RPE</h4>
                     <BaseLineChart
