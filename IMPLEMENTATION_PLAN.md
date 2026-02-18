@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 108
+- Completed: 110
 - In progress: 0
-- Remaining: 72 (7 original + 97 new from spec review)
+- Remaining: 69
 
 ## Tasks
 
@@ -593,11 +593,12 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 20: Exercise Library Enhancements
 
-- [ ] **Task 20.1**: Implement tag filter UI on exercise library page
+- [x] **Task 20.1**: Implement tag filter UI on exercise library page
   - Spec: specs/05-exercise-library.md
   - Acceptance: Tag filter alongside category filter. Multi-select chips. AND logic with category filter.
+  - Note: Already implemented in ExerciseList.tsx — multi-select chip buttons for 4 tags with AND logic against category filter.
 
-- [ ] **Task 20.2**: Implement edit exercise form
+- [x] **Task 20.2**: Implement edit exercise form
   - Spec: specs/05-exercise-library.md
   - Acceptance: Edit button, pre-populated form, PUT `/api/exercises/[id]`, shared form component.
 

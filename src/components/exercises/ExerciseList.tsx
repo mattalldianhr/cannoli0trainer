@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Dumbbell } from 'lucide-react';
+import { Search, Plus, Dumbbell, Pencil } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -177,7 +177,7 @@ export function ExerciseList({ exercises }: ExerciseListProps) {
                     </div>
                   </div>
 
-                  {/* Right: metadata */}
+                  {/* Right: metadata + edit */}
                   <div className="flex items-center gap-3 text-sm text-right shrink-0">
                     {exercise.force && (
                       <div className="hidden sm:block">
@@ -191,6 +191,12 @@ export function ExerciseList({ exercises }: ExerciseListProps) {
                         <p className="font-semibold capitalize">{exercise.level}</p>
                       </div>
                     )}
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={`/exercises/${exercise.id}/edit`}>
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit {exercise.name}</span>
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </CardContent>
