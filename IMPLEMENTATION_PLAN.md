@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 64
+- Completed: 65
 - In progress: 0
 
 ## Tasks
@@ -293,7 +293,7 @@
 
 ### Priority 12: Progress Analytics
 
-- [ ] **Task 12.1**: Install charting library (recharts) and create base chart components
+- [x] **Task 12.1**: Install charting library (recharts) and create base chart components
   - Spec: specs/07-progress-analytics.md
   - Acceptance: recharts installed, basic LineChart and BarChart wrappers created
 
