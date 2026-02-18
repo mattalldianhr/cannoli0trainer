@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 66
+- Completed: 69
 - In progress: 0
 
 ## Tasks
@@ -301,15 +301,17 @@
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Page renders with selectable date ranges (4/8/12 weeks, all time)
 
-- [ ] **Task 12.3**: Implement 1RM trend chart and volume tracking chart
+- [x] **Task 12.3**: Implement 1RM trend chart and volume tracking chart
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Line chart shows estimated 1RM over time, bar chart shows weekly volume
+  - Note: Already implemented in AnalyticsDashboard.tsx during Task 12.2 — E1RM uses MaxSnapshot + RPE-based fallback, volume uses weekly tonnage bar chart
 
-- [ ] **Task 12.4**: Implement compliance rate and bodyweight trend charts
+- [x] **Task 12.4**: Implement compliance rate and bodyweight trend charts
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Compliance shows %, bodyweight shows trend line
+  - Note: Already implemented in AnalyticsDashboard.tsx during Task 12.2 — compliance bar chart + bodyweight line chart with empty states
 
-- [ ] **Task 12.5**: Add CSV export for athlete training data
+- [x] **Task 12.5**: Add CSV export for athlete training data
   - Spec: specs/07-progress-analytics.md
   - Acceptance: Download button generates CSV with date, exercise, sets, reps, weight, RPE
 

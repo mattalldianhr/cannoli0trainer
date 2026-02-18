@@ -13,6 +13,7 @@ import {
   Activity,
   Scale,
   Loader2,
+  Download,
 } from 'lucide-react';
 
 interface Athlete {
@@ -133,6 +134,22 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
     fetchAnalytics();
   }, [fetchAnalytics]);
 
+  const handleExportCSV = useCallback(() => {
+    if (!selectedAthleteId) return;
+
+    const rangeConfig = DATE_RANGES.find(r => r.value === dateRange);
+    const params = new URLSearchParams();
+
+    if (rangeConfig && rangeConfig.weeks > 0) {
+      const from = new Date();
+      from.setDate(from.getDate() - rangeConfig.weeks * 7);
+      params.set('from', from.toISOString().split('T')[0]);
+    }
+    params.set('to', new Date().toISOString().split('T')[0]);
+
+    window.location.href = `/api/analytics/${selectedAthleteId}/export?${params.toString()}`;
+  }, [selectedAthleteId, dateRange]);
+
   if (athletes.length === 0) {
     return (
       <Card>
@@ -169,17 +186,28 @@ export function AnalyticsDashboard({ athletes, initialAthleteId }: AnalyticsDash
           </select>
         </div>
 
-        <div className="flex items-center gap-1">
-          {DATE_RANGES.map((range) => (
-            <Button
-              key={range.value}
-              variant={dateRange === range.value ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setDateRange(range.value)}
-            >
-              {range.label}
-            </Button>
-          ))}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            {DATE_RANGES.map((range) => (
+              <Button
+                key={range.value}
+                variant={dateRange === range.value ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setDateRange(range.value)}
+              >
+                {range.label}
+              </Button>
+            ))}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            disabled={!selectedAthleteId}
+          >
+            <Download className="h-4 w-4 mr-1" />
+            CSV
+          </Button>
         </div>
       </div>
 
