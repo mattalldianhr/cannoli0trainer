@@ -1,8 +1,8 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 70
-- Completed: 9
+- Total tasks: 82
+- Completed: 10
 - In progress: 0
 
 ## Tasks
@@ -41,7 +41,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma migrate dev --name init-platform-models` succeeds
 
-- [ ] **Task 1.9**: Add WorkoutSession and MaxSnapshot models to Prisma schema
+- [x] **Task 1.9**: Add WorkoutSession and MaxSnapshot models to Prisma schema
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, both models have proper relations and indexes
   - Note: Moved from old Priority 13 (Task 13.1). Required before data seeding.
@@ -351,6 +351,32 @@
   - Spec: summaries/teambuildr-api-exploration-findings.md
   - Acceptance: `npx tsx scripts/teambuildr-export.ts --help` prints usage, supports --token, --account, --output, --resume flags
   - **Completed**: Full implementation exists at `scripts/teambuildr-export.ts` with supporting libraries in `scripts/lib/` (teambuildr-client, rate-limiter, retry, checkpoint, logger). Supports --token, --account, --output, --resume, --athletes, --concurrency, --rate flags.
+
+### Priority 16: Railway Deployment & Live Testing
+
+- [ ] **Task 16.1**: Configure Railway PostgreSQL plugin and environment variables
+  - Spec: (none — infrastructure)
+  - Acceptance: Railway project has PostgreSQL plugin provisioned. `DATABASE_URL`, `DIRECT_URL` (if needed) environment variables set in Railway dashboard. `.env.example` documents all required env vars. Railway build succeeds with `npx prisma generate` in build step.
+
+- [ ] **Task 16.2**: Run Prisma migrations on Railway production database
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `railway run npx prisma migrate deploy` succeeds. All tables created in production database. `railway run npx prisma db seed` populates production with real data (5 athletes, 800+ exercises, 2,033 sessions).
+
+- [ ] **Task 16.3**: Verify production deployment at cannoli.mattalldian.com
+  - Spec: (none — infrastructure)
+  - Acceptance: `railway up` or `git push` triggers successful deploy. All pages return 200: `/dashboard`, `/athletes`, `/exercises`, `/programs`, `/analytics`, `/findings`. No build errors, no runtime errors in Railway logs.
+
+- [ ] **Task 16.4**: Production smoke test — verify real data renders on live site
+  - Spec: specs/02-coach-dashboard.md, specs/03-athlete-management.md
+  - Acceptance: Dashboard shows non-zero stats (5 athletes, active programs). `/athletes` lists all 5 athletes with correct names. `/exercises` shows 800+ exercises with working search. At least one athlete profile page loads with training history and PR data.
+
+- [ ] **Task 16.5**: Run Playwright E2E tests against production URL
+  - Spec: (none — infrastructure)
+  - Acceptance: `PLAYWRIGHT_BASE_URL=https://cannoli.mattalldian.com npx playwright test` passes all smoke tests from Task 3.6 against live production. Tests verify real data (not mocked) renders correctly. Any failures documented and triaged.
+
+- [ ] **Task 16.6**: Configure Railway health check and auto-deploy from main branch
+  - Spec: (none — infrastructure)
+  - Acceptance: Railway health check endpoint (`/api/health`) returns 200 with `{ status: "ok", db: "connected" }`. Railway auto-deploys on push to `main`. Failed deploys do not replace the running version (Railway's default rollback behavior confirmed).
 
 ## Discoveries
 

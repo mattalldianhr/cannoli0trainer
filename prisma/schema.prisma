@@ -43,6 +43,18 @@ enum PeriodizationType {
   hybrid
 }
 
+enum WorkoutSessionStatus {
+  NOT_STARTED
+  PARTIALLY_COMPLETED
+  FULLY_COMPLETED
+}
+
+enum MaxSnapshotSource {
+  WORKOUT
+  MANUAL
+  IMPORT
+}
+
 // --- Existing Models ---
 
 model Submission {
@@ -93,6 +105,8 @@ model Athlete {
   setLogs            SetLog[]
   bodyweightLogs     BodyweightLog[]
   meetEntries        MeetEntry[]
+  workoutSessions    WorkoutSession[]
+  maxSnapshots       MaxSnapshot[]
 
   @@index([coachId])
 }
@@ -110,9 +124,10 @@ model Program {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
-  coach       Coach                @relation(fields: [coachId], references: [id])
-  workouts    Workout[]
-  assignments ProgramAssignment[]
+  coach           Coach                @relation(fields: [coachId], references: [id])
+  workouts        Workout[]
+  assignments     ProgramAssignment[]
+  workoutSessions WorkoutSession[]
 
   @@index([coachId])
 }
@@ -162,6 +177,7 @@ model Exercise {
 
   coach            Coach             @relation(fields: [coachId], references: [id])
   workoutExercises WorkoutExercise[]
+  maxSnapshots     MaxSnapshot[]
 
   @@index([coachId])
 }
@@ -262,4 +278,47 @@ model MeetEntry {
 
   @@index([meetId])
   @@index([athleteId])
+}
+
+model WorkoutSession {
+  id                   String               @id @default(uuid())
+  athleteId            String
+  date                 DateTime             @db.Date
+  programId            String?
+  title                String?
+  durationSeconds      Int?
+  completionPercentage Float                @default(0)
+  completedItems       Int                  @default(0)
+  totalItems           Int                  @default(0)
+  status               WorkoutSessionStatus @default(NOT_STARTED)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  athlete Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  program Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+
+  @@unique([athleteId, date])
+  @@index([athleteId])
+  @@index([athleteId, date])
+  @@index([programId])
+}
+
+model MaxSnapshot {
+  id           String            @id @default(uuid())
+  athleteId    String
+  exerciseId   String
+  date         DateTime
+  workingMax   Float
+  generatedMax Float?
+  isCurrentMax Boolean           @default(false)
+  source       MaxSnapshotSource @default(WORKOUT)
+  createdAt    DateTime          @default(now())
+
+  athlete  Athlete  @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+
+  @@index([athleteId])
+  @@index([exerciseId])
+  @@index([athleteId, exerciseId])
+  @@index([athleteId, date])
 }
