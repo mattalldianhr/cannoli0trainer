@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 94
+- Completed: 95
 - In progress: 0
-- Remaining: 85 (7 original + 97 new from spec review)
+- Remaining: 84 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -537,7 +537,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Confirmation message, email provider hints, "Try again" link.
 
-- [ ] **Task 18.5**: Add Next.js middleware to protect `/athlete/*` routes
+- [x] **Task 18.5**: Add Next.js middleware to protect `/athlete/*` routes
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `src/middleware.ts` protects all `/athlete/*` routes except login and check-email. Unauthenticated requests redirect to `/athlete/login`. Coach routes unaffected.
 
