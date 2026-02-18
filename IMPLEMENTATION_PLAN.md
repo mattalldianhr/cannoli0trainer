@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 34
+- Completed: 35
 - In progress: 0
 
 ## Tasks
@@ -158,7 +158,7 @@
 
 ### Priority 5: Core UI - Athlete Management
 
-- [ ] **Task 5.1**: Create athlete listing page at `/athletes` with search and filter
+- [x] **Task 5.1**: Create athlete listing page at `/athletes` with search and filter
   - Spec: specs/03-athlete-management.md
   - Acceptance: Page renders athlete list, search filters by name, filter chips work
 
