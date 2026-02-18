@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 18
+- Completed: 19
 - In progress: 0
 
 ## Tasks
@@ -88,7 +88,7 @@
   - Acceptance: Both packages installed, TypeScript types resolve. Test: `calculateOneRepMax(100, 5)` returns valid e1RM. `wilks(82.5, 510, 'male')` returns valid score.
   - Note: MIT-licensed calculation libraries for 1RM (Epley, Brzycki, etc.) and powerlifting coefficients (Wilks, DOTS).
 
-- [ ] **Task 2.8**: Implement RPE/RIR-to-%1RM lookup table as data module
+- [x] **Task 2.8**: Implement RPE/RIR-to-%1RM lookup table as data module
   - Spec: specs/12-rpe-rir-support.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
   - Acceptance: `src/lib/rpe-table.ts` exports lookup function: given RPE (6-10) and reps (1-12), returns %1RM. Covers ~50 data points from Tuchscherer RPE table. TypeScript typed, unit tested.
 
