@@ -89,6 +89,7 @@ model Athlete {
   coach Coach @relation(fields: [coachId], references: [id])
 
   programAssignments ProgramAssignment[]
+  setLogs            SetLog[]
 }
 
 model Program {
@@ -167,4 +168,23 @@ model WorkoutExercise {
 
   workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   exercise Exercise @relation(fields: [exerciseId], references: [id])
+  setLogs  SetLog[]
+}
+
+model SetLog {
+  id                String     @id @default(uuid())
+  workoutExerciseId String
+  athleteId         String
+  setNumber         Int
+  reps              Int
+  weight            Float
+  unit              WeightUnit @default(lbs)
+  rpe               Float?
+  rir               Int?
+  velocity          Float?
+  completedAt       DateTime   @default(now())
+  notes             String?    @db.Text
+
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+  athlete         Athlete         @relation(fields: [athleteId], references: [id], onDelete: Cascade)
 }

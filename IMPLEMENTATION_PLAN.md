@@ -1,8 +1,8 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 66
-- Completed: 5
+- Total tasks: 72
+- Completed: 6
 - In progress: 0
 
 ## Tasks
@@ -25,7 +25,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, all programming models defined with relations
 
-- [ ] **Task 1.5**: Create SetLog model with all tracking fields (reps, weight, RPE, RIR, velocity)
+- [x] **Task 1.5**: Create SetLog model with all tracking fields (reps, weight, RPE, RIR, velocity)
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, SetLog supports all 6 prescription methods
 
@@ -41,11 +41,58 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma migrate dev --name init-platform-models` succeeds
 
-- [ ] **Task 1.9**: Create seed script with 30+ common powerlifting exercises
-  - Spec: specs/05-exercise-library.md
-  - Acceptance: `npx prisma db seed` creates exercises (SBD + accessories)
+- [ ] **Task 1.9**: Add WorkoutSession and MaxSnapshot models to Prisma schema
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `npx prisma validate` passes, both models have proper relations and indexes
+  - Note: Moved from old Priority 13 (Task 13.1). Required before data seeding.
 
-### Priority 2: Core API Routes
+- [ ] **Task 1.10**: Add superset, unilateral, rest, tempo fields to WorkoutExercise model
+  - Spec: specs/01-data-models-and-schema.md
+  - Acceptance: `npx prisma validate` passes, WorkoutExercise has supersetGroup, supersetColor, isUnilateral, restTimeSeconds, tempo fields
+  - Note: Moved from old Priority 13 (Task 13.2). Required before TeamBuildr import.
+
+### Priority 2: Data Seeding (Real Data)
+
+- [ ] **Task 2.1**: Download and import free-exercise-db (800+ exercises) into seed script
+  - Spec: specs/05-exercise-library.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
+  - Acceptance: `npx prisma db seed` creates 800+ exercises with name, category, force, level, mechanic, equipment, primaryMuscles, secondaryMuscles, instructions, images
+  - Data source: https://github.com/yuhonas/free-exercise-db (Unlicense/Public Domain)
+
+- [ ] **Task 2.2**: Tag powerlifting-relevant exercises and create exercise name mapping
+  - Spec: specs/05-exercise-library.md
+  - Acceptance: Exercises tagged with powerlifting categories (competition_lift, competition_variation, accessory, gpp). TeamBuildr's 136 exercise names mapped to free-exercise-db entries where possible, unmatched exercises created as new entries.
+  - Data source: TeamBuildr export (136 unique exercises) + free-exercise-db
+
+- [ ] **Task 2.3**: Build TeamBuildr data transformer (TeamBuildr schema -> Cannoli schema)
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: Transforms all exercise types (L, S, C, N, W), handles prescribed (placeholder) vs actual (value) pattern, maps superset grouping (groupingLetter/groupingColorCode), extracts RPE from additionalInformation, maps workingMax/generatedMax to MaxSnapshot
+  - Note: Moved from old Priority 13 (Task 13.4). Must run before import.
+
+- [ ] **Task 2.4**: Create TeamBuildr import seed script for coach + athletes
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: `npx prisma db seed` creates coach (Joe Cristando), 5 athletes with real profiles (Matt, Chris, Michael, Hannah, Maddy), group assignments, correct IDs and date ranges from TeamBuildr export
+  - Data source: test-data/teambuildr-full-export-5-athletes.json
+
+- [ ] **Task 2.5**: Import workout history (sessions, exercises, sets, maxes) from TeamBuildr export
+  - Spec: summaries/teambuildr-api-exploration-findings.md
+  - Acceptance: All 2,033 workout dates imported as WorkoutSessions. All 12,437 workout items imported as WorkoutExercises with SetLogs. All 1,806 PRs imported as MaxSnapshots. Tonnage, sets, reps match source data totals.
+  - Data source: test-data/teambuildr-full-export-5-athletes.json
+
+- [ ] **Task 2.6**: Create import validation script to verify data completeness
+  - Spec: summaries/spec-review-teambuildr-data-alignment.md
+  - Acceptance: Script compares source TeamBuildr JSON counts (dates, exercises, sets, reps, tonnage, PRs per athlete) against imported database records, reports discrepancies with pass/fail status
+  - Note: Moved from old Priority 13 (Task 13.5).
+
+- [ ] **Task 2.7**: Install `@finegym/fitness-calc` and `powerlifting-formulas` npm packages
+  - Spec: summaries/open-source-exercise-databases-apis-powerlifting-resources.md
+  - Acceptance: Both packages installed, TypeScript types resolve. Test: `calculateOneRepMax(100, 5)` returns valid e1RM. `wilks(82.5, 510, 'male')` returns valid score.
+  - Note: MIT-licensed calculation libraries for 1RM (Epley, Brzycki, etc.) and powerlifting coefficients (Wilks, DOTS).
+
+- [ ] **Task 2.8**: Implement RPE/RIR-to-%1RM lookup table as data module
+  - Spec: specs/12-rpe-rir-support.md, summaries/open-source-exercise-databases-apis-powerlifting-resources.md
+  - Acceptance: `src/lib/rpe-table.ts` exports lookup function: given RPE (6-10) and reps (1-12), returns %1RM. Covers ~50 data points from Tuchscherer RPE table. TypeScript typed, unit tested.
+
+### Priority 3: Core API Routes
 
 - [ ] **Task 2.1**: Create CRUD API routes for Coach (`/api/coaches`)
   - Spec: specs/02-coach-dashboard.md
