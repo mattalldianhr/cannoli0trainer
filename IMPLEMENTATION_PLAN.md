@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 55
+- Completed: 56
 - In progress: 0
 
 ## Tasks
@@ -252,7 +252,7 @@
 
 ### Priority 10: Athlete Training Log
 
-- [ ] **Task 10.1**: Create training log page at `/train` showing today's workout
+- [x] **Task 10.1**: Create training log page at `/train` showing today's workout
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Displays assigned exercises with prescriptions, mobile-optimized
 
