@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 84
+- Completed: 85
 - In progress: 0
-- Remaining: 95 (7 original + 97 new from spec review)
+- Remaining: 94 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -495,7 +495,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Page renders a 7-day week grid. Rows are athletes (filterable). Columns are Monday-Sunday. Each cell shows the WorkoutSession title for that athlete+date, or empty for rest days. Current week shown by default. Forward/backward navigation changes the displayed week.
 
-- [ ] **Task 17.9**: Create schedule API route at `/api/schedule`
+- [x] **Task 17.9**: Create schedule API route at `/api/schedule`
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: GET `/api/schedule?startDate=...&endDate=...&athleteId=all` returns athletes with their sessions for the date range. Supports filtering by athleteId.
 
