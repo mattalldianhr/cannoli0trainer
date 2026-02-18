@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentCoachId } from '@/lib/coach';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,6 +14,14 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Fetch the coach's default weight unit
+    const coachId = await getCurrentCoachId();
+    const coach = await prisma.coach.findUnique({
+      where: { id: coachId },
+      select: { defaultWeightUnit: true },
+    });
+    const defaultWeightUnit = coach?.defaultWeightUnit ?? 'lbs';
 
     // Default to today (UTC date only, no time)
     const targetDate = dateParam ? new Date(dateParam) : new Date();
@@ -55,6 +64,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         session: null,
         exercises: [],
+        defaultWeightUnit,
         message: 'No workout scheduled for this date',
         nextSession: nextSession
           ? {
@@ -109,6 +119,7 @@ export async function GET(request: NextRequest) {
           program: session.program,
         },
         exercises: [],
+        defaultWeightUnit,
         message: 'Session found but no workout exercises linked',
       });
     }
@@ -206,6 +217,7 @@ export async function GET(request: NextRequest) {
         program: session.program,
       },
       exercises,
+      defaultWeightUnit,
     });
   } catch (error) {
     console.error('Failed to fetch training data:', error);

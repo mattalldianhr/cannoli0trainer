@@ -108,6 +108,7 @@ interface NextSessionData {
 interface TrainResponse {
   session: SessionData | null;
   exercises: ExerciseData[];
+  defaultWeightUnit?: string;
   message?: string;
   nextSession?: NextSessionData | null;
 }
@@ -471,11 +472,13 @@ function VelocityLossIndicator({ setLogs }: { setLogs: SetLogData[] }) {
 function ExerciseCard({
   exercise,
   athleteId,
+  weightUnit,
   onSetChange,
   onEnqueue,
 }: {
   exercise: ExerciseData;
   athleteId: string;
+  weightUnit: string;
   onSetChange: () => void;
   onEnqueue?: () => void;
 }) {
@@ -551,7 +554,7 @@ function ExerciseCard({
         setNumber: nextSetNumber,
         reps: r,
         weight: w,
-        unit: 'lbs',
+        unit: weightUnit,
       };
       if (rpe != null) payload.rpe = rpe;
       const v = velocity ? parseFloat(velocity) : null;
@@ -738,7 +741,7 @@ function ExerciseCard({
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-xs text-muted-foreground" htmlFor={`weight-${exercise.id}`}>
-                    Weight (lbs)
+                    Weight ({weightUnit})
                   </label>
                   <Input
                     id={`weight-${exercise.id}`}
@@ -880,7 +883,7 @@ function ExerciseCard({
   );
 }
 
-function WorkoutSummary({ exercises }: { exercises: ExerciseData[] }) {
+function WorkoutSummary({ exercises, weightUnit }: { exercises: ExerciseData[]; weightUnit: string }) {
   const totalSets = exercises.reduce((sum, ex) => sum + ex.setLogs.length, 0);
   const totalReps = exercises.reduce(
     (sum, ex) => sum + ex.setLogs.reduce((s, set) => s + set.reps, 0),
@@ -900,7 +903,7 @@ function WorkoutSummary({ exercises }: { exercises: ExerciseData[] }) {
     { label: 'Exercises', value: String(exerciseCount), icon: Dumbbell },
     { label: 'Sets', value: String(totalSets), icon: Repeat },
     { label: 'Reps', value: String(totalReps), icon: TrendingUp },
-    { label: 'Volume', value: `${totalVolume.toLocaleString()} lbs`, icon: Weight },
+    { label: 'Volume', value: `${totalVolume.toLocaleString()} ${weightUnit}`, icon: Weight },
   ];
 
   return (
@@ -975,6 +978,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
   // Calculate completion
   const session = data?.session;
   const exercises = data?.exercises ?? [];
+  const weightUnit = data?.defaultWeightUnit ?? 'lbs';
   const totalExercises = exercises.length;
   const completedExercises = exercises.filter((ex) => {
     const total = ex.prescribedSets ? parseInt(ex.prescribedSets, 10) : 0;
@@ -1120,7 +1124,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
                   <span>{completedExercises}/{totalExercises} exercises</span>
                   <span>{totalSetsLogged} sets logged</span>
                   {totalVolume > 0 && (
-                    <span>{totalVolume.toLocaleString()} lbs volume</span>
+                    <span>{totalVolume.toLocaleString()} {weightUnit} volume</span>
                   )}
                 </div>
               </div>
@@ -1134,6 +1138,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
                 key={ex.id}
                 exercise={ex}
                 athleteId={athleteId}
+                weightUnit={weightUnit}
                 onSetChange={fetchWorkout}
                 onEnqueue={handleEnqueue}
               />
@@ -1142,7 +1147,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
 
           {/* Workout completion summary */}
           {completionPercent === 100 && (
-            <WorkoutSummary exercises={exercises} />
+            <WorkoutSummary exercises={exercises} weightUnit={weightUnit} />
           )}
         </>
       )}

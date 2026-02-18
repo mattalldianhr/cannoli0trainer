@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 146
+- Completed: 147
 - In progress: 0
-- Remaining: 33
+- Remaining: 32
 
 ## Tasks
 
@@ -755,7 +755,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: GET/PUT `/api/settings`. Zod validation. Returns updated coach record.
 
-- [ ] **Task 29.4**: Wire default weight unit preference into set logging
+- [x] **Task 29.4**: Wire default weight unit preference into set logging
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: SetLog unit defaults to coach's `defaultWeightUnit`. UI pre-selects. Per-set override still works.
 
