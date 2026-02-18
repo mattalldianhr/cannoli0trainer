@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 80
+- Completed: 81
 - In progress: 0
-- Remaining: 99 (7 original + 97 new from spec review)
+- Remaining: 98 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -479,7 +479,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: POST to `/api/programs/[id]/assign` with `{ athleteId, startDate, trainingDays? }` creates ProgramAssignment AND generates WorkoutSessions. If `trainingDays` is omitted, defaults to `[1,2,4,5]`. Response includes count of generated sessions. Integration test: assign a 4-week/4-day program and verify 16 WorkoutSessions are created on correct dates.
 
-- [ ] **Task 17.5**: Add conflict detection for overlapping program assignments
+- [x] **Task 17.5**: Add conflict detection for overlapping program assignments
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Before generating sessions, check for existing WorkoutSessions on the target dates for the athlete. If conflicts found, return them in the API response. Coach can choose to proceed (overwrite) or cancel.
 

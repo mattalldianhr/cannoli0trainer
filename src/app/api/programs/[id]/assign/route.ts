@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateSchedule, type WorkoutInput } from '@/lib/scheduling/generate-schedule';
 import { persistSchedule } from '@/lib/scheduling/persist-schedule';
+import { detectConflicts, type ConflictingSession } from '@/lib/scheduling/detect-conflicts';
 
 export async function POST(
   request: Request,
@@ -12,7 +13,7 @@ export async function POST(
     const body = await request.json();
 
     // Validate request body — support both multi-athlete and single-athlete
-    const { athleteIds, athleteId, startDate, endDate, trainingDays } = body;
+    const { athleteIds, athleteId, startDate, endDate, trainingDays, force } = body;
     const resolvedAthleteIds: string[] = athleteIds
       ?? (athleteId ? [athleteId] : null);
 
@@ -121,6 +122,59 @@ export async function POST(
 
       const parsedStartDate = new Date(startDate);
 
+      // Check for conflicts before persisting (unless force=true)
+      if (!force) {
+        const allConflicts: {
+          athleteId: string;
+          athleteName: string;
+          conflicts: ConflictingSession[];
+        }[] = [];
+
+        for (const assignment of assignments) {
+          const schedule = generateSchedule(
+            workoutInputs,
+            parsedStartDate,
+            resolvedTrainingDays
+          );
+
+          const result = await detectConflicts(
+            assignment.athleteId,
+            schedule,
+            assignment.id
+          );
+
+          if (result.hasConflicts) {
+            allConflicts.push({
+              athleteId: assignment.athleteId,
+              athleteName: assignment.athlete.name,
+              conflicts: result.conflicts,
+            });
+          }
+        }
+
+        if (allConflicts.length > 0) {
+          return NextResponse.json({
+            error: 'Scheduling conflicts detected',
+            message: 'Some athletes already have workouts on the scheduled dates. Set force=true to overwrite.',
+            programId,
+            assignments,
+            count: assignments.length,
+            conflicts: allConflicts.map((c) => ({
+              athleteId: c.athleteId,
+              athleteName: c.athleteName,
+              conflictCount: c.conflicts.length,
+              dates: c.conflicts.map((cf) => ({
+                date: cf.date.toISOString().split('T')[0],
+                existingTitle: cf.existingTitle,
+                existingStatus: cf.existingStatus,
+                newTitle: cf.newTitle,
+              })),
+            })),
+          }, { status: 409 });
+        }
+      }
+
+      // No conflicts (or force=true) — persist the schedule
       schedulingResults = await Promise.all(
         assignments.map(async (assignment) => {
           const schedule = generateSchedule(
