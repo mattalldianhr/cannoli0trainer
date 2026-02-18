@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 96
+- Completed: 97
 - In progress: 0
-- Remaining: 83 (7 original + 97 new from spec review)
+- Remaining: 82 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -545,7 +545,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Bottom nav with 4 tabs (Dashboard, Train, Calendar, History), SessionProvider, Cannoli branding, 44px tap targets.
 
-- [ ] **Task 18.7**: Build athlete dashboard page at `/athlete`
+- [x] **Task 18.7**: Build athlete dashboard page at `/athlete`
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Hero card with today's workout, quick stats (streak, weekly workouts, completion rate), last 3 sessions.
 
