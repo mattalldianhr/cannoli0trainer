@@ -10,6 +10,7 @@ import { PRESCRIPTION_TYPE_LABELS } from '@/lib/programs/types';
 import type { PrescriptionType } from '@prisma/client';
 import { AssignAthletes } from '@/components/programs/AssignAthletes';
 import { SaveAsTemplate } from '@/components/programs/SaveAsTemplate';
+import { ProgramOverview } from '@/components/programs/ProgramOverview';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -129,6 +130,16 @@ export default async function ProgramDetailPage({
         )}
       </div>
 
+      {/* Program Overview Grid */}
+      {weeks.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <h2 className="text-sm font-semibold mb-3">Program Overview</h2>
+            <ProgramOverview weeks={weeks} />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Assigned Athletes */}
       {program.assignments.length > 0 && (
         <Card>
@@ -160,7 +171,7 @@ export default async function ProgramDetailPage({
       ) : (
         <div className="space-y-4">
           {weeks.map(([weekNumber, workouts]) => (
-            <Card key={weekNumber}>
+            <Card key={weekNumber} id={`week-${weekNumber}`}>
               <CardContent className="p-0">
                 <div className="px-4 py-3 border-b border-border">
                   <span className="font-semibold text-sm">Week {weekNumber}</span>

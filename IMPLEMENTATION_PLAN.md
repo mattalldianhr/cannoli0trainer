@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 117
+- Completed: 118
 - In progress: 0
-- Remaining: 62
+- Remaining: 61
 
 ## Tasks
 
@@ -636,7 +636,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 23: Program Overview, Notes, Auto-Save
 
-- [ ] **Task 23.1**: Build program overview compact grid showing weekly structure at a glance
+- [x] **Task 23.1**: Build program overview compact grid showing weekly structure at a glance
   - Spec: specs/04-program-builder.md
   - Acceptance: Weeks as rows, days as columns, exercise count per cell, click to navigate.
 
