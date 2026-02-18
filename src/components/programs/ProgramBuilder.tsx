@@ -11,6 +11,7 @@ import {
   ChevronRight,
   GripVertical,
   Dumbbell,
+  Settings2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +25,8 @@ import {
   type WeekState,
   type DayState,
   type ExerciseEntry,
+  type PrescriptionType,
+  type PrescriptionValues,
   type ProgramType,
   type PeriodizationType,
   PERIODIZATION_TYPE_LABELS,
@@ -33,6 +36,7 @@ import {
   createDefaultWeek,
   createDefaultDay,
   createDefaultExerciseEntry,
+  createDefaultPrescription,
 } from '@/lib/programs/types';
 import { ExercisePicker } from './ExercisePicker';
 
@@ -273,6 +277,27 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
     }));
   }, []);
 
+  const updateExercise = useCallback(
+    (dayId: string, exerciseId: string, updates: Partial<ExerciseEntry>) => {
+      setProgram((prev) => ({
+        ...prev,
+        weeks: prev.weeks.map((w) => ({
+          ...w,
+          days: w.days.map((d) => {
+            if (d.id !== dayId) return d;
+            return {
+              ...d,
+              exercises: d.exercises.map((ex) =>
+                ex.id === exerciseId ? { ...ex, ...updates } : ex
+              ),
+            };
+          }),
+        })),
+      }));
+    },
+    []
+  );
+
   // ============================================================
   // Summary stats
   // ============================================================
@@ -417,6 +442,7 @@ export function ProgramBuilder({ coachId }: ProgramBuilderProps) {
               onUpdateDayNotes={(dayId, notes) => updateDayNotes(week.id, dayId, notes)}
               onAddExercise={openExercisePicker}
               onRemoveExercise={removeExercise}
+              onUpdateExercise={updateExercise}
             />
           ))}
         </div>
@@ -451,6 +477,7 @@ interface WeekCardProps {
   onUpdateDayNotes: (dayId: string, notes: string) => void;
   onAddExercise: (dayId: string) => void;
   onRemoveExercise: (dayId: string, exerciseId: string) => void;
+  onUpdateExercise: (dayId: string, exerciseId: string, updates: Partial<ExerciseEntry>) => void;
 }
 
 function WeekCard({
@@ -468,6 +495,7 @@ function WeekCard({
   onUpdateDayNotes,
   onAddExercise,
   onRemoveExercise,
+  onUpdateExercise,
 }: WeekCardProps) {
   const exerciseCount = week.days.reduce((sum, d) => sum + d.exercises.length, 0);
 
@@ -549,6 +577,7 @@ function WeekCard({
                   onUpdateNotes={(notes) => onUpdateDayNotes(day.id, notes)}
                   onAddExercise={() => onAddExercise(day.id)}
                   onRemoveExercise={(exId) => onRemoveExercise(day.id, exId)}
+                  onUpdateExercise={(exId, updates) => onUpdateExercise(day.id, exId, updates)}
                 />
               ))
             )}
@@ -574,6 +603,7 @@ interface DayCardProps {
   onUpdateNotes: (notes: string) => void;
   onAddExercise: () => void;
   onRemoveExercise: (exerciseId: string) => void;
+  onUpdateExercise: (exerciseId: string, updates: Partial<ExerciseEntry>) => void;
 }
 
 function DayCard({
@@ -587,6 +617,7 @@ function DayCard({
   onUpdateNotes,
   onAddExercise,
   onRemoveExercise,
+  onUpdateExercise,
 }: DayCardProps) {
   const [showNotes, setShowNotes] = useState(day.notes.length > 0);
 
@@ -679,6 +710,7 @@ function DayCard({
                   key={exercise.id}
                   exercise={exercise}
                   onRemove={() => onRemoveExercise(exercise.id)}
+                  onUpdate={(updates) => onUpdateExercise(exercise.id, updates)}
                 />
               ))}
             </div>
@@ -690,39 +722,347 @@ function DayCard({
 }
 
 // ============================================================
-// Exercise Row (compact display)
+// Exercise Row (expandable with prescription editing)
 // ============================================================
 
 interface ExerciseRowProps {
   exercise: ExerciseEntry;
   onRemove: () => void;
+  onUpdate: (updates: Partial<ExerciseEntry>) => void;
 }
 
-function ExerciseRow({ exercise, onRemove }: ExerciseRowProps) {
+function ExerciseRow({ exercise, onRemove, onUpdate }: ExerciseRowProps) {
+  const [expanded, setExpanded] = useState(false);
   const prescriptionSummary = formatPrescription(exercise);
 
+  const handlePrescriptionTypeChange = (newType: PrescriptionType) => {
+    onUpdate({
+      prescriptionType: newType,
+      prescription: createDefaultPrescription(newType),
+    });
+  };
+
+  const updatePrescription = (updates: Partial<PrescriptionValues>) => {
+    onUpdate({
+      prescription: { ...exercise.prescription, ...updates } as PrescriptionValues,
+    });
+  };
+
   return (
-    <div className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 group">
-      <GripVertical className="h-4 w-4 text-muted-foreground/50 shrink-0" />
-      <span className="text-xs text-muted-foreground w-5 shrink-0">{exercise.order}.</span>
-      <Dumbbell className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-      <span className="text-sm font-medium truncate">{exercise.exerciseName}</span>
-      <Badge variant="outline" className="text-xs shrink-0 ml-auto">
-        {PRESCRIPTION_TYPE_LABELS[exercise.prescriptionType]}
-      </Badge>
-      {prescriptionSummary && (
-        <span className="text-xs text-muted-foreground shrink-0">{prescriptionSummary}</span>
+    <div className="rounded-md border border-border bg-background group">
+      {/* Compact Row */}
+      <div className="flex items-center gap-2 px-3 py-2">
+        <GripVertical className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+        <span className="text-xs text-muted-foreground w-5 shrink-0">{exercise.order}.</span>
+        <Dumbbell className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+        <span className="text-sm font-medium truncate">{exercise.exerciseName}</span>
+        <Badge variant="outline" className="text-xs shrink-0 ml-auto">
+          {PRESCRIPTION_TYPE_LABELS[exercise.prescriptionType]}
+        </Badge>
+        {prescriptionSummary && (
+          <span className="text-xs text-muted-foreground shrink-0">{prescriptionSummary}</span>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setExpanded(!expanded)}
+          className={cn(
+            'h-6 w-6 p-0 shrink-0 transition-colors',
+            expanded ? 'text-primary' : 'opacity-0 group-hover:opacity-100'
+          )}
+          title="Edit prescription"
+        >
+          <Settings2 className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive shrink-0"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+
+      {/* Expanded Prescription Editor */}
+      {expanded && (
+        <div className="px-3 pb-3 pt-1 border-t border-border space-y-3">
+          {/* Prescription Type + Sets/Reps (always shown) */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Prescription Type</Label>
+              <select
+                value={exercise.prescriptionType}
+                onChange={(e) => handlePrescriptionTypeChange(e.target.value as PrescriptionType)}
+                className={cn(SELECT_CLASS, 'h-8 text-xs')}
+              >
+                {(Object.entries(PRESCRIPTION_TYPE_LABELS) as [PrescriptionType, string][]).map(
+                  ([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Sets</Label>
+              <Input
+                value={exercise.prescription.sets}
+                onChange={(e) => updatePrescription({ sets: e.target.value })}
+                placeholder="3"
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Reps</Label>
+              <Input
+                value={exercise.prescription.reps}
+                onChange={(e) => updatePrescription({ reps: e.target.value })}
+                placeholder="5"
+                className="h-8 text-xs"
+              />
+            </div>
+          </div>
+
+          {/* Type-specific fields */}
+          <PrescriptionFields
+            prescription={exercise.prescription}
+            onUpdate={updatePrescription}
+          />
+
+          {/* Notes */}
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Exercise Notes</Label>
+            <Input
+              value={exercise.notes}
+              onChange={(e) => onUpdate({ notes: e.target.value })}
+              placeholder="e.g. Pause 2 sec at bottom"
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
       )}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onRemove}
-        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive shrink-0"
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </Button>
     </div>
   );
+}
+
+// ============================================================
+// Prescription Fields (type-specific inputs)
+// ============================================================
+
+interface PrescriptionFieldsProps {
+  prescription: PrescriptionValues;
+  onUpdate: (updates: Partial<PrescriptionValues>) => void;
+}
+
+function PrescriptionFields({ prescription, onUpdate }: PrescriptionFieldsProps) {
+  switch (prescription.type) {
+    case 'percentage':
+      return (
+        <div className="grid grid-cols-1 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">% of 1RM</Label>
+            <Input
+              type="number"
+              value={prescription.percentage ?? ''}
+              onChange={(e) =>
+                onUpdate({ percentage: e.target.value ? Number(e.target.value) : null })
+              }
+              placeholder="80"
+              min={0}
+              max={120}
+              step={2.5}
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      );
+
+    case 'rpe':
+      return (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Target RPE</Label>
+            <Input
+              type="number"
+              value={prescription.rpe ?? ''}
+              onChange={(e) =>
+                onUpdate({ rpe: e.target.value ? Number(e.target.value) : null })
+              }
+              placeholder="8"
+              min={1}
+              max={10}
+              step={0.5}
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Load (optional)</Label>
+            <Input
+              value={prescription.load}
+              onChange={(e) => onUpdate({ load: e.target.value })}
+              placeholder="e.g. 315 lbs"
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      );
+
+    case 'rir':
+      return (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Reps in Reserve</Label>
+            <Input
+              type="number"
+              value={prescription.rir ?? ''}
+              onChange={(e) =>
+                onUpdate({ rir: e.target.value ? Number(e.target.value) : null })
+              }
+              placeholder="2"
+              min={0}
+              max={10}
+              step={1}
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Load (optional)</Label>
+            <Input
+              value={prescription.load}
+              onChange={(e) => onUpdate({ load: e.target.value })}
+              placeholder="e.g. 225 lbs"
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      );
+
+    case 'velocity':
+      return (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Velocity Target (m/s)</Label>
+            <Input
+              type="number"
+              value={prescription.velocityTarget ?? ''}
+              onChange={(e) =>
+                onUpdate({
+                  velocityTarget: e.target.value ? Number(e.target.value) : null,
+                })
+              }
+              placeholder="0.8"
+              min={0}
+              max={3}
+              step={0.05}
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Load (optional)</Label>
+            <Input
+              value={prescription.load}
+              onChange={(e) => onUpdate({ load: e.target.value })}
+              placeholder="e.g. 275 lbs"
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      );
+
+    case 'autoregulated':
+      return (
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Target RPE</Label>
+              <Input
+                type="number"
+                value={prescription.rpe ?? ''}
+                onChange={(e) =>
+                  onUpdate({ rpe: e.target.value ? Number(e.target.value) : null })
+                }
+                placeholder="8"
+                min={1}
+                max={10}
+                step={0.5}
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Backoff %</Label>
+              <Input
+                type="number"
+                value={prescription.backoffPercent ?? ''}
+                onChange={(e) =>
+                  onUpdate({
+                    backoffPercent: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+                placeholder="10"
+                min={0}
+                max={50}
+                step={5}
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Backoff Sets</Label>
+              <Input
+                type="number"
+                value={prescription.backoffSets ?? ''}
+                onChange={(e) =>
+                  onUpdate({
+                    backoffSets: e.target.value ? Number(e.target.value) : null,
+                  })
+                }
+                placeholder="3"
+                min={0}
+                max={20}
+                step={1}
+                className="h-8 text-xs"
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Instructions</Label>
+            <Input
+              value={prescription.instructions}
+              onChange={(e) => onUpdate({ instructions: e.target.value })}
+              placeholder="e.g. Work up to RPE 8, then -10% for 3x3"
+              className="h-8 text-xs"
+            />
+          </div>
+        </div>
+      );
+
+    case 'fixed':
+      return (
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Load</Label>
+            <Input
+              value={prescription.load}
+              onChange={(e) => onUpdate({ load: e.target.value })}
+              placeholder="185"
+              className="h-8 text-xs"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Unit</Label>
+            <select
+              value={prescription.unit}
+              onChange={(e) => onUpdate({ unit: e.target.value as 'lbs' | 'kg' })}
+              className={cn(SELECT_CLASS, 'h-8 text-xs')}
+            >
+              <option value="lbs">lbs</option>
+              <option value="kg">kg</option>
+            </select>
+          </div>
+        </div>
+      );
+  }
 }
 
 // ============================================================

@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 44
+- Completed: 45
 - In progress: 0
 
 ## Tasks
@@ -202,7 +202,7 @@
   - Spec: specs/04-program-builder.md
   - Acceptance: Can create program, add weeks, add days within weeks
 
-- [ ] **Task 7.4**: Add exercise addition to program builder with prescription type selector
+- [x] **Task 7.4**: Add exercise addition to program builder with prescription type selector
   - Spec: specs/04-program-builder.md
   - Acceptance: Can add exercise from library, select prescription type, enter prescription values
 
