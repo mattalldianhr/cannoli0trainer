@@ -2,12 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Dumbbell, Pencil } from 'lucide-react';
+import { Search, Plus, Dumbbell, Pencil, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { DeleteExerciseDialog } from './DeleteExerciseDialog';
 
 interface ExerciseData {
   id: string;
@@ -48,6 +49,7 @@ export function ExerciseList({ exercises }: ExerciseListProps) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const filtered = useMemo(() => {
     return exercises.filter((exercise) => {
@@ -197,12 +199,31 @@ export function ExerciseList({ exercises }: ExerciseListProps) {
                         <span className="sr-only">Edit {exercise.name}</span>
                       </Link>
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteTarget({ id: exercise.id, name: exercise.name })}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <span className="sr-only">Delete {exercise.name}</span>
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+      )}
+
+      {deleteTarget && (
+        <DeleteExerciseDialog
+          exerciseId={deleteTarget.id}
+          exerciseName={deleteTarget.name}
+          open={!!deleteTarget}
+          onOpenChange={(open) => {
+            if (!open) setDeleteTarget(null);
+          }}
+        />
       )}
     </div>
   );

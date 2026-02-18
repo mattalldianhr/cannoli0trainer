@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 110
+- Completed: 111
 - In progress: 0
-- Remaining: 69
+- Remaining: 68
 
 ## Tasks
 
@@ -602,7 +602,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/05-exercise-library.md
   - Acceptance: Edit button, pre-populated form, PUT `/api/exercises/[id]`, shared form component.
 
-- [ ] **Task 20.3**: Implement delete exercise with usage protection
+- [x] **Task 20.3**: Implement delete exercise with usage protection
   - Spec: specs/05-exercise-library.md
   - Acceptance: Usage check before delete. Warning if referenced. Confirmation if unreferenced.
 
