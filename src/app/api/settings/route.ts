@@ -1,6 +1,38 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
+
+const settingsUpdateSchema = z.object({
+  name: z.string().trim().min(1, 'Name cannot be empty').optional(),
+  email: z.string().trim().email('Invalid email address').optional(),
+  brandName: z.string().trim().nullable().optional(),
+  defaultWeightUnit: z.enum(['kg', 'lbs']).optional(),
+  timezone: z.string().optional(),
+  defaultRestTimerSeconds: z
+    .number()
+    .int()
+    .min(0, 'Rest timer must be at least 0 seconds')
+    .max(600, 'Rest timer must be at most 600 seconds')
+    .optional(),
+  notificationPreferences: z
+    .object({
+      emailOnWorkoutComplete: z.boolean(),
+      emailOnCheckIn: z.boolean(),
+    })
+    .optional(),
+});
+
+const coachSelect = {
+  id: true,
+  name: true,
+  email: true,
+  brandName: true,
+  defaultWeightUnit: true,
+  timezone: true,
+  defaultRestTimerSeconds: true,
+  notificationPreferences: true,
+} as const;
 
 export async function GET() {
   try {
@@ -8,16 +40,7 @@ export async function GET() {
 
     const coach = await prisma.coach.findUnique({
       where: { id: coachId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        brandName: true,
-        defaultWeightUnit: true,
-        timezone: true,
-        defaultRestTimerSeconds: true,
-        notificationPreferences: true,
-      },
+      select: coachSelect,
     });
 
     if (!coach) {
@@ -39,58 +62,32 @@ export async function PUT(request: Request) {
     const coachId = await getCurrentCoachId();
     const body = await request.json();
 
-    // Validate weight unit
-    if (body.defaultWeightUnit && !['kg', 'lbs'].includes(body.defaultWeightUnit)) {
+    const result = settingsUpdateSchema.safeParse(body);
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'Invalid weight unit. Must be "kg" or "lbs".' },
+        { error: result.error.issues[0].message },
         { status: 400 }
       );
     }
 
-    // Validate rest timer
-    if (body.defaultRestTimerSeconds !== undefined) {
-      const seconds = Number(body.defaultRestTimerSeconds);
-      if (isNaN(seconds) || seconds < 0 || seconds > 600) {
-        return NextResponse.json(
-          { error: 'Rest timer must be between 0 and 600 seconds.' },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Validate name is non-empty if provided
-    if (body.name !== undefined && !body.name?.trim()) {
-      return NextResponse.json(
-        { error: 'Name cannot be empty.' },
-        { status: 400 }
-      );
-    }
+    const data = result.data;
 
     const coach = await prisma.coach.update({
       where: { id: coachId },
       data: {
-        ...(body.name !== undefined && { name: body.name.trim() }),
-        ...(body.email !== undefined && { email: body.email.trim() }),
-        ...(body.brandName !== undefined && { brandName: body.brandName?.trim() || null }),
-        ...(body.defaultWeightUnit !== undefined && { defaultWeightUnit: body.defaultWeightUnit }),
-        ...(body.timezone !== undefined && { timezone: body.timezone }),
-        ...(body.defaultRestTimerSeconds !== undefined && {
-          defaultRestTimerSeconds: Number(body.defaultRestTimerSeconds),
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.email !== undefined && { email: data.email }),
+        ...(data.brandName !== undefined && { brandName: data.brandName || null }),
+        ...(data.defaultWeightUnit !== undefined && { defaultWeightUnit: data.defaultWeightUnit }),
+        ...(data.timezone !== undefined && { timezone: data.timezone }),
+        ...(data.defaultRestTimerSeconds !== undefined && {
+          defaultRestTimerSeconds: data.defaultRestTimerSeconds,
         }),
-        ...(body.notificationPreferences !== undefined && {
-          notificationPreferences: body.notificationPreferences,
+        ...(data.notificationPreferences !== undefined && {
+          notificationPreferences: data.notificationPreferences,
         }),
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        brandName: true,
-        defaultWeightUnit: true,
-        timezone: true,
-        defaultRestTimerSeconds: true,
-        notificationPreferences: true,
-      },
+      select: coachSelect,
     });
 
     return NextResponse.json(coach);

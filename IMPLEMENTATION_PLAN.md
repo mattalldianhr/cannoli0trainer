@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 145
+- Completed: 146
 - In progress: 0
-- Remaining: 34
+- Remaining: 33
 
 ## Tasks
 
@@ -751,7 +751,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: Profile and preferences sections. Server action save. Success toast. Gear icon in nav.
 
-- [ ] **Task 29.3**: Create Settings API route for coach preferences
+- [x] **Task 29.3**: Create Settings API route for coach preferences
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: GET/PUT `/api/settings`. Zod validation. Returns updated coach record.
 
