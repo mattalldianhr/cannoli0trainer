@@ -65,7 +65,9 @@ model Coach {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  athletes Athlete[]
+  athletes  Athlete[]
+  programs  Program[]
+  exercises Exercise[]
 }
 
 model Athlete {
@@ -85,4 +87,84 @@ model Athlete {
   updatedAt       DateTime        @updatedAt
 
   coach Coach @relation(fields: [coachId], references: [id])
+
+  programAssignments ProgramAssignment[]
+}
+
+model Program {
+  id                String            @id @default(uuid())
+  coachId           String
+  name              String
+  description       String?           @db.Text
+  type              ProgramType       @default(individual)
+  periodizationType PeriodizationType?
+  startDate         DateTime?
+  endDate           DateTime?
+  isTemplate        Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  coach       Coach                @relation(fields: [coachId], references: [id])
+  workouts    Workout[]
+  assignments ProgramAssignment[]
+}
+
+model ProgramAssignment {
+  id         String    @id @default(uuid())
+  programId  String
+  athleteId  String
+  assignedAt DateTime  @default(now())
+  startDate  DateTime?
+  endDate    DateTime?
+
+  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  athlete Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+}
+
+model Workout {
+  id         String   @id @default(uuid())
+  programId  String
+  name       String
+  dayNumber  Int
+  weekNumber Int
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  program   Program           @relation(fields: [programId], references: [id], onDelete: Cascade)
+  exercises WorkoutExercise[]
+}
+
+model Exercise {
+  id        String   @id @default(uuid())
+  coachId   String
+  name      String
+  category  String
+  videoUrl  String?
+  cues      String?  @db.Text
+  tags      Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  coach            Coach             @relation(fields: [coachId], references: [id])
+  workoutExercises WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id               String           @id @default(uuid())
+  workoutId        String
+  exerciseId       String
+  order            Int
+  prescriptionType PrescriptionType @default(fixed)
+  prescribedSets   String?
+  prescribedReps   String?
+  prescribedLoad   String?
+  prescribedRPE    Float?
+  prescribedRIR    Int?
+  velocityTarget   Float?
+  percentageOf1RM  Float?
+  notes            String?          @db.Text
+
+  workout  Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
 }

@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 66
-- Completed: 4
+- Completed: 5
 - In progress: 0
 
 ## Tasks
@@ -21,7 +21,7 @@
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, Athlete has coachId relation
 
-- [ ] **Task 1.4**: Create Program, ProgramAssignment, Workout, Exercise, WorkoutExercise models
+- [x] **Task 1.4**: Create Program, ProgramAssignment, Workout, Exercise, WorkoutExercise models
   - Spec: specs/01-data-models-and-schema.md
   - Acceptance: `npx prisma validate` passes, all programming models defined with relations
 
@@ -322,6 +322,8 @@ _Updated by Ralph during planning review (2026-02-17)_
 - No coaching components (`components/programs/`, `components/meets/`, `components/shared/` — none exist)
 - No type definitions for coaching domain (`lib/programs/types.ts`, `lib/vbt/` — missing)
 - No charting library installed (recharts or alternatives)
+
+**Lint command broken**: `npm run lint` (`next lint`) fails with "Invalid project directory provided, no such directory: .../lint" on Next.js 16.1.6. This is a pre-existing issue — may need an eslint config file or Next.js 16 migration fix. Does not block schema work since `tsc --noEmit` and `npm run build` both pass.
 
 **Header nav issue**: Current Header (`src/components/layout/Header.tsx`) contains research hub navigation (Home, Research, Interview, Submissions, Findings, PRD). Task 9.5 must either replace these or add a mode switch. The branding also says "S&C Research Hub" — will need renaming to Cannoli Trainer or similar.
 
