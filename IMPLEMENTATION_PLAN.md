@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 72
+- Completed: 73
 - In progress: 0
 
 ## Tasks
@@ -331,7 +331,7 @@
 
 ### Priority 14: Competition Prep
 
-- [ ] **Task 14.1**: Create meet listing and creation pages at `/meets`
+- [x] **Task 14.1**: Create meet listing and creation pages at `/meets`
   - Spec: specs/09-competition-prep.md
   - Acceptance: List meets, create new meet with name/date/location/federation
 

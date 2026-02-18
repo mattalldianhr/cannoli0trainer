@@ -11,6 +11,7 @@ const navItems = [
   { href: "/athletes", label: "Athletes" },
   { href: "/programs", label: "Programs" },
   { href: "/exercises", label: "Exercises" },
+  { href: "/meets", label: "Meets" },
 ];
 
 export function Header() {
