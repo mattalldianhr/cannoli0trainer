@@ -18,6 +18,8 @@ import {
   BarChart3,
   Activity,
   Calendar,
+  AlertTriangle,
+  Clock,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -98,10 +100,45 @@ async function getRecentActivity() {
   return grouped;
 }
 
+async function getAthletesNeedingAttention() {
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  threeDaysAgo.setHours(0, 0, 0, 0);
+
+  const athletes = await prisma.athlete.findMany({
+    where: {
+      workoutSessions: {
+        none: {
+          date: { gte: threeDaysAgo },
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      workoutSessions: {
+        orderBy: { date: 'desc' },
+        take: 1,
+        select: { date: true },
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
+
+  return athletes.map((athlete) => ({
+    id: athlete.id,
+    name: athlete.name,
+    email: athlete.email,
+    lastSessionDate: athlete.workoutSessions[0]?.date ?? null,
+  }));
+}
+
 export default async function DashboardPage() {
-  const [stats, recentActivity] = await Promise.all([
+  const [stats, recentActivity, athletesNeedingAttention] = await Promise.all([
     getDashboardStats(),
     getRecentActivity(),
+    getAthletesNeedingAttention(),
   ]);
 
   const statCards = [
@@ -126,8 +163,8 @@ export default async function DashboardPage() {
     {
       title: 'Needs Attention',
       value: stats.athletesNeedingAttention,
-      icon: Users,
-      href: undefined,
+      icon: AlertTriangle,
+      href: '#needs-attention',
     },
   ];
 
@@ -284,6 +321,67 @@ export default async function DashboardPage() {
                         ))}
                       </div>
                     </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Needs Attention Section */}
+        <Card className="mt-8" id="needs-attention">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5" />
+              Needs Attention
+            </CardTitle>
+            <Badge variant="secondary">
+              {athletesNeedingAttention.length} {athletesNeedingAttention.length === 1 ? 'athlete' : 'athletes'}
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            {athletesNeedingAttention.length === 0 ? (
+              <p className="text-muted-foreground text-sm text-center py-8">
+                All athletes have logged sessions in the last 3 days.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {athletesNeedingAttention.map((athlete) => {
+                  const daysSince = athlete.lastSessionDate
+                    ? Math.floor(
+                        (Date.now() - athlete.lastSessionDate.getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      )
+                    : null;
+
+                  return (
+                    <Link
+                      key={athlete.id}
+                      href={`/athletes/${athlete.id}`}
+                      className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10 text-destructive text-sm font-medium">
+                          {athlete.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{athlete.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {athlete.email || 'No email'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="h-3.5 w-3.5" />
+                          {daysSince !== null ? (
+                            <span>{daysSince} {daysSince === 1 ? 'day' : 'days'} ago</span>
+                          ) : (
+                            <span>No sessions</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
                   );
                 })}
               </div>

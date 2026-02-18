@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 61
+- Completed: 62
 - In progress: 0
 
 ## Tasks
@@ -278,7 +278,7 @@
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows last 7 days of athlete training logs grouped by day
 
-- [ ] **Task 11.3**: Add "Needs Attention" section flagging inactive athletes
+- [x] **Task 11.3**: Add "Needs Attention" section flagging inactive athletes
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: Shows athletes with no logs in 3+ days
 
