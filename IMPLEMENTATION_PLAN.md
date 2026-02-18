@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 93
+- Completed: 94
 - In progress: 0
-- Remaining: 86 (7 original + 97 new from spec review)
+- Remaining: 85 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -533,7 +533,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Email input + "Send Login Link" button. Success redirects to `/athlete/check-email`. Error shows inline message. Mobile-optimized.
 
-- [ ] **Task 18.4**: Build "Check your email" confirmation page at `/athlete/check-email`
+- [x] **Task 18.4**: Build "Check your email" confirmation page at `/athlete/check-email`
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Confirmation message, email provider hints, "Try again" link.
 
