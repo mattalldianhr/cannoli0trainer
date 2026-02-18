@@ -2,7 +2,7 @@
 
 ## Status
 - Total tasks: 82
-- Completed: 36
+- Completed: 37
 - In progress: 0
 
 ## Tasks
@@ -166,7 +166,7 @@
   - Spec: specs/03-athlete-management.md
   - Acceptance: Form creates athlete via API, validates required fields
 
-- [ ] **Task 5.3**: Create athlete profile page at `/athletes/[id]` with tabs for info, training, analytics
+- [x] **Task 5.3**: Create athlete profile page at `/athletes/[id]` with tabs for info, training, analytics
   - Spec: specs/03-athlete-management.md
   - Acceptance: Profile shows athlete data, current program, recent training
 
