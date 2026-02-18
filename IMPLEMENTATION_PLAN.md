@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 179
-- Completed: 77
+- Completed: 78
 - In progress: 0
-- Remaining: 102 (7 original + 97 new from spec review)
+- Remaining: 101 (7 original + 97 new from spec review)
 
 ## Tasks
 
@@ -467,7 +467,7 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: ProgramAssignment gains `trainingDays` (Json, default `[1,2,4,5]`) and `isActive` (Boolean, default true). WorkoutSession gains `workoutId` (FK -> Workout, optional), `programAssignmentId` (FK -> ProgramAssignment, optional), `isManuallyScheduled` (Boolean, default false), `isSkipped` (Boolean, default false), `weekNumber` (Int?), `dayNumber` (Int?). Migration runs successfully. `npx prisma validate` passes.
 
-- [ ] **Task 17.2**: Implement schedule generation service at `src/lib/scheduling/generate-schedule.ts`
+- [x] **Task 17.2**: Implement schedule generation service at `src/lib/scheduling/generate-schedule.ts`
   - Spec: specs/13-workout-scheduling-calendar.md
   - Acceptance: Pure function `generateSchedule(workouts, startDate, trainingDays)` returns an array of `{ date, workoutId, weekNumber, dayNumber, title }` objects. Maps abstract Week/Day pairs to concrete calendar dates using training day config. Handles programs where days-per-week exceeds training days (spillover). Handles programs where days-per-week is less than training days (rest gaps). Unit tested with at least 5 test cases covering 3-day, 4-day, 5-day, and spillover scenarios.
 
