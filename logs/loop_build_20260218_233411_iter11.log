@@ -1,0 +1,11 @@
+**Task 31.8 complete.** Here's what was done:
+
+**Changes:**
+- `src/components/training/TrainingLog.tsx` — Added `groupExercises()` helper that collects consecutive exercises with the same `supersetGroup` into visual groups. The exercise list now renders:
+  - **Superset groups**: Wrapped in a container with a 4px colored left border, a "Superset {letter}" label with a Link icon, and reduced inter-card spacing (`space-y-1.5` vs `space-y-3`)
+  - **Individual cards inside supersets**: No longer show their own left border or "SS:" badge (redundant with the group header)
+  - **Orphan exercises** (single exercise with a supersetGroup but no adjacent partners): Still render with individual border/badge
+  - **Non-superset exercises**: Render normally with standard spacing
+
+**Validation:** `tsc --noEmit` clean, `npm run build` passes.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

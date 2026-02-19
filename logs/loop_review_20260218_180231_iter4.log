@@ -1,0 +1,10 @@
+## Quick Spec Review — Iter 4 Summary
+
+- **Findings**: 0 issues
+  - Task 30.7 (React error boundaries) completed cleanly — 9 route-level `error.tsx` files created
+  - Task 30.6 (ConfirmDialog) also clean from prior iteration
+  - Build and type-check both pass
+  - No inconsistencies, missing items, or unexpected discoveries in either log
+- **Specs updated**: None needed
+- **Carry-forward P2**: "Archived Programs" filter/tab on `/programs` page (from iter 23) — not blocking
+- **Continue building?** Yes

@@ -1,0 +1,15 @@
+**Task 18.18 complete.** Here's what was implemented:
+
+**Files created:**
+- `public/sw.js` — Service worker with cache-first for static assets, network-first for navigation (offline fallback), skip for API/auth routes, auto-cleanup of old caches
+- `src/app/offline/page.tsx` — Offline fallback page with WifiOff icon, explanation message, and "Try Again" button
+- `src/components/ServiceWorkerRegistration.tsx` — Client component that registers the service worker on mount
+
+**Files modified:**
+- `src/app/layout.tsx` — Added `ServiceWorkerRegistration` component to root layout
+- `docs/IMPLEMENTATION_PLAN.md` — Marked task complete (158/185)
+
+**Validation:** `tsc --noEmit` passes, `npm run build` passes (lint is a pre-existing known issue).
+
+**Remaining: 27 tasks** — next actionable code task would be **Task 18.19** (cache athlete workout data for offline training) or **Task 31.1** (workout history list for coach athlete view).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

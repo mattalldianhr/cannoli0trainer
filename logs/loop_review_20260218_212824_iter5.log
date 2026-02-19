@@ -1,0 +1,28 @@
+Now let me cross-check the build log against the spec acceptance criteria for Task 31.1.
+
+## Quick Spec Review — Summary
+
+**Logs reviewed**: `loop_build_20260218_212347_iter5.log` (Task 31.1) + `loop_review_20260218_212321_iter4.log` (prior review — clean)
+
+**Findings**: 0 issues
+
+Task 31.1 build output vs spec acceptance criteria:
+
+| Spec Requirement | Build Output | Status |
+|---|---|---|
+| Paginated list on `/athletes/[id]` | API route at `/api/athletes/[id]/history` + `WorkoutHistoryList` component integrated into `AthleteProfile.tsx` Training tab | OK |
+| Date, workout/program name | Shows title/date, program name | OK |
+| Completion percentage | Completion badge shown | OK |
+| Total volume (sum weight*reps) | Volume calculated from SetLogs | OK |
+| Duration | Duration shown per session | OK |
+| Most recent first | Paginated, most recent first | OK |
+| 20 per page with "Load More" | 20 per page with "Load More" button | OK |
+| Click expands to session detail | Click-to-expand loads session detail with per-exercise breakdown (sets with weight/reps/RPE/velocity) | OK |
+
+The build also added extras (status icon, sets count, exercise count, detail caching) which are additive — no spec conflict.
+
+The prior review (iter4) confirmed all tasks 30.8, 18.17, 18.18, 18.19 were clean with no spec discrepancies.
+
+- **Findings count**: 0
+- **Specs updated**: None needed
+- **Continue building?** Yes — no blockers or spec mismatches found.

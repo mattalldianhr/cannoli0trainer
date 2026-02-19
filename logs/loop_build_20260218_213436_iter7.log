@@ -1,0 +1,19 @@
+**Task 31.2 complete.** Here's what was built:
+
+**New component: `WorkoutSessionDetail`** (`src/components/athletes/WorkoutSessionDetail.tsx`)
+- Two-column **Prescribed vs Actual** layout per exercise with clear column headers
+- **Green/amber/red** status badges and left-border indicators per exercise (Met/Partial/Missed)
+- Set-by-set breakdown table with color-coded reps and RPE adherence
+- Per-exercise volume diff with trend arrows (+/-%)
+- Session summary cards (exercises, completion %, volume, duration)
+- Status distribution counts (X met, Y partial, Z missed)
+- Total volume comparison with progress bar and percentage
+
+**API enhancement** (`/api/athletes/[id]/history`):
+- Added `rir`, `notes` to SetLog response
+- Added `supersetGroup`, `supersetColor`, `notes`, `athleteNotes` from WorkoutExercise
+
+**Refactored `WorkoutHistoryList`** to use the new `WorkoutSessionDetail` component in its expanded view, replacing the previous inline detail rendering.
+
+All validation passes: `tsc --noEmit`, `npm run build`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

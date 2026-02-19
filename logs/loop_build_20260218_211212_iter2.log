@@ -1,0 +1,10 @@
+**Task 18.17 complete.** 
+
+**What was done**: Wired the branded Cannoli email template into NextAuth's magic link emails by adding a custom `sendVerificationRequest` function to the Resend provider in `src/lib/auth.ts`. The function uses:
+- `brandedEmailHtml()` — orange header with "Cannoli Trainer" branding + gray footer
+- `emailCtaButton("Sign In", url)` — orange CTA button
+- Plain text fallback for email clients that don't render HTML
+- `&#39;` entity for apostrophe (better email client compatibility than `&apos;`)
+
+**Validation**: `tsc --noEmit` clean, `npm run build` clean. Committed as `035ef10`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

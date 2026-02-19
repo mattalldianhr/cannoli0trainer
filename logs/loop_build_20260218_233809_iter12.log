@@ -1,0 +1,17 @@
+**Task 32.1 complete.** Here's what was implemented:
+
+**`GET /api/athlete/progress?range=8w`** — Athlete-facing progress data endpoint at `src/app/api/athlete/progress/route.ts`
+
+The endpoint:
+- Authenticates via `session?.user?.athleteId` (returns 401 if unauthenticated)
+- Supports `range` param: `4w`, `8w`, `12w`, `all` (default: `8w`)
+- Returns the `AthleteProgressData` shape from the spec:
+  - **`e1rmTrends`**: Record keyed by exerciseId with `{date, value}[]` — uses MaxSnapshots first, falls back to RPE-based estimation from SetLogs
+  - **`weeklyVolume`**: `{weekStart, tonnage}[]` — weekly tonnage from SetLogs
+  - **`compliance`**: `{assigned, completed, streak}` — session counts + consecutive training day streak
+  - **`personalRecords`**: All-time best MaxSnapshot per exercise with `isRecent` flag (last 7 days)
+  - **`bodyweight`**: `{date, weight}[]` or `null` if fewer than 2 entries
+  - **`availableExercises`**: Deduplicated list from MaxSnapshots + SetLogs
+
+All queries are scoped to the authenticated athlete. Follows existing patterns from `/api/analytics/[athleteId]` and `/api/athlete/dashboard`.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

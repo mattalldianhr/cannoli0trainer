@@ -1,0 +1,19 @@
+**Task 31.7 completed.** Here's what was done:
+
+1. **Exercise API** (`/api/exercises`): Added `paginated=true` query param that returns `{ data, total, hasMore }` response shape. Backward compatible — without the param, returns plain array as before. Limit capped at 100.
+
+2. **Exercise Library** (`ExerciseList`): Converted from a server-rendered full-list component to a client-side component with:
+   - 30-per-page server-side pagination
+   - 300ms debounced search
+   - "Load More" button showing current/total counts
+   - Server-side category and tag filtering
+
+3. **Exercise Picker**: Converted from load-all-then-filter to server-side search with:
+   - 30-per-page pagination with "Load More" 
+   - 300ms debounced search input
+   - Loading spinner states
+
+4. **Dashboard Activity Feed**: Limited to 20 most recent sessions (was unbounded within 7-day window).
+
+5. **Training History**: Already paginated at 20 per page — no changes needed.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

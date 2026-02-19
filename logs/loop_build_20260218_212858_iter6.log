@@ -1,0 +1,22 @@
+**Task 31.2 complete.** Here's what was implemented:
+
+### Changes Made
+
+**1. API Update** (`src/app/api/athletes/[id]/history/route.ts`):
+- Session detail endpoint now returns `prescribed` data for each exercise (sets, reps, load, RPE, RIR, velocity target, percentage of 1RM, prescription type)
+- Added `totalPrescribedVolume` and `totalActualVolume` to the session response for volume comparison
+
+**2. UI Update** (`src/components/athletes/WorkoutHistoryList.tsx`):
+- Each exercise in the expanded session detail now shows a **color-coded left border** indicating completion status:
+  - **Green** — actual meets or exceeds prescribed (all sets done, all reps hit)
+  - **Yellow/Amber** — partial completion (some sets logged but not all targets met)
+  - **Red** — missed exercise (zero sets logged)
+- Each exercise shows a **"Rx:" prescription line** displaying the prescribed sets×reps, load, RPE/RIR/velocity targets
+- Below the prescription, the actual logged sets are shown with weight, reps, RPE, and velocity
+- A **volume comparison summary card** at the bottom shows prescribed vs actual total volume with a percentage indicator
+
+### Validation
+- TypeScript: passes
+- Build: passes
+- Committed as `3429fe5`
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

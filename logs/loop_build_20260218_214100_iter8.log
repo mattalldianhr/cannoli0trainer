@@ -1,0 +1,7 @@
+Three tasks completed this iteration:
+- **Task 31.3**: Coach notes on workout sessions (schema + PATCH API + editable textarea in coach view + read-only in athlete view)
+- **Task 31.4**: Program builder edit mode (title updated to "Edit: {name}" + edit button on program list cards)
+- **Task 31.5**: Active assignment warning banner (amber banner with athlete count/names when editing assigned programs)
+
+All builds pass. Progress: **164/185 tasks complete** (21 remaining).
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

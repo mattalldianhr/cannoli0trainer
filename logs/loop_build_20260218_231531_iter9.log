@@ -1,0 +1,15 @@
+{"level":"warn","message":"[BashTool] Pre-flight check is taking longer than expected. Run with ANTHROPIC_LOG=debug to check for failed or slow API requests."}
+Task 31.6 is complete. Here's what was implemented:
+
+**Task 31.6: Add bodyweight logging entry point**
+
+1. **`BodyweightLogDialog`** (`src/components/athletes/BodyweightLogDialog.tsx`) — A reusable Radix Dialog component with weight (number input), unit (kg/lbs selector), and date fields. Validates input, POSTs to `/api/bodyweight`, shows success/error toasts.
+
+2. **"Log Bodyweight" button on athlete profile** — Added to the header action bar in `AthleteProfile.tsx`, next to Edit/Archive buttons. Triggers the dialog with the athlete's info pre-filled.
+
+3. **Updated Info tab** — Now shows the latest bodyweight log entry with date instead of just the static profile bodyweight. Falls back to profile bodyweight, or "No bodyweight logged" if neither exists.
+
+4. **Post-workout bodyweight field** — Added `PostWorkoutBodyweight` inline component to the `WorkoutSummary` card in `TrainingLog.tsx`. When a workout is 100% complete, a compact weight input + Log button appears. Shows a green checkmark after successful logging.
+
+All validation passes: `tsc --noEmit` clean, `npm run build` clean.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

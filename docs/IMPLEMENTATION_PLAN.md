@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 167
+- Completed: 169
 - In progress: 0
-- Remaining: 18
+- Remaining: 16
 
 ## Tasks
 
@@ -875,13 +875,15 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 32: Athlete Progress Dashboard
 
-- [ ] **Task 32.1**: Create athlete progress API endpoint
+- [x] **Task 32.1**: Create athlete progress API endpoint
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: `GET /api/athlete/progress?range=8w` returns `AthleteProgressData`: e1RM trends, weekly volume, compliance, personal records, bodyweight, available exercises. Session-authenticated, scoped to athlete. Range supports `4w`, `8w`, `12w`, `all`. Unit tested.
+  - Note: Full implementation at `src/app/api/athlete/progress/route.ts`. Six parallel queries: getE1RMTrends (MaxSnapshot + RPE fallback), getWeeklyVolume (SetLog tonnage by ISO week), getCompliance (assigned/completed/streak), getPersonalRecords (best MaxSnapshot per exercise with isRecent), getBodyweight (null if <2 entries), getAvailableExercises (merged MaxSnapshot + SetLog exercises).
 
-- [ ] **Task 32.2**: Build e1RM trend line chart for athlete progress page
+- [x] **Task 32.2**: Build e1RM trend line chart for athlete progress page
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: Recharts LineChart of estimated 1RM over time. Exercise dropdown defaults to competition lifts. Date range selector. Reuses chart wrappers from Spec 07.
+  - Note: Created `E1RMTrendChart` component at `src/components/athlete/progress/E1RMTrendChart.tsx`. Uses `BaseLineChart` wrapper from Spec 07. Exercise dropdown defaults to competition lifts (squat/bench/deadlift pattern match). Shows data point count badge. Empty state when no trend data exists. Date range selector deferred to page-level component (Task 32.7) since the API `range` param controls the data window.
 
 - [ ] **Task 32.3**: Build weekly volume bar chart for athlete progress page
   - Spec: specs/15-athlete-progress-dashboard.md

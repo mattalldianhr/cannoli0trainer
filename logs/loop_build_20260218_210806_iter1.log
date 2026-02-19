@@ -1,0 +1,12 @@
+**Task 30.8 complete.** 
+
+Summary:
+- Created 11 `loading.tsx` files with `animate-pulse` skeleton shapes matching actual content layouts
+- Routes covered: `/athletes`, `/athletes/[id]`, `/programs`, `/programs/[id]`, `/exercises`, `/analytics`, `/meets`, `/meets/[id]`, `/schedule`, `/train`, `/settings`
+- `/dashboard` already had a loading skeleton (existing)
+- Athlete portal pages (`/athlete/*`) handle loading inline as client components
+- All validation passed: `tsc --noEmit` clean, `npm run build` clean
+- Committed as `604f4d1`
+
+**Status: 156/185 tasks complete, 29 remaining.**
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

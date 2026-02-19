@@ -1,0 +1,17 @@
+**Task 30.6 complete.** Here's what was done:
+
+- **Created** `src/components/ui/confirm-dialog.tsx` — a shared `ConfirmDialog` component built on `@radix-ui/react-alert-dialog` with:
+  - `ConfirmDialog` high-level wrapper (open/onOpenChange, title, description, confirmLabel, variant, loading, onConfirm)
+  - Destructive (default) and neutral variants
+  - Loading spinner state
+  - All individual AlertDialog primitives also exported for custom use cases
+
+- **Refactored** existing destructive dialogs to use the shared component:
+  - `DeleteAthleteDialog` (ArchiveAthleteDialog) — now uses `ConfirmDialog`
+  - `ArchiveProgram` — now uses `ConfirmDialog`
+  - `TemplateList` archive dialog — now uses `ConfirmDialog`
+  - `DeleteExerciseDialog` — migrated to AlertDialog primitives (kept custom error content for usage protection)
+  - `MeetDetail` remove athlete — replaced native `confirm()` with `ConfirmDialog`
+
+- **Validation**: `tsc --noEmit` and `npm run build` both pass.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

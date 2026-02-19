@@ -1,0 +1,14 @@
+**Task 30.7 complete.** 
+
+Created `error.tsx` files for 9 page routes:
+- **Coach routes**: `/dashboard`, `/athletes`, `/programs`, `/exercises`, `/analytics`, `/meets`, `/schedule`, `/settings`
+- **Athlete route**: `/athlete` (covers all sub-routes via layout)
+
+Each error boundary:
+- Is a `'use client'` component (required by Next.js)
+- Shows an `AlertTriangle` icon + "Something went wrong" message with context-specific description
+- Provides a "Try again" button that calls the `reset()` prop to re-render the route
+- Logs errors to console in development mode only
+
+All validation passed (tsc, build). 155/179 tasks complete, 24 remaining.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

@@ -1,0 +1,21 @@
+**Task 18.19 complete.** Here's what was implemented:
+
+**Service Worker (`public/sw.js`):**
+- Upgraded to v2 with a dedicated `cannoli-api-v1` cache for API responses
+- Added network-first caching with stale fallback for `/api/train`, `/api/athlete/dashboard`, `/api/athlete/calendar`, `/api/athlete/history`
+- Static assets remain cache-first, auth routes remain uncached
+
+**New: `useOnlineStatus` hook (`src/hooks/useOnlineStatus.ts`):**
+- Tracks browser online/offline status via `navigator.onLine` + event listeners
+- Returns boolean for clean conditional rendering
+
+**New: `OfflineIndicator` component (`src/components/shared/OfflineIndicator.tsx`):**
+- Amber pill badge with WifiOff icon, only renders when offline
+- Added to athlete layout header for global visibility
+
+**TrainingLog updates:**
+- Shows "Offline — viewing cached workout data" banner when offline with stale data
+- Shows "Offline — you can still log sets" when offline without cached data
+- Auto-refetches when connectivity returns and clears stale flag
+- Simplified pending sync badge (removed redundant inline offline indicator)
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h

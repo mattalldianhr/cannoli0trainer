@@ -1,0 +1,18 @@
+**Task 31.1 complete.** Here's what was built:
+
+**API Route** — `src/app/api/athletes/[id]/history/route.ts`
+- Coach-scoped endpoint (verifies athlete belongs to coach)
+- Paginated list: `GET /api/athletes/[id]/history?page=1&limit=20`
+- Session detail: `GET /api/athletes/[id]/history?sessionId=...`
+- Returns date, title, status, completion %, volume (calculated from SetLogs), sets count, duration, exercise count
+
+**Component** — `src/components/athletes/WorkoutHistoryList.tsx`
+- Client component that fetches paginated workout sessions (20 per page)
+- Each session row shows: status icon, title/date, program name, completion badge, exercise count, sets, volume, duration
+- Click-to-expand loads session detail with per-exercise breakdown (sets with weight/reps/RPE/velocity)
+- Detail results cached to avoid refetching
+- "Load More" pagination button
+- Loading skeleton and empty state
+
+**Integration** — Replaced the simple "Recent Sessions" list in `AthleteProfile.tsx` Training tab with the new `WorkoutHistoryList` component. Current Maxes section preserved above it.
+[<u[?1004l[?2004l[?25h]9;4;0;[?25h
