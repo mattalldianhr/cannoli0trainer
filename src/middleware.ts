@@ -31,13 +31,17 @@ const COACH_API_ROUTES = [
   "/api/analytics",
   "/api/messages",
   "/api/settings",
+  "/api/coaches",
+  "/api/submissions",
+]
+
+// API routes accessible by both coaches and athletes (auth still required)
+const SHARED_API_ROUTES = [
   "/api/train",
   "/api/bodyweight",
   "/api/sets",
   "/api/sessions",
   "/api/workout-exercises",
-  "/api/coaches",
-  "/api/submissions",
 ]
 
 function isCoachRoute(pathname: string): boolean {

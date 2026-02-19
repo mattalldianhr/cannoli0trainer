@@ -1060,7 +1060,8 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
     if (!athleteId) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/train?athleteId=${athleteId}&date=${date}`);
+      const endpoint = mode === 'athlete' ? `/api/athlete/train?date=${date}` : `/api/train?athleteId=${athleteId}&date=${date}`;
+      const res = await fetch(endpoint);
       const json = await res.json();
       setData(json);
       // If we got data while offline, the service worker served it from cache
@@ -1077,7 +1078,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
       setLoading(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [athleteId, date]);
+  }, [athleteId, date, mode]);
 
   // Clear stale flag when coming back online and refetch
   useEffect(() => {
