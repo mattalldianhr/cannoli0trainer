@@ -4,7 +4,7 @@ Spec: specs/15-athlete-progress-dashboard.md
 
 ### Priority 32: Athlete-Facing Progress Visibility
 
-- [ ] **Task 32.1**: Create athlete progress API endpoint
+- [x] **Task 32.1**: Create athlete progress API endpoint
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: `GET /api/athlete/progress?range=8w` returns `AthleteProgressData` shape: e1RM trends (keyed by exerciseId), weekly volume array, compliance (assigned/completed/streak), personal records list, bodyweight array (or null), available exercises. Endpoint validates authenticated session and scopes all queries to `athleteId` from session. Returns 401 if unauthenticated. Range param supports `4w`, `8w`, `12w`, `all`. Unit tested with mock Prisma data.
 
