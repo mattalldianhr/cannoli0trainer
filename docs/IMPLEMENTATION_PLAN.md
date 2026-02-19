@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 164
+- Completed: 165
 - In progress: 0
-- Remaining: 21
+- Remaining: 20
 
 ## Tasks
 
@@ -858,9 +858,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Warning banner when editing assigned programs. Shows count and names of assigned athletes. Editing still allowed.
   - Note: Added amber warning banner at top of ProgramBuilder when `initialProgram.assignments.length > 0`. Shows count and comma-separated athlete names. Banner only appears in edit mode (not new programs). Editing remains fully functional.
 
-- [ ] **Task 31.6**: Add bodyweight logging entry point
+- [x] **Task 31.6**: Add bodyweight logging entry point
   - Spec: specs/07-progress-analytics.md
   - Acceptance: "Log Bodyweight" button on athlete profile. Quick-entry form (weight, unit, date). Optional post-workout bodyweight field. POST `/api/bodyweight`.
+  - Note: Created `BodyweightLogDialog` component with weight/unit/date form using Radix Dialog. Added "Log Bodyweight" button to athlete profile header. Updated Info tab to show latest bodyweight log date. Added `PostWorkoutBodyweight` inline form to `WorkoutSummary` card — appears after 100% completion with quick weight input and Log button.
 
 - [ ] **Task 31.7**: Add pagination to exercise library, training history, and activity feed
   - Spec: specs/05-exercise-library.md

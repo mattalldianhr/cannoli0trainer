@@ -24,6 +24,7 @@ import {
   MessageSquare,
   WifiOff,
   CloudOff,
+  Scale,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,6 +39,7 @@ import { enqueue, type SetLogPayload } from '@/lib/offline-queue';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { calculateVelocityDrop } from '@/lib/vbt';
+import { showSuccess, showError } from '@/lib/toast';
 
 interface SetLogData {
   id: string;
@@ -887,7 +889,68 @@ function ExerciseCard({
   );
 }
 
-function WorkoutSummary({ exercises, weightUnit }: { exercises: ExerciseData[]; weightUnit: string }) {
+function PostWorkoutBodyweight({ athleteId, weightUnit }: { athleteId: string; weightUnit: string }) {
+  const [bw, setBw] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  async function handleLog() {
+    const w = parseFloat(bw);
+    if (!bw || isNaN(w) || w <= 0) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch('/api/bodyweight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ athleteId, weight: w, unit: weightUnit }),
+      });
+      if (!res.ok) throw new Error('Failed to log');
+      showSuccess(`Bodyweight logged: ${w} ${weightUnit}`);
+      setSaved(true);
+    } catch {
+      showError('Failed to log bodyweight');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (saved) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-green-600">
+        <Check className="h-4 w-4" />
+        <span>Bodyweight logged: {bw} {weightUnit}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Scale className="h-4 w-4 text-muted-foreground shrink-0" />
+      <Input
+        type="number"
+        inputMode="decimal"
+        step="0.1"
+        min="0"
+        placeholder={`Post-workout BW (${weightUnit})`}
+        value={bw}
+        onChange={(e) => setBw(e.target.value)}
+        className="h-8 w-40 text-sm"
+      />
+      <Button
+        size="sm"
+        variant="outline"
+        className="h-8"
+        onClick={handleLog}
+        disabled={saving || !bw}
+      >
+        {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Log'}
+      </Button>
+    </div>
+  );
+}
+
+function WorkoutSummary({ exercises, weightUnit, athleteId }: { exercises: ExerciseData[]; weightUnit: string; athleteId: string }) {
   const totalSets = exercises.reduce((sum, ex) => sum + ex.setLogs.length, 0);
   const totalReps = exercises.reduce(
     (sum, ex) => sum + ex.setLogs.reduce((s, set) => s + set.reps, 0),
@@ -936,6 +999,11 @@ function WorkoutSummary({ exercises, weightUnit }: { exercises: ExerciseData[]; 
             Top RPE: <span className="font-medium text-foreground">{topRPE}</span>
           </div>
         )}
+
+        {/* Post-workout bodyweight */}
+        <div className="mt-4 pt-3 border-t">
+          <PostWorkoutBodyweight athleteId={athleteId} weightUnit={weightUnit} />
+        </div>
       </CardContent>
     </Card>
   );
@@ -1179,7 +1247,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
 
           {/* Workout completion summary */}
           {completionPercent === 100 && (
-            <WorkoutSummary exercises={exercises} weightUnit={weightUnit} />
+            <WorkoutSummary exercises={exercises} weightUnit={weightUnit} athleteId={athleteId} />
           )}
         </>
       )}

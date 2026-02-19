@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   User,
@@ -24,6 +25,7 @@ import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { EditAthleteForm } from './EditAthleteForm';
 import { DeleteAthleteDialog } from './DeleteAthleteDialog';
 import { WorkoutHistoryList } from './WorkoutHistoryList';
+import { BodyweightLogDialog } from './BodyweightLogDialog';
 
 type TabKey = 'info' | 'training' | 'analytics';
 
@@ -127,9 +129,14 @@ function bestAttempt(...attempts: (number | null)[]): number | null {
 }
 
 export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>('info');
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const handleBodyweightLogged = useCallback(() => {
+    router.refresh();
+  }, [router]);
 
   const currentProgram = athlete.programAssignments[0] ?? null;
   const lastSession = athlete.workoutSessions[0] ?? null;
@@ -176,6 +183,11 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <BodyweightLogDialog
+            athleteId={athlete.id}
+            athleteName={athlete.name}
+            onLogged={handleBodyweightLogged}
+          />
           <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
             <Pencil className="h-4 w-4 mr-1" />
             Edit
@@ -255,7 +267,7 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'info' && <InfoTab athlete={athlete} currentProgram={currentProgram} />}
+      {activeTab === 'info' && <InfoTab athlete={athlete} currentProgram={currentProgram} onBodyweightLogged={handleBodyweightLogged} />}
       {activeTab === 'training' && <TrainingTab athlete={athlete} />}
       {activeTab === 'analytics' && <AnalyticsTab athlete={athlete} />}
     </div>
@@ -265,10 +277,14 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
 function InfoTab({
   athlete,
   currentProgram,
+  onBodyweightLogged,
 }: {
   athlete: AthleteProfileData;
   currentProgram: AthleteProfileData['programAssignments'][number] | null;
+  onBodyweightLogged: () => void;
 }) {
+  const latestBw = athlete.bodyweightLogs[athlete.bodyweightLogs.length - 1] ?? null;
+
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Profile Details */}
@@ -282,12 +298,23 @@ function InfoTab({
                 <dd>{athlete.email}</dd>
               </div>
             )}
-            {athlete.bodyweight && (
-              <div className="flex items-center gap-2">
-                <Weight className="h-4 w-4 text-muted-foreground shrink-0" />
-                <dd>{athlete.bodyweight} kg</dd>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <Weight className="h-4 w-4 text-muted-foreground shrink-0" />
+              <dd>
+                {latestBw ? (
+                  <span>
+                    {latestBw.weight} {latestBw.unit}
+                    <span className="text-muted-foreground ml-1">
+                      ({formatDate(latestBw.loggedAt)})
+                    </span>
+                  </span>
+                ) : athlete.bodyweight ? (
+                  <span>{athlete.bodyweight} kg</span>
+                ) : (
+                  <span className="text-muted-foreground">No bodyweight logged</span>
+                )}
+              </dd>
+            </div>
             {athlete.weightClass && (
               <div className="flex items-center gap-2">
                 <Dumbbell className="h-4 w-4 text-muted-foreground shrink-0" />
