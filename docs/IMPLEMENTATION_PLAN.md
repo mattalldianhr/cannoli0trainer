@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 159
+- Completed: 160
 - In progress: 0
-- Remaining: 26
+- Remaining: 25
 
 ## Tasks
 
@@ -833,9 +833,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 31: Missing UI Features
 
-- [ ] **Task 31.1**: Build workout history list component for coach athlete view
+- [x] **Task 31.1**: Build workout history list component for coach athlete view
   - Spec: specs/03-athlete-management.md
   - Acceptance: "Training History" section on `/athletes/[id]` with paginated WorkoutSession list. Date, name, completion %, volume, duration. 20 per page.
+  - Note: Created `/api/athletes/[id]/history` API route with paginated list + session detail endpoints. `WorkoutHistoryList` component fetches paginated sessions (20/page), shows date, title, completion %, volume, sets, duration, exercise count. Click-to-expand shows per-exercise set details with weight/reps/RPE/velocity. Replaced simple "Recent Sessions" list in Training tab.
 
 - [ ] **Task 31.2**: Build workout session detail view with prescribed vs actual comparison
   - Spec: specs/03-athlete-management.md

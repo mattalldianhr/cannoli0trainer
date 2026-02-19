@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { EditAthleteForm } from './EditAthleteForm';
 import { DeleteAthleteDialog } from './DeleteAthleteDialog';
+import { WorkoutHistoryList } from './WorkoutHistoryList';
 
 type TabKey = 'info' | 'training' | 'analytics';
 
@@ -446,54 +447,8 @@ function TrainingTab({ athlete }: { athlete: AthleteProfileData }) {
         </Card>
       )}
 
-      {/* Recent Sessions */}
-      <Card>
-        <CardContent className="p-6 space-y-4">
-          <h2 className="text-lg font-semibold">
-            Recent Training ({athlete._count.workoutSessions} total)
-          </h2>
-          {athlete.workoutSessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No training sessions recorded yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {athlete.workoutSessions.map((session) => {
-                const pct = Math.round(session.completionPercentage);
-                return (
-                  <div
-                    key={session.id}
-                    className="flex items-center justify-between rounded-lg border p-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm">
-                        {session.title ?? formatDate(session.date)}
-                      </p>
-                      {session.title && (
-                        <p className="text-xs text-muted-foreground">{formatDate(session.date)}</p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0 ml-3">
-                      <span className="text-xs text-muted-foreground">
-                        {session.completedItems}/{session.totalItems} exercises
-                      </span>
-                      <Badge
-                        variant={pct >= 80 ? 'default' : pct >= 50 ? 'secondary' : 'outline'}
-                        className="text-xs tabular-nums"
-                      >
-                        {pct}%
-                      </Badge>
-                    </div>
-                  </div>
-                );
-              })}
-              {athlete._count.workoutSessions > athlete.workoutSessions.length && (
-                <p className="text-xs text-muted-foreground text-center pt-2">
-                  Showing {athlete.workoutSessions.length} of {athlete._count.workoutSessions} sessions
-                </p>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Workout History with Pagination */}
+      <WorkoutHistoryList athleteId={athlete.id} />
     </div>
   );
 }
