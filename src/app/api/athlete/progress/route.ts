@@ -300,6 +300,8 @@ async function getPersonalRecords(
     reps: number;
     date: string;
     isRecent: boolean;
+    category: string;
+    tags: string[];
   }[]
 > {
   // Get the best (highest workingMax) MaxSnapshot per exercise
@@ -310,7 +312,7 @@ async function getPersonalRecords(
       workingMax: true,
       generatedMax: true,
       date: true,
-      exercise: { select: { name: true } },
+      exercise: { select: { name: true, category: true, tags: true } },
     },
     orderBy: { workingMax: 'desc' },
   });
@@ -323,6 +325,8 @@ async function getPersonalRecords(
       exerciseName: string;
       weight: number;
       date: Date;
+      category: string;
+      tags: string[];
     }
   > = {};
 
@@ -335,6 +339,8 @@ async function getPersonalRecords(
         exerciseName: snap.exercise.name,
         weight,
         date: snap.date,
+        category: snap.exercise.category,
+        tags: Array.isArray(snap.exercise.tags) ? (snap.exercise.tags as string[]) : [],
       };
     }
   }
@@ -350,6 +356,8 @@ async function getPersonalRecords(
       reps: 1, // MaxSnapshot represents a 1RM
       date: pr.date.toISOString().split('T')[0],
       isRecent: pr.date >= sevenDaysAgo,
+      category: pr.category,
+      tags: pr.tags,
     }))
     .sort((a, b) => b.date.localeCompare(a.date));
 }

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 171
+- Completed: 172
 - In progress: 0
-- Remaining: 14
+- Remaining: 13
 
 ## Tasks
 
@@ -895,9 +895,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Donut chart for compliance %. Streak counter badge. Weekly and monthly compliance. Capped at 100%.
   - Note: Created `ComplianceRing` component at `src/components/athlete/progress/ComplianceRing.tsx`. SVG donut ring (140px) with animated progress arc colored by rate (green ≥80%, amber ≥50%, red <50%). Center shows percentage with "Compliance" label. Side column shows streak counter with Flame icon (matching athlete dashboard pattern), completed/assigned count, and status badge ("On Track" or "Needs Attention"). Rate capped at 100%. Empty state when no data. Uses compliance data from `/api/athlete/progress` endpoint (assigned, completed, streak fields).
 
-- [ ] **Task 32.5**: Build personal records list component
+- [x] **Task 32.5**: Build personal records list component
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: All-time best per exercise from MaxSnapshot. "New PR" badge for last 7 days. Filterable by category. Sorted most recent first.
+  - Note: Created `PersonalRecordsList` component at `src/components/athlete/progress/PersonalRecordsList.tsx`. Card with Trophy icon, category filter chips (All, Competition Lifts, Variations, Accessories) with counts, divider-separated PR rows with Star icons (amber-filled for recent), "New PR" badge on records from last 7 days, weight in kg with tabular-nums. Filters by powerlifting tags from exercise data. Updated `/api/athlete/progress` `getPersonalRecords()` to include `category` and `tags` fields from Exercise model. Empty state when no PRs exist.
 
 - [ ] **Task 32.6**: Build bodyweight trend chart (conditional render)
   - Spec: specs/15-athlete-progress-dashboard.md
