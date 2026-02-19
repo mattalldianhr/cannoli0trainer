@@ -3,6 +3,7 @@ import Resend from "next-auth/providers/resend"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
+import { brandedEmailHtml, emailCtaButton } from "@/lib/email"
 
 declare module "next-auth" {
   interface Session {
@@ -28,6 +29,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Resend({
       apiKey: process.env.AUTH_RESEND_KEY,
       from: process.env.EMAIL_FROM || "Cannoli Trainer <noreply@cannoli.mattalldian.com>",
+      async sendVerificationRequest({ identifier: to, url, provider }) {
+        const { host } = new URL(url)
+        const body = `
+          <h2 style="margin: 0 0 16px;">Sign in to Cannoli Trainer</h2>
+          <p style="color: #374151; font-size: 16px; line-height: 1.5;">
+            Click the button below to sign in to your account on <strong>${host}</strong>.
+            This link expires in 24 hours.
+          </p>
+          ${emailCtaButton("Sign In", url)}
+          <p style="color: #9ca3af; font-size: 13px; line-height: 1.5;">
+            If you didn&#39;t request this email, you can safely ignore it.
+          </p>
+        `
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${provider.apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: provider.from,
+            to,
+            subject: `Sign in to ${host}`,
+            html: brandedEmailHtml({ body }),
+            text: `Sign in to ${host}\n\n${url}\n\nIf you didn't request this email, you can safely ignore it.`,
+          }),
+        })
+        if (!res.ok) {
+          throw new Error("Resend error: " + JSON.stringify(await res.json()))
+        }
+      },
     }),
     // Dev bypass: sign in as first athlete without email verification
     ...(process.env.ENABLE_DEV_LOGIN === "true"

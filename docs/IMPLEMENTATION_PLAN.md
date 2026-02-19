@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 156
+- Completed: 157
 - In progress: 0
-- Remaining: 29
+- Remaining: 28
 
 ## Tasks
 
@@ -605,10 +605,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `AUTH_RESEND_KEY` set on Railway. `AUTH_URL` set to `https://cannoli.mattalldian.com`. `AUTH_SECRET` set. Real magic link email sent to a test athlete email, link opens and creates a valid session. Verify the full flow: enter email → receive email → click link → land on `/athlete` with valid session.
   - Note: The Resend provider, login page, check-email page, and middleware are all implemented. This task is purely Railway env var configuration and end-to-end verification.
 
-- [ ] **Task 18.17**: Wire branded email template into NextAuth magic link emails
+- [x] **Task 18.17**: Wire branded email template into NextAuth magic link emails
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Magic link emails use the branded template from `src/lib/email.ts` (Cannoli orange header, footer, CTA button) instead of NextAuth's default plain email. Configure Resend provider's `sendVerificationRequest` option to use `brandedEmailHtml()`. Verify email renders correctly in Gmail and Apple Mail.
-  - Note: `brandedEmailHtml()` and `emailCtaButton()` helpers already exist in `src/lib/email.ts` but are unused — NextAuth's Resend provider sends its own default email.
+  - Note: Custom `sendVerificationRequest` in `src/lib/auth.ts` uses `brandedEmailHtml()` wrapper (orange header + footer) and `emailCtaButton("Sign In", url)` for the CTA. Includes plain text fallback. Uses `&#39;` for email client compatibility.
 
 - [ ] **Task 18.18**: Add service worker for PWA offline support
   - Spec: specs/10-remote-program-delivery.md
