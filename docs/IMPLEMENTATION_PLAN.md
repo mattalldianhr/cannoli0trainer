@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 170
+- Completed: 171
 - In progress: 0
-- Remaining: 15
+- Remaining: 14
 
 ## Tasks
 
@@ -890,9 +890,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Recharts BarChart of weekly tonnage. Current week highlighted. Trend indicator (up/down arrow + %).
   - Note: Created `WeeklyVolumeChart` component at `src/components/athlete/progress/WeeklyVolumeChart.tsx`. Uses `BaseBarChart` wrapper from Spec 07 with two data keys (pastTonnage/currentTonnage) for current week orange highlight vs blue past weeks. Shows latest week tonnage as hero number with trend badge (up/down/flat arrow + %). Trend compares last two weeks with 2% deadzone. Empty state when no volume data.
 
-- [ ] **Task 32.4**: Build compliance ring and training streak display
+- [x] **Task 32.4**: Build compliance ring and training streak display
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: Donut chart for compliance %. Streak counter badge. Weekly and monthly compliance. Capped at 100%.
+  - Note: Created `ComplianceRing` component at `src/components/athlete/progress/ComplianceRing.tsx`. SVG donut ring (140px) with animated progress arc colored by rate (green ≥80%, amber ≥50%, red <50%). Center shows percentage with "Compliance" label. Side column shows streak counter with Flame icon (matching athlete dashboard pattern), completed/assigned count, and status badge ("On Track" or "Needs Attention"). Rate capped at 100%. Empty state when no data. Uses compliance data from `/api/athlete/progress` endpoint (assigned, completed, streak fields).
 
 - [ ] **Task 32.5**: Build personal records list component
   - Spec: specs/15-athlete-progress-dashboard.md
