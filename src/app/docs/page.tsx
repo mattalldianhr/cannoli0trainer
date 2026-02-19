@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { MarkdownRenderer } from "@/components/research/MarkdownRenderer";
 import { TableOfContents } from "@/components/research/TableOfContents";
 import { extractHeadings } from "@/lib/markdown";
-import { getAllSpecs, getImplementationPlan, getPRD, getArchitecture } from "@/lib/specs";
+import { getAllSpecs, getImplementationPlan, getPRD, getArchitecture, getCoachDocs } from "@/lib/specs";
 import {
   FileText,
   ListChecks,
@@ -37,6 +37,8 @@ export default function DocsPage() {
   const plan = getImplementationPlan();
   const prd = getPRD();
   const arch = getArchitecture();
+  const coachDocs = getCoachDocs();
+  const coachTotalWords = coachDocs.reduce((sum, d) => sum + d.wordCount, 0);
 
   const headings = prd ? extractHeadings(prd.content) : [];
 
@@ -303,6 +305,58 @@ export default function DocsPage() {
                 </Button>
               </CardFooter>
             </Card>
+
+            {/* Coach Guide Card */}
+            {coachDocs.length > 0 && (
+              <Card className="flex flex-col">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <BookOpen className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle>Coach Guide</CardTitle>
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        {coachDocs.length} guides &middot;{" "}
+                        {coachTotalWords.toLocaleString()} words
+                      </p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <p className="text-sm text-muted-foreground">
+                    Comprehensive coaching documentation covering every feature,
+                    step-by-step walkthroughs, and a full glossary of
+                    powerlifting terms and prescription types.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-4">
+                    <Badge variant="secondary" className="text-xs">
+                      Getting Started
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Programs
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Analytics
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Meets
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Glossary
+                    </Badge>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/docs/coach" className="gap-1">
+                      View coach guide
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            )}
           </div>
 
           <Separator />

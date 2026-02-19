@@ -922,7 +922,234 @@ export const apiGroups: EndpointGroup[] = [
     ],
   },
 
-  // ── 12. Settings ────────────────────────────────────────────────────
+  // ── 12. Athlete App ────────────────────────────────────────────────
+  {
+    id: "athlete-app",
+    title: "Athlete App",
+    description: "Endpoints used by the athlete-facing app. All require an authenticated athlete session.",
+    endpoints: [
+      {
+        id: "athlete-dashboard",
+        method: "GET",
+        path: "/api/athlete/dashboard",
+        summary: "Athlete dashboard overview",
+        coachTip:
+          "This powers the athlete's home screen — today's workout, streak, weekly stats, and recent sessions.",
+        params: [],
+        responseExample: {
+          todayWorkout: {
+            id: "sess_1",
+            title: "Squat Day",
+            status: "NOT_STARTED",
+            completionPercentage: 0,
+            completedItems: 0,
+            totalItems: 5,
+            programName: "Off-Season Hypertrophy",
+          },
+          nextWorkout: null,
+          stats: { streak: 3, workoutsThisWeek: 2, completionRate: 85 },
+          recentSessions: [
+            {
+              id: "sess_2",
+              date: "2026-02-18T00:00:00Z",
+              title: "Bench Day",
+              status: "FULLY_COMPLETED",
+              completionPercentage: 100,
+              completedItems: 6,
+              totalItems: 6,
+              programName: "Off-Season Hypertrophy",
+            },
+          ],
+          currentProgram: { name: "Off-Season Hypertrophy" },
+        },
+      },
+      {
+        id: "athlete-calendar",
+        method: "GET",
+        path: "/api/athlete/calendar",
+        summary: "Athlete workout calendar",
+        coachTip:
+          "Returns sessions within a date range for the athlete's calendar view, plus a completion rate.",
+        params: [
+          { name: "startDate", location: "query", type: "string", required: true, description: "Start date (YYYY-MM-DD)" },
+          { name: "endDate", location: "query", type: "string", required: true, description: "End date (YYYY-MM-DD)" },
+        ],
+        responseExample: {
+          sessions: [
+            {
+              id: "sess_1",
+              date: "2026-02-17",
+              title: "Squat Day",
+              status: "FULLY_COMPLETED",
+              isSkipped: false,
+              completionPercentage: 100,
+              completedItems: 5,
+              totalItems: 5,
+              weekNumber: 3,
+              dayNumber: 1,
+              programName: "Off-Season Hypertrophy",
+            },
+          ],
+          completionRate: 80,
+        },
+        errorCodes: [
+          { code: 400, meaning: "Missing or invalid startDate/endDate" },
+        ],
+      },
+      {
+        id: "athlete-progress",
+        method: "GET",
+        path: "/api/athlete/progress",
+        summary: "Athlete progress analytics",
+        coachTip:
+          "Aggregated progress data: e1RM trends, weekly volume, compliance, PRs, bodyweight, and available exercises.",
+        params: [
+          { name: "range", location: "query", type: "string", required: false, description: "'4w' | '8w' | '12w' | 'all' (default: '8w')" },
+        ],
+        responseExample: {
+          e1rmTrends: {
+            "exercise_1": [
+              { date: "2026-02-01", value: 165 },
+              { date: "2026-02-08", value: 167.5 },
+            ],
+          },
+          weeklyVolume: [
+            { weekStart: "2026-02-03", tonnage: 12500 },
+          ],
+          compliance: { assigned: 12, completed: 10, streak: 3 },
+          personalRecords: [
+            {
+              exerciseId: "exercise_1",
+              exerciseName: "Back Squat",
+              weight: 180,
+              reps: 1,
+              date: "2026-02-15",
+              isRecent: true,
+              category: "squat",
+              tags: ["competition"],
+            },
+          ],
+          bodyweight: [
+            { date: "2026-02-01", weight: 74.2 },
+            { date: "2026-02-15", weight: 74.0 },
+          ],
+          availableExercises: [
+            { id: "exercise_1", name: "Back Squat" },
+          ],
+          weightClass: "74kg",
+        },
+      },
+      {
+        id: "athlete-history",
+        method: "GET",
+        path: "/api/athlete/history",
+        summary: "Athlete training history",
+        coachTip:
+          "Paginated list of completed sessions, or pass sessionId for full detail with exercises and sets.",
+        params: [
+          { name: "page", location: "query", type: "number", required: false, description: "Page number (default: 1)" },
+          { name: "limit", location: "query", type: "number", required: false, description: "Items per page, max 50 (default: 20)" },
+          { name: "sessionId", location: "query", type: "string", required: false, description: "Session ID for detailed view" },
+        ],
+        responseExample: {
+          data: [
+            {
+              id: "sess_1",
+              date: "2026-02-18T00:00:00Z",
+              title: "Squat Day",
+              status: "FULLY_COMPLETED",
+              completionPercentage: 100,
+              completedItems: 5,
+              totalItems: 5,
+              programName: "Off-Season Hypertrophy",
+              weekNumber: 3,
+              dayNumber: 1,
+              exerciseNames: ["Back Squat", "Front Squat", "Leg Press"],
+              exerciseCount: 3,
+              totalVolume: 8400,
+              totalSets: 15,
+            },
+          ],
+          total: 42,
+          hasMore: true,
+          page: 1,
+          limit: 20,
+        },
+      },
+      {
+        id: "athlete-coach",
+        method: "GET",
+        path: "/api/athlete/coach",
+        summary: "Get assigned coach",
+        coachTip:
+          "Returns the name of the athlete's assigned coach.",
+        params: [],
+        responseExample: { name: "Joe Cristando" },
+        errorCodes: [{ code: 404, meaning: "Coach not found" }],
+      },
+      {
+        id: "athlete-messages-list",
+        method: "GET",
+        path: "/api/athlete/messages",
+        summary: "List athlete messages",
+        coachTip:
+          "Cursor-based paginated messages for the athlete's conversation with their coach. Supports polling with 'after' param.",
+        params: [
+          { name: "cursor", location: "query", type: "string", required: false, description: "Message ID for backward pagination" },
+          { name: "after", location: "query", type: "string", required: false, description: "Message ID for polling new messages" },
+          { name: "limit", location: "query", type: "number", required: false, description: "Messages to return, max 100 (default: 50)" },
+        ],
+        responseExample: {
+          messages: [
+            {
+              id: "msg_1",
+              senderId: "athlete_1",
+              senderType: "ATHLETE",
+              content: "Squats felt great today, RPE 7 on top sets",
+              createdAt: "2026-02-19T10:35:00Z",
+              readAt: null,
+            },
+          ],
+          hasMore: false,
+        },
+      },
+      {
+        id: "athlete-messages-send",
+        method: "POST",
+        path: "/api/athlete/messages",
+        summary: "Send message to coach",
+        coachTip:
+          "Athlete sends a message to their coach. Auto-creates the conversation if needed.",
+        params: [
+          { name: "content", location: "body", type: "string", required: true, description: "Message text" },
+        ],
+        requestExample: { content: "Can we move bench day to Thursday this week?" },
+        responseExample: {
+          id: "msg_2",
+          conversationId: "conv_1",
+          senderId: "athlete_1",
+          senderType: "ATHLETE",
+          content: "Can we move bench day to Thursday this week?",
+          createdAt: "2026-02-19T11:00:00Z",
+          readAt: null,
+        },
+        errorCodes: [{ code: 400, meaning: "content is required" }],
+      },
+      {
+        id: "athlete-messages-read",
+        method: "PATCH",
+        path: "/api/athlete/messages/read",
+        summary: "Mark messages read",
+        coachTip:
+          "Marks all coach-sent messages as read and resets the athlete's unread count.",
+        params: [],
+        responseExample: { success: true },
+        errorCodes: [{ code: 404, meaning: "Conversation not found" }],
+      },
+    ],
+  },
+
+  // ── 13. Settings ────────────────────────────────────────────────────
   {
     id: "settings",
     title: "Settings",

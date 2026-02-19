@@ -102,6 +102,67 @@ export function getArchitecture(): { content: string; wordCount: number; reading
   return { content, wordCount, readingTime };
 }
 
+export interface CoachDoc {
+  slug: string;
+  title: string;
+  content: string;
+  wordCount: number;
+  readingTime: number;
+}
+
+const COACH_DOC_ORDER = [
+  "getting-started",
+  "athletes",
+  "program-builder",
+  "schedule-and-training",
+  "exercises",
+  "meets",
+  "analytics",
+  "glossary",
+  "walkthroughs",
+];
+
+export function getCoachDocs(): CoachDoc[] {
+  const coachDir = path.join(process.cwd(), "docs", "coach");
+  if (!fs.existsSync(coachDir)) return [];
+
+  const files = fs
+    .readdirSync(coachDir)
+    .filter((f) => f.endsWith(".md") && f !== "README.md");
+
+  const docMap = new Map<string, CoachDoc>();
+
+  for (const filename of files) {
+    const raw = fs.readFileSync(path.join(coachDir, filename), "utf-8");
+    const slug = filename.replace(/\.md$/, "");
+    const wordCount = raw.split(/\s+/).filter(Boolean).length;
+    const readingTime = Math.max(1, Math.round(wordCount / 250));
+
+    docMap.set(slug, {
+      slug,
+      title: extractTitle(raw),
+      content: raw,
+      wordCount,
+      readingTime,
+    });
+  }
+
+  // Return in display order, then any remaining files alphabetically
+  const ordered: CoachDoc[] = [];
+  for (const slug of COACH_DOC_ORDER) {
+    const doc = docMap.get(slug);
+    if (doc) {
+      ordered.push(doc);
+      docMap.delete(slug);
+    }
+  }
+  for (const doc of Array.from(docMap.values()).sort((a, b) => a.slug.localeCompare(b.slug))) {
+    ordered.push(doc);
+  }
+
+  return ordered;
+}
+
 export function getSurveyPRD(): { content: string } | undefined {
   const localPrd = path.join(process.cwd(), "prd.json");
   if (fs.existsSync(localPrd)) {
