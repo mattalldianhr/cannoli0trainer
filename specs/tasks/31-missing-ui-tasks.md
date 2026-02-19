@@ -4,11 +4,11 @@ Source: specs/tasks/00-implied-features-audit.md (gaps #13, #14, #15, #25, #26)
 
 ### Priority 31: Missing UI Features
 
-- [ ] **Task 31.1**: Build workout history list component for coach athlete view
+- [x] **Task 31.1**: Build workout history list component for coach athlete view
   - Spec: specs/03-athlete-management.md
   - Acceptance: `/athletes/[id]` profile page includes a "Training History" section showing a paginated list of `WorkoutSession` records for the athlete. Each row shows: date, workout/program name, completion percentage, total volume (sum of weight * reps across all SetLogs), duration. Most recent sessions first. Load 20 per page with a "Load More" button. Clicking a session row expands or navigates to the session detail view (Task 31.2).
 
-- [ ] **Task 31.2**: Build workout session detail view with prescribed vs actual comparison
+- [x] **Task 31.2**: Build workout session detail view with prescribed vs actual comparison
   - Spec: specs/03-athlete-management.md
   - Acceptance: Session detail view (expandable row or `/athletes/[id]/sessions/[sessionId]` page) shows each exercise in the workout with two columns: "Prescribed" (from WorkoutExercise: sets x reps @ weight/RPE) and "Actual" (from SetLogs: logged sets with actual weight, reps, RPE). Visual indicators: green when actual meets or exceeds prescribed, yellow for partial completion, red for missed exercises. Total volume comparison at the bottom. Coach can see at a glance whether the athlete followed the program.
 

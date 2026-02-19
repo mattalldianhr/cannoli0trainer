@@ -72,6 +72,16 @@ export async function GET(
         id: we.id,
         name: we.exercise.name,
         category: we.exercise.category,
+        prescribed: {
+          sets: we.prescribedSets,
+          reps: we.prescribedReps,
+          load: we.prescribedLoad,
+          rpe: we.prescribedRPE,
+          rir: we.prescribedRIR,
+          velocityTarget: we.velocityTarget,
+          percentageOf1RM: we.percentageOf1RM,
+          prescriptionType: we.prescriptionType,
+        },
         sets: we.setLogs.map((s) => ({
           id: s.id,
           setNumber: s.setNumber,
@@ -83,6 +93,15 @@ export async function GET(
         })),
         totalVolume: we.setLogs.reduce((sum, s) => sum + s.weight * s.reps, 0),
       }));
+
+      const totalPrescribedVolume = exercises.reduce((sum, ex) => {
+        const prescribedSets = parseInt(ex.prescribed.sets || '0', 10) || 0;
+        const prescribedReps = parseInt(ex.prescribed.reps || '0', 10) || 0;
+        const prescribedLoad = parseFloat(ex.prescribed.load || '0') || 0;
+        return sum + prescribedSets * prescribedReps * prescribedLoad;
+      }, 0);
+
+      const totalActualVolume = exercises.reduce((sum, ex) => sum + ex.totalVolume, 0);
 
       return NextResponse.json({
         session: {
@@ -98,6 +117,8 @@ export async function GET(
           dayNumber: workoutSession.dayNumber,
           durationSeconds: workoutSession.durationSeconds,
           exercises,
+          totalPrescribedVolume: Math.round(totalPrescribedVolume),
+          totalActualVolume: Math.round(totalActualVolume),
         },
       });
     }
