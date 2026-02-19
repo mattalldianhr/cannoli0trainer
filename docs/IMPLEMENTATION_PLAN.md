@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 158
+- Completed: 159
 - In progress: 0
-- Remaining: 27
+- Remaining: 26
 
 ## Tasks
 
@@ -615,10 +615,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `public/sw.js` service worker caches app shell (HTML, JS, CSS bundles). Client-side registration in app layout. Athlete can "Add to Home Screen" on iOS/Android and app launches in standalone mode. Offline fallback page shown when network unavailable. Chrome DevTools > Application > Service Workers shows registered worker. Lighthouse PWA audit passes.
   - Note: Service worker at `public/sw.js` implements: cache-first for static assets (`/_next/static/`, icons, JS/CSS), network-first for navigation with offline fallback, skip for API and auth routes. Offline fallback page at `/offline` with WifiOff icon and retry button. Registration component `ServiceWorkerRegistration.tsx` added to root layout. Pre-caches `/offline` page and icon assets on install. Auto-cleans old caches on activate.
 
-- [ ] **Task 18.19**: Cache athlete workout data for offline training sessions
+- [x] **Task 18.19**: Cache athlete workout data for offline training sessions
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: Service worker caches `/api/train` response so athletes can view today's workout without network. Cache-first strategy for static assets, network-first for API data with stale fallback. Previously loaded workout history available offline. "Offline" indicator badge shown when disconnected. Syncs with offline queue on reconnect.
-  - Note: Extends Task 18.18. The offline queue (`src/lib/offline-queue.ts` + `useOfflineSync` hook) already handles queueing set log POSTs when offline. This task adds the read side — caching GET responses so athletes can see their prescribed workout and log sets even without connectivity.
+  - Note: Service worker (`public/sw.js`) upgraded to v2 with dedicated `cannoli-api-v1` cache for API responses. Cacheable API paths: `/api/train`, `/api/athlete/dashboard`, `/api/athlete/calendar`, `/api/athlete/history`. Network-first with stale fallback on failure. `OfflineIndicator` component added to athlete layout header (pill badge with WifiOff icon). TrainingLog enhanced with `useOnlineStatus` hook to show "Offline — viewing cached workout data" banner and auto-refetch when connectivity returns. Existing offline queue continues handling set log POSTs.
 
 ### Priority 19: Athlete Management Enhancements
 

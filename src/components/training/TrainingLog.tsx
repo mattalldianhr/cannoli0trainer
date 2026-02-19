@@ -36,6 +36,7 @@ import { RestTimer } from '@/components/training/RestTimer';
 import { cn } from '@/lib/utils';
 import { enqueue, type SetLogPayload } from '@/lib/offline-queue';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { calculateVelocityDrop } from '@/lib/vbt';
 
 interface SetLogData {
@@ -945,6 +946,8 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
   const [date, setDate] = useState(formatDate(new Date()));
   const [data, setData] = useState<TrainResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isStaleData, setIsStaleData] = useState(false);
+  const isOnline = useOnlineStatus();
 
   const fetchWorkout = useCallback(async () => {
     if (!athleteId) return;
@@ -953,12 +956,29 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
       const res = await fetch(`/api/train?athleteId=${athleteId}&date=${date}`);
       const json = await res.json();
       setData(json);
+      // If we got data while offline, the service worker served it from cache
+      setIsStaleData(!navigator.onLine);
     } catch {
-      setData(null);
+      // Network failure and no cached response — keep existing data if any
+      if (data) {
+        setIsStaleData(true);
+      } else {
+        setData(null);
+        setIsStaleData(false);
+      }
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [athleteId, date]);
+
+  // Clear stale flag when coming back online and refetch
+  useEffect(() => {
+    if (isOnline && isStaleData) {
+      fetchWorkout();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnline]);
 
   const { pendingCount, refreshCount } = useOfflineSync(fetchWorkout);
 
@@ -1037,6 +1057,18 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
         </div>
       </div>
 
+      {/* Offline indicator */}
+      {!isOnline && (
+        <div className="flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+          <WifiOff className="h-4 w-4 flex-shrink-0" />
+          <span>
+            {isStaleData
+              ? 'Offline — viewing cached workout data'
+              : 'Offline — you can still log sets'}
+          </span>
+        </div>
+      )}
+
       {/* Pending sync badge */}
       {pendingCount > 0 && (
         <div className="flex items-center gap-2 rounded-md border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-800 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-300">
@@ -1044,11 +1076,6 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
           <span>
             {pendingCount} set{pendingCount !== 1 ? 's' : ''} pending sync
           </span>
-          {typeof navigator !== 'undefined' && !navigator.onLine && (
-            <span className="ml-auto flex items-center gap-1 text-xs opacity-75">
-              <WifiOff className="h-3 w-3" /> Offline
-            </span>
-          )}
         </div>
       )}
 
