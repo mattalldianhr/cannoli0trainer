@@ -166,9 +166,10 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
       if (rangeConfig && rangeConfig.weeks > 0) {
         const from = new Date();
         from.setDate(from.getDate() - rangeConfig.weeks * 7);
-        params.set('from', from.toISOString().split('T')[0]);
+        params.set('from', `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`);
       }
-      params.set('to', new Date().toISOString().split('T')[0]);
+      const toDate = new Date();
+      params.set('to', `${toDate.getFullYear()}-${String(toDate.getMonth() + 1).padStart(2, '0')}-${String(toDate.getDate()).padStart(2, '0')}`);
       if (rpeExerciseId) {
         params.set('rpeExerciseId', rpeExerciseId);
       }
@@ -204,9 +205,10 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
     if (rangeConfig && rangeConfig.weeks > 0) {
       const from = new Date();
       from.setDate(from.getDate() - rangeConfig.weeks * 7);
-      params.set('from', from.toISOString().split('T')[0]);
+      params.set('from', `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`);
     }
-    params.set('to', new Date().toISOString().split('T')[0]);
+    const exportDate = new Date();
+    params.set('to', `${exportDate.getFullYear()}-${String(exportDate.getMonth() + 1).padStart(2, '0')}-${String(exportDate.getDate()).padStart(2, '0')}`);
 
     window.location.href = `/api/analytics/${selectedAthleteId}/export?${params.toString()}`;
   }, [selectedAthleteId, dateRange]);
@@ -371,7 +373,7 @@ export function AnalyticsDashboard({ athletes, initialAthleteId, compact }: Anal
       {!loading && !error && data && (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">

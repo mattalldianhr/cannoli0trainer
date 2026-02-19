@@ -2,7 +2,8 @@
 
 import { usePathname } from "next/navigation"
 import { Header } from "./Header"
-import { Footer } from "./Footer"
+
+const NO_CHROME_ROUTES = ["/login", "/check-email"]
 
 export function ConditionalCoachChrome({
   children,
@@ -10,9 +11,10 @@ export function ConditionalCoachChrome({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isAthleteRoute = pathname.startsWith("/athlete")
+  const isAthleteRoute = pathname === "/athlete" || pathname.startsWith("/athlete/")
+  const isAuthRoute = NO_CHROME_ROUTES.includes(pathname)
 
-  if (isAthleteRoute) {
+  if (isAthleteRoute || isAuthRoute) {
     return <>{children}</>
   }
 
@@ -20,7 +22,6 @@ export function ConditionalCoachChrome({
     <>
       <Header />
       <main className="flex-1">{children}</main>
-      <Footer />
     </>
   )
 }

@@ -183,7 +183,9 @@ export default function AthleteHistoryPage() {
           const isExpanded = expandedId === s.id
           const detail = detailCache[s.id]
           const isLoadingThis = loadingDetail === s.id
-          const date = new Date(s.date)
+          // Parse date as local to avoid UTC shift
+          const dateParts = s.date.split("T")[0].split("-").map(Number)
+          const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2])
           const isCompleted = s.status === "FULLY_COMPLETED"
 
           return (

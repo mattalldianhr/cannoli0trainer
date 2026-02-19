@@ -15,13 +15,19 @@ function getMonday(date: Date): string {
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   d.setDate(diff);
-  return d.toISOString().split('T')[0];
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
 }
 
 function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr + 'T00:00:00');
   d.setDate(d.getDate() + days);
-  return d.toISOString().split('T')[0];
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
 }
 
 interface SchedulePageProps {
@@ -89,7 +95,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
     name: athlete.name,
     sessions: athlete.workoutSessions.map((s) => ({
       id: s.id,
-      date: s.date.toISOString().split('T')[0],
+      date: `${s.date.getFullYear()}-${String(s.date.getMonth() + 1).padStart(2, '0')}-${String(s.date.getDate()).padStart(2, '0')}`,
       title: s.title,
       status: s.status,
       isSkipped: s.isSkipped,

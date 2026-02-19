@@ -60,13 +60,19 @@ function getMonday(dateStr: string): string {
   const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   d.setDate(diff);
-  return d.toISOString().split('T')[0];
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
 }
 
 function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr + 'T00:00:00');
   d.setDate(d.getDate() + days);
-  return d.toISOString().split('T')[0];
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
 }
 
 function formatWeekRange(mondayStr: string): string {
@@ -120,8 +126,9 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
     return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   }, [weekStart]);
 
-  // Today's date for highlighting
-  const today = new Date().toISOString().split('T')[0];
+  // Today's date for highlighting (local timezone)
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   // Filter athletes
   const displayedAthletes = useMemo(() => {
@@ -436,7 +443,7 @@ export function WeeklyCalendar({ athletes, weekStart, isCurrentWeek }: WeeklyCal
       </Card>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+      <div className="flex flex-wrap gap-2 sm:gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
           <Circle className="h-3 w-3" /> Not Started
         </span>

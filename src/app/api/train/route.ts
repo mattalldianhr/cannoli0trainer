@@ -24,13 +24,16 @@ export async function GET(request: NextRequest) {
     const defaultWeightUnit = coach?.defaultWeightUnit ?? 'lbs';
     const defaultRestTimerSeconds = coach?.defaultRestTimerSeconds ?? 120;
 
-    // Default to today (UTC date only, no time)
-    const targetDate = dateParam ? new Date(dateParam) : new Date();
-    const dateOnly = new Date(
-      targetDate.getFullYear(),
-      targetDate.getMonth(),
-      targetDate.getDate()
-    );
+    // Parse date param as local date (YYYY-MM-DD), default to today
+    let dateOnly: Date;
+    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+      // Parse as local midnight to avoid UTC offset shifting the day
+      const [y, m, d] = dateParam.split('-').map(Number);
+      dateOnly = new Date(y, m - 1, d);
+    } else {
+      const now = new Date();
+      dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
 
     // Find the workout session for this athlete + date
     const session = await prisma.workoutSession.findUnique({

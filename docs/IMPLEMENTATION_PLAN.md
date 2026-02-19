@@ -1,12 +1,23 @@
 # Implementation Plan
 
 ## Status
-- Total tasks: 184
-- Completed: 184
+- Total tasks: 192
+- Completed: 192
 - In progress: 0
 - Remaining: 0
 
 ## Tasks
+
+### Priority 0: Unified Login & Coach Authentication
+
+- [x] **Task 0.1**: Add `userId` and `user` relation to Coach model (mirrors Athlete pattern)
+- [x] **Task 0.2**: Run migration `add-coach-user-relation`, link existing coach to User record in seed
+- [x] **Task 0.3**: Expand NextAuth types with `coachId` and `role` on Session/JWT
+- [x] **Task 0.4**: Update `signIn` callback to allow coach OR athlete email
+- [x] **Task 0.5**: Update `jwt` callback to store `coachId` and `role`, `session` callback to copy them
+- [x] **Task 0.6**: Add `dev-coach-login` credentials provider for development
+- [x] **Task 0.7**: Create unified `/login` page (single email input, auto-detects role)
+- [x] **Task 0.8**: Create unified `/check-email` page, redirect old athlete auth pages
 
 ### Priority 1: Foundation (Data Layer)
 

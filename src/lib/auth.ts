@@ -13,6 +13,8 @@ declare module "next-auth" {
       name?: string | null
       image?: string | null
       athleteId?: string
+      coachId?: string
+      role: "coach" | "athlete"
     }
   }
 }
@@ -20,6 +22,8 @@ declare module "next-auth" {
 declare module "@auth/core/jwt" {
   interface JWT {
     athleteId?: string
+    coachId?: string
+    role?: "coach" | "athlete"
   }
 }
 
@@ -57,7 +61,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       ? [
           Credentials({
             id: "dev-login",
-            name: "Dev Login",
+            name: "Dev Login (Athlete)",
             credentials: {},
             async authorize() {
               const athlete = await prisma.athlete.findFirst({
@@ -73,6 +77,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               }
             },
           }),
+          Credentials({
+            id: "dev-coach-login",
+            name: "Dev Login (Coach)",
+            credentials: {},
+            async authorize() {
+              const coach = await prisma.coach.findFirst({
+                include: { user: true },
+                orderBy: { createdAt: "asc" },
+              })
+              if (!coach?.user) return null
+              return {
+                id: coach.user.id,
+                email: coach.user.email,
+                name: coach.user.name,
+              }
+            },
+          }),
         ]
       : []),
   ],
@@ -80,23 +101,48 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async signIn({ user }) {
-      // Only allow sign-in if an athlete exists with this email
+    async signIn({ user, account }) {
+      // Dev credentials providers bypass email check — authorize() already verified
+      if (account?.provider === "dev-login" || account?.provider === "dev-coach-login") {
+        return true
+      }
+      // Allow sign-in if email matches an athlete OR a coach
       if (!user.email) return false
       const athlete = await prisma.athlete.findFirst({
         where: { email: user.email },
       })
-      return !!athlete
+      if (athlete) return true
+      const coach = await prisma.coach.findFirst({
+        where: { email: user.email },
+      })
+      return !!coach
     },
-    async jwt({ token, trigger }) {
-      // Only look up athleteId on sign-in (not every request) to avoid
-      // Prisma calls in Edge Runtime where middleware validates the JWT.
-      if (trigger === "signIn" && token.email) {
-        const athlete = await prisma.athlete.findFirst({
-          where: { email: token.email },
-        })
-        if (athlete) {
-          token.athleteId = athlete.id
+    async jwt({ token, trigger, user }) {
+      // On sign-in, populate role info. For Credentials providers, we need
+      // to manually set sub/email since there's no adapter session.
+      if (trigger === "signIn") {
+        if (user?.id) token.sub = user.id
+        if (user?.email) token.email = user.email
+
+        if (token.email) {
+          const coach = await prisma.coach.findFirst({
+            where: { email: token.email },
+          })
+          if (coach) {
+            token.coachId = coach.id
+            token.role = "coach"
+          }
+
+          const athlete = await prisma.athlete.findFirst({
+            where: { email: token.email },
+          })
+          if (athlete) {
+            token.athleteId = athlete.id
+            // Coach role takes priority if somehow both
+            if (!token.role) {
+              token.role = "athlete"
+            }
+          }
         }
       }
       return token
@@ -105,6 +151,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token?.athleteId) {
         session.user.athleteId = token.athleteId as string
       }
+      if (token?.coachId) {
+        session.user.coachId = token.coachId as string
+      }
+      if (token?.role) {
+        session.user.role = token.role as "coach" | "athlete"
+      }
       if (token?.sub) {
         session.user.id = token.sub
       }
@@ -112,8 +164,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {
-    signIn: "/athlete/login",
-    verifyRequest: "/athlete/check-email",
-    error: "/athlete/login",
+    signIn: "/login",
+    verifyRequest: "/check-email",
+    error: "/login",
   },
 })

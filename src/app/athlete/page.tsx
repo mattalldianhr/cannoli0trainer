@@ -105,7 +105,7 @@ export default function AthleteDashboardPage() {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
         <Dumbbell className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Welcome to Cannoli Trainer</h2>
+        <h2 className="text-xl font-semibold mb-2">Welcome to Cannoli Strength</h2>
         <p className="text-muted-foreground">
           Your dashboard will appear once your coach assigns you a program.
         </p>
@@ -245,7 +245,7 @@ export default function AthleteDashboardPage() {
       )}
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3 mt-2">
         <Card>
           <CardContent className="p-3 text-center">
             <Flame className="h-5 w-5 text-orange-500 mx-auto mb-1" />
@@ -277,44 +277,44 @@ export default function AthleteDashboardPage() {
           </h2>
           <div className="space-y-2">
             {recentSessions.map((s) => {
-              const date = new Date(s.date)
+              // Parse date as local to avoid UTC shift
+              const dateParts = s.date.split("T")[0].split("-").map(Number)
+              const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2])
               const isCompleted = s.status === "FULLY_COMPLETED"
 
               return (
                 <Card key={s.id} className="hover:bg-muted/50 transition-colors">
                   <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                          isCompleted
-                            ? "bg-green-500/10 text-green-600"
-                            : "bg-yellow-500/10 text-yellow-600"
-                        }`}>
-                          {isCompleted ? (
-                            <CheckCircle2 className="h-4.5 w-4.5" />
-                          ) : (
-                            <Clock className="h-4.5 w-4.5" />
+                    <div className="flex items-center gap-3">
+                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                        isCompleted
+                          ? "bg-green-500/10 text-green-600"
+                          : "bg-yellow-500/10 text-yellow-600"
+                      }`}>
+                        {isCompleted ? (
+                          <CheckCircle2 className="h-4.5 w-4.5" />
+                        ) : (
+                          <Clock className="h-4.5 w-4.5" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium truncate">
+                          {s.title || "Training Session"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {date.toLocaleDateString("en-US", {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                          {s.totalItems > 0 && (
+                            <> &middot; {s.completedItems}/{s.totalItems} exercises</>
                           )}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            {s.title || "Training Session"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {date.toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                            {s.totalItems > 0 && (
-                              <> &middot; {s.completedItems}/{s.totalItems} exercises</>
-                            )}
-                          </p>
-                        </div>
+                        </p>
                       </div>
                       <Badge
                         variant={isCompleted ? "default" : "secondary"}
-                        className="text-xs"
+                        className="text-xs shrink-0"
                       >
                         {Math.round(s.completionPercentage)}%
                       </Badge>
@@ -331,10 +331,11 @@ export default function AthleteDashboardPage() {
 }
 
 function formatRelativeDate(dateStr: string): string {
-  const date = new Date(dateStr)
+  // Parse as local date to avoid UTC shift
+  const parts = dateStr.split("T")[0].split("-").map(Number)
+  const target = new Date(parts[0], parts[1] - 1, parts[2])
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
   const diffDays = Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 
   if (diffDays === 0) return "Today"

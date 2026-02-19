@@ -137,7 +137,10 @@ interface SetFormValues {
 }
 
 function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function displayDate(dateStr: string): string {
@@ -1141,7 +1144,7 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
           <Button variant="outline" size="icon" onClick={() => changeDate(-1)}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="flex items-center gap-2 min-w-[180px] justify-center">
+          <div className="flex items-center gap-2 min-w-0 sm:min-w-[180px] justify-center">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <input
               type="date"

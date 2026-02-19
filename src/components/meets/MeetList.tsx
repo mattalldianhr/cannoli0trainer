@@ -78,8 +78,8 @@ export function MeetList({ meets, coachId }: MeetListProps) {
   return (
     <div className="space-y-4">
       {/* Search + Create */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search meets..."
@@ -88,9 +88,9 @@ export function MeetList({ meets, coachId }: MeetListProps) {
             className="pl-9"
           />
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Meet
+        <Button onClick={() => setDialogOpen(true)} className="shrink-0">
+          <Plus className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">New Meet</span>
         </Button>
       </div>
 
@@ -152,13 +152,13 @@ export function MeetList({ meets, coachId }: MeetListProps) {
             const isPast = days < 0;
 
             return (
-              <Link key={meet.id} href={`/meets/${meet.id}`}>
-                <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between gap-4">
+              <Link key={meet.id} href={`/meets/${meet.id}`} className="min-w-0">
+                <Card className="hover:bg-muted/50 transition-colors cursor-pointer overflow-hidden">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex items-start gap-3">
                       {/* Left: Name + details */}
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 min-w-0">
                           <span className="font-semibold truncate">{meet.name}</span>
                           {isUpcoming && days <= 30 && (
                             <Badge variant="default" className="text-xs">
@@ -171,7 +171,7 @@ export function MeetList({ meets, coachId }: MeetListProps) {
                             </Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
+                        <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-muted-foreground flex-wrap">
                           <span className="inline-flex items-center gap-1">
                             <Calendar className="h-3.5 w-3.5" />
                             {formatDate(meet.date)}

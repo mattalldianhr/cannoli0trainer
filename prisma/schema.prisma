@@ -84,6 +84,7 @@ model User {
   sessions Session[]
 
   athlete Athlete?
+  coach   Coach?
 }
 
 model Account {
@@ -143,9 +144,11 @@ model Coach {
   defaultWeightUnit       WeightUnit @default(lbs)
   timezone                String     @default("America/New_York")
   defaultRestTimerSeconds Int        @default(120)
+  userId                  String?    @unique
   createdAt               DateTime   @default(now())
   updatedAt               DateTime   @updatedAt
 
+  user          User?      @relation(fields: [userId], references: [id])
   athletes      Athlete[]
   programs      Program[]
   exercises     Exercise[]

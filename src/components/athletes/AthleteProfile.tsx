@@ -113,7 +113,10 @@ const TABS: { key: TabKey; label: string; icon: typeof User }[] = [
 ];
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  // Parse as local date to avoid UTC shift
+  const parts = dateStr.split('T')[0].split('-').map(Number);
+  const d = new Date(parts[0], parts[1] - 1, parts[2]);
+  return d.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -121,7 +124,9 @@ function formatDate(dateStr: string): string {
 }
 
 function daysSince(dateStr: string): number {
-  return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+  const parts = dateStr.split('T')[0].split('-').map(Number);
+  const d = new Date(parts[0], parts[1] - 1, parts[2]);
+  return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 function bestAttempt(...attempts: (number | null)[]): number | null {
@@ -161,7 +166,7 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Button variant="ghost" size="sm" asChild>
@@ -171,7 +176,7 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
               </Link>
             </Button>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">{athlete.name}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{athlete.name}</h1>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             {athlete.isCompetitor && <Badge variant="default">Competitor</Badge>}
             {athlete.isRemote && <Badge variant="secondary">Remote</Badge>}
@@ -183,7 +188,7 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button variant="outline" size="sm" asChild>
             <Link href={`/messages/${athlete.id}`}>
               <MessageSquare className="h-4 w-4 mr-1" />
@@ -214,7 +219,7 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
       />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-2xl font-bold">{athlete._count.workoutSessions}</p>
@@ -510,7 +515,7 @@ function AnalyticsTab({ athlete }: { athlete: AthleteProfileData }) {
               {Array.from({ length: 28 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - (27 - i));
-                const dateStr = date.toISOString().split('T')[0];
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                 const hasSession = athlete.workoutSessions.some(
                   (s) => s.date.split('T')[0] === dateStr
                 );

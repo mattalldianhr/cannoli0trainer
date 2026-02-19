@@ -90,7 +90,9 @@ interface MeetDetailProps {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  const parts = dateStr.split('T')[0].split('-').map(Number);
+  const d = new Date(parts[0], parts[1] - 1, parts[2]);
+  return d.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -380,15 +382,15 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
           Back to Meets
         </Link>
 
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">{meet.name}</h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{meet.name}</h1>
               {isPast && (
                 <Badge variant="secondary">Completed</Badge>
               )}
             </div>
-            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
+            <div className="flex items-center gap-3 sm:gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
               <span className="inline-flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 {formatDate(meet.date)}
@@ -413,7 +415,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
           </div>
 
           {availableAthletes.length > 0 && (
-            <Button onClick={() => setAddDialogOpen(true)}>
+            <Button onClick={() => setAddDialogOpen(true)} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Add Athlete
             </Button>
@@ -470,7 +472,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
         return (
           <Card key={entry.id}>
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <CardTitle className="text-lg">
                     <Link
@@ -480,7 +482,7 @@ export function MeetDetail({ meet, availableAthletes }: MeetDetailProps) {
                       {entry.athleteName}
                     </Link>
                   </CardTitle>
-                  <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground flex-wrap">
                     {entry.weightClass && (
                       <span>{entry.weightClass} kg</span>
                     )}

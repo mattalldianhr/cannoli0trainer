@@ -22,7 +22,9 @@ import {
   CheckCircle2,
   Layers,
   LayoutDashboard,
+  Server,
 } from "lucide-react";
+import { totalEndpoints, apiGroups } from "@/lib/api-docs-data";
 
 export const metadata = {
   title: "Docs | Cannoli Trainer",
@@ -244,6 +246,58 @@ export default function DocsPage() {
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/docs/survey" className="gap-1">
                     View survey data
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* API Reference Card */}
+            <Card className="flex flex-col">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Server className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle>API Reference</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      {totalEndpoints} endpoints &middot; {apiGroups.length}{" "}
+                      groups
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <p className="text-sm text-muted-foreground">
+                  Complete API reference with parameters, request/response
+                  examples, and plain-English coaching tips for every endpoint.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mt-4">
+                  <Badge variant="secondary" className="text-xs">
+                    Athletes
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Programs
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Training
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Analytics
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Meets
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Messaging
+                  </Badge>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/docs/api" className="gap-1">
+                    View API reference
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>

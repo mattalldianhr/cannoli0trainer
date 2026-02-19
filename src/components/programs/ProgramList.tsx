@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Search, Plus, Calendar, Users, Dumbbell, BookTemplate, ClipboardList, Pencil } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -37,9 +38,14 @@ const PERIODIZATION_LABELS: Record<string, string> = {
   hybrid: 'Hybrid',
 };
 
+function parseLocal(dateStr: string): Date {
+  const parts = dateStr.split('T')[0].split('-').map(Number);
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
 function formatDate(dateStr: string | null): string | null {
   if (!dateStr) return null;
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return parseLocal(dateStr).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -48,13 +54,14 @@ function formatDate(dateStr: string | null): string | null {
 
 function durationWeeks(start: string | null, end: string | null): string | null {
   if (!start || !end) return null;
-  const diff = new Date(end).getTime() - new Date(start).getTime();
+  const diff = parseLocal(end).getTime() - parseLocal(start).getTime();
   const weeks = Math.round(diff / (1000 * 60 * 60 * 24 * 7));
   if (weeks <= 0) return null;
   return `${weeks} week${weeks !== 1 ? 's' : ''}`;
 }
 
 export function ProgramList({ programs }: ProgramListProps) {
+  const router = useRouter();
   const [search, setSearch] = useState('');
 
   const nonTemplates = programs.filter((p) => !p.isTemplate);
@@ -73,8 +80,8 @@ export function ProgramList({ programs }: ProgramListProps) {
   return (
     <div className="space-y-4">
       {/* Search + New Program */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search programs..."
@@ -83,10 +90,10 @@ export function ProgramList({ programs }: ProgramListProps) {
             className="pl-9"
           />
         </div>
-        <Button asChild>
+        <Button asChild className="shrink-0">
           <Link href="/programs/new">
-            <Plus className="h-4 w-4 mr-2" />
-            New Program
+            <Plus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">New Program</span>
           </Link>
         </Button>
       </div>
@@ -140,63 +147,61 @@ export function ProgramList({ programs }: ProgramListProps) {
             const duration = durationWeeks(program.startDate, program.endDate);
 
             return (
-              <Link key={program.id} href={`/programs/${program.id}`}>
-                <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between gap-4">
-                      {/* Left: Name + metadata */}
+              <Link key={program.id} href={`/programs/${program.id}`} className="min-w-0">
+                <Card className="hover:bg-muted/50 transition-colors cursor-pointer overflow-hidden">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex items-center gap-3">
+                      {/* Name + metadata — takes remaining space */}
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-semibold truncate">{program.name}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-semibold truncate text-sm">{program.name}</span>
                           {program.periodizationType && (
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="secondary" className="text-[10px] leading-tight shrink-0">
                               {PERIODIZATION_LABELS[program.periodizationType] ?? program.periodizationType}
                             </Badge>
                           )}
                         </div>
                         {program.description && (
-                          <p className="text-sm text-muted-foreground mt-0.5 truncate">
+                          <p className="text-xs text-muted-foreground mt-0.5 truncate">
                             {program.description}
                           </p>
                         )}
-                        <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground flex-wrap">
                           {duration && (
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5" />
+                            <span className="inline-flex items-center gap-1">
+                              <Calendar className="h-3 w-3 shrink-0" />
                               {duration}
                             </span>
                           )}
                           {program.startDate && !duration && (
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5" />
+                            <span className="inline-flex items-center gap-1">
+                              <Calendar className="h-3 w-3 shrink-0" />
                               {formatDate(program.startDate)}
                             </span>
                           )}
+                          <span className="inline-flex items-center gap-1">
+                            <Dumbbell className="h-3 w-3 shrink-0" />
+                            {program._count.workouts}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Users className="h-3 w-3 shrink-0" />
+                            {program._count.assignments}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Right: Quick stats + Edit */}
-                      <div className="flex items-center gap-4 text-sm text-right shrink-0">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Workouts</p>
-                          <p className="font-semibold">{program._count.workouts}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Athletes</p>
-                          <p className="font-semibold flex items-center justify-end gap-1">
-                            <Users className="h-3.5 w-3.5" />
-                            {program._count.assignments}
-                          </p>
-                        </div>
-                        <Link
-                          href={`/programs/${program.id}/edit`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground text-muted-foreground transition-colors"
-                          title="Edit program"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                      </div>
+                      {/* Edit button — always visible */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          router.push(`/programs/${program.id}/edit`);
+                        }}
+                        className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground text-muted-foreground transition-colors shrink-0"
+                        title="Edit program"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
                     </div>
                   </CardContent>
                 </Card>

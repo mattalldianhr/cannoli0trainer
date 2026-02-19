@@ -415,8 +415,8 @@ export function WarmupCalculator({
           {/* Schedule display */}
           {schedule && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <div className="text-xs sm:text-sm min-w-0 flex-1">
                   <span className="font-medium">{schedule.lift}</span>
                   <span className="text-muted-foreground mx-1">·</span>
                   <span className="text-muted-foreground">
@@ -427,7 +427,7 @@ export function WarmupCalculator({
                     Flight at {formatTime(schedule.flightStartTime)}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <Button
                     size="sm"
                     variant={isTimerRunning ? 'secondary' : 'default'}

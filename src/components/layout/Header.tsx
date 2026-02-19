@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Dumbbell, Menu, MessageSquare, Settings, X } from "lucide-react";
+import { LogOut, Menu, MessageSquare, Settings, X } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -66,9 +68,15 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
-            <Dumbbell className="h-6 w-6 text-primary" />
-            <span>Cannoli Trainer</span>
+          <Link href="/dashboard" className="flex items-center">
+            <Image
+              src="/logo-white.webp"
+              alt="Cannoli Strength"
+              width={160}
+              height={40}
+              className="h-8 w-auto brightness-0 dark:brightness-100"
+              priority
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -100,6 +108,13 @@ export function Header() {
             >
               <Settings className="h-4 w-4" />
             </Link>
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="ml-1 p-2 rounded-md transition-colors text-muted-foreground hover:text-foreground hover:bg-muted"
+              aria-label="Sign out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </nav>
 
           {/* Mobile menu button */}
@@ -127,7 +142,7 @@ export function Header() {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center justify-between px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                  "flex items-center justify-between px-4 py-3 rounded-md text-sm font-medium transition-colors",
                   pathname === item.href || pathname.startsWith(item.href)
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -145,7 +160,7 @@ export function Header() {
               href="/settings"
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "flex items-center gap-2 px-4 py-3 rounded-md text-sm font-medium transition-colors",
                 pathname === "/settings"
                   ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -154,6 +169,16 @@ export function Header() {
               <Settings className="h-4 w-4" />
               Settings
             </Link>
+            <button
+              onClick={() => {
+                setMobileOpen(false);
+                signOut({ callbackUrl: "/login" });
+              }}
+              className="flex items-center gap-2 w-full px-4 py-3 rounded-md text-sm font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-muted"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </button>
           </nav>
         )}
       </div>

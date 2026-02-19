@@ -97,7 +97,7 @@ async function getRecentActivity(coachId: string) {
   // Group sessions by date
   const grouped = new Map<string, typeof sessions>();
   for (const session of sessions) {
-    const dateKey = session.date.toISOString().split('T')[0];
+    const dateKey = `${session.date.getFullYear()}-${String(session.date.getMonth() + 1).padStart(2, '0')}-${String(session.date.getDate()).padStart(2, '0')}`;
     const group = grouped.get(dateKey);
     if (group) {
       group.push(session);
@@ -305,11 +305,13 @@ export default async function DashboardPage() {
               <div className="space-y-6">
                 {Array.from(recentActivity.entries()).map(([dateKey, sessions]) => {
                   const date = new Date(dateKey + 'T00:00:00');
-                  const isToday = dateKey === new Date().toISOString().split('T')[0];
+                  const _now = new Date();
+                  const _todayStr = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, '0')}-${String(_now.getDate()).padStart(2, '0')}`;
+                  const isToday = dateKey === _todayStr;
                   const isYesterday = (() => {
-                    const yesterday = new Date();
+                    const yesterday = new Date(_now);
                     yesterday.setDate(yesterday.getDate() - 1);
-                    return dateKey === yesterday.toISOString().split('T')[0];
+                    return dateKey === `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
                   })();
 
                   const dateLabel = isToday

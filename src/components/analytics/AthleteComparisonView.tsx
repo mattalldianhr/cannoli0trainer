@@ -115,9 +115,10 @@ export function AthleteComparisonView({ athletes }: AthleteComparisonViewProps) 
       if (rangeConfig && rangeConfig.weeks > 0) {
         const from = new Date();
         from.setDate(from.getDate() - rangeConfig.weeks * 7);
-        params.set('from', from.toISOString().split('T')[0]);
+        params.set('from', `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`);
       }
-      params.set('to', new Date().toISOString().split('T')[0]);
+      const toDate = new Date();
+      params.set('to', `${toDate.getFullYear()}-${String(toDate.getMonth() + 1).padStart(2, '0')}-${String(toDate.getDate()).padStart(2, '0')}`);
 
       if (exerciseId && metric === 'e1rm') {
         params.set('exerciseId', exerciseId);

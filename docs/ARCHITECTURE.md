@@ -81,12 +81,12 @@ src/
 The database has 15 core models organized around the coaching workflow:
 
 ### Auth (NextAuth)
-- **User** — authentication identity (email, profile)
+- **User** — authentication identity (email, profile), linked to Coach or Athlete via optional 1:1 relations
 - **Account** / **Session** / **VerificationToken** — NextAuth managed
 
 ### Coaching Core
-- **Coach** — coach profile, settings, notification preferences, timezone, weight units
-- **Athlete** — athlete profile linked to a coach (experience level, federation, bodyweight class, notes)
+- **Coach** — coach profile, settings, notification preferences, timezone, weight units; linked to User via `userId`
+- **Athlete** — athlete profile linked to a coach (experience level, federation, bodyweight class, notes); linked to User via `userId`
 - **Exercise** — exercise library entries (name, category, equipment, muscles, instructions, video URLs, coaching cues)
 
 ### Programming
@@ -148,15 +148,26 @@ All API routes live under `/api/` and follow RESTful conventions. Every coach-fa
 
 ## Authentication
 
-Authentication uses NextAuth.js 5 with a passwordless magic link flow:
+Authentication uses NextAuth.js 5 with a unified passwordless magic link flow for both coaches and athletes:
 
-1. Athlete enters email at `/athlete/login`
-2. Resend delivers a magic link to their inbox
-3. Clicking the link verifies the token and creates a session
-4. JWT session strategy with `athleteId` embedded in the token
-5. Protected routes check the session; coaches are identified via Prisma lookup
+1. User visits `/` → redirected to `/login` if no session
+2. User enters email at `/login` — system auto-detects role from email
+3. Resend delivers a magic link to their inbox
+4. Clicking the link verifies the token and creates a session
+5. JWT session strategy with `athleteId`, `coachId`, and `role` embedded in the token
+6. Root page (`/`) redirects based on role: coaches → `/dashboard`, athletes → `/athlete`
 
-Only athletes whose email exists in the database can sign in. Coach routes use a separate `getCurrentCoachId()` helper that resolves the coach from the database on each request.
+### Role Detection
+- On sign-in, the JWT callback checks if the email belongs to a Coach or Athlete
+- Coach role takes priority if an email matches both (edge case)
+- `getCurrentCoachId()` reads `coachId` from the session (with DB fallback during migration)
+
+### Route Protection (Middleware)
+- **Public routes**: `/`, `/login`, `/check-email`, `/offline`, `/api/auth`, `/api/health`
+- **Coach routes**: `/dashboard`, `/athletes`, `/programs`, `/schedule`, `/exercises`, `/meets`, `/analytics`, `/messages`, `/settings`, `/train`, `/docs`, `/research`, `/findings`, `/interview`, `/submissions`
+- **Athlete routes**: `/athlete/*`
+- **Role enforcement**: Athletes cannot access coach routes (redirected to `/athlete`), coaches cannot access athlete routes (redirected to `/dashboard`)
+- **API protection**: Coach API routes return 403 for athletes, athlete API routes return 403 for coaches, unauthenticated requests return 401
 
 ## Data Flow
 

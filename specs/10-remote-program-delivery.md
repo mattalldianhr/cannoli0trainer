@@ -104,9 +104,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   pages: {
-    signIn: "/athlete/login",
-    verifyRequest: "/athlete/check-email",
-    error: "/athlete/login",
+    signIn: "/login",
+    verifyRequest: "/check-email",
+    error: "/login",
   },
 })
 ```
@@ -168,9 +168,9 @@ export const config = {
 }
 ```
 
-This protects all `/athlete/*` routes except `/athlete/login` and `/athlete/check-email`. Unauthenticated requests redirect to `/athlete/login`.
+This protects all `/athlete/*` routes except `/athlete/login` and `/athlete/check-email`. Unauthenticated requests redirect to `/login`.
 
-**Coach auth**: For the initial build, the coach-facing app (`/dashboard`, `/athletes`, `/programs`, etc.) remains unauthenticated with the existing `prisma.coach.findFirst()` pattern. Coach authentication is a future enhancement — it would use the same NextAuth setup with an additional role field on the User model. This is explicitly deferred to keep scope manageable.
+**Coach auth**: Coach authentication uses the same NextAuth magic link flow. The unified login at `/login` auto-detects role from email. Coach routes (`/dashboard`, `/athletes`, `/programs`, `/docs`, `/research`, `/findings`, etc.) are protected by middleware. `getCurrentCoachId()` reads `coachId` from the authenticated session.
 
 ### Athlete Portal Views
 

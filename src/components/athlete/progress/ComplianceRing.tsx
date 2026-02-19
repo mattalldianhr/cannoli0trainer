@@ -64,7 +64,7 @@ export function ComplianceRing({ compliance }: ComplianceRingProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-center gap-8">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
           {/* Donut ring */}
           <div className="relative flex items-center justify-center">
             <svg

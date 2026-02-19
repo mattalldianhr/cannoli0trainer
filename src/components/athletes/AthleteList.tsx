@@ -150,8 +150,8 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
   return (
     <div className="space-y-4">
       {/* Search + Add */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search athletes..."
@@ -160,10 +160,10 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
             className="pl-9"
           />
         </div>
-        <Button asChild>
+        <Button asChild className="shrink-0">
           <Link href="/athletes/new">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Athlete
+            <UserPlus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Add Athlete</span>
           </Link>
         </Button>
       </div>
@@ -211,22 +211,24 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
 
       {/* Bulk Action Bar */}
       {isSelecting && !isArchivedView && (
-        <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-4 py-2.5">
-          <span className="text-sm font-medium">
+        <div className="flex items-center gap-2 sm:gap-3 rounded-lg border bg-muted/50 px-3 sm:px-4 py-2.5">
+          <span className="text-sm font-medium shrink-0">
             {selected.size} selected
           </span>
           <div className="flex-1" />
           <Button
             size="sm"
             onClick={() => setAssignDialogOpen(true)}
+            className="shrink-0"
           >
-            <ClipboardList className="h-4 w-4 mr-2" />
-            Assign Program
+            <ClipboardList className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Assign Program</span>
           </Button>
           <Button
             size="sm"
             variant="ghost"
             onClick={clearSelection}
+            className="shrink-0"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -273,17 +275,17 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
               <Card
                 key={athlete.id}
                 className={cn(
-                  'hover:bg-muted/50 transition-colors cursor-pointer',
+                  'hover:bg-muted/50 transition-colors cursor-pointer overflow-hidden',
                   isChecked && 'ring-2 ring-primary bg-primary/5',
                   isArchivedView && 'opacity-75'
                 )}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-start gap-2 sm:gap-3">
                     {/* Checkbox (not shown for archived) */}
                     {!isArchivedView && (
                       <div
-                        className="shrink-0"
+                        className="shrink-0 pt-0.5"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -300,27 +302,27 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
 
                     {/* Card content as link */}
                     <Link href={`/athletes/${athlete.id}`} className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-4">
-                        {/* Left: Name + badges */}
+                      <div className="flex items-start gap-3">
+                        {/* Left: Name + badges + metadata */}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 min-w-0">
                             <span className="font-semibold truncate">{athlete.name}</span>
                             {isArchivedView && (
-                              <Badge variant="outline" className="text-xs">Archived</Badge>
+                              <Badge variant="outline" className="text-xs shrink-0">Archived</Badge>
                             )}
                             {!isArchivedView && athlete.isCompetitor && (
-                              <Badge variant="default" className="text-xs">Competitor</Badge>
+                              <Badge variant="default" className="text-xs shrink-0">Competitor</Badge>
                             )}
                             {!isArchivedView && athlete.isRemote && (
-                              <Badge variant="secondary" className="text-xs">Remote</Badge>
+                              <Badge variant="secondary" className="text-xs shrink-0">Remote</Badge>
                             )}
                             {needsAttention && (
-                              <Badge variant="destructive" className="text-xs">Needs Attention</Badge>
+                              <Badge variant="destructive" className="text-xs shrink-0">Needs Attention</Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs sm:text-sm text-muted-foreground flex-wrap">
                             {athlete.currentProgram && (
-                              <span>{athlete.currentProgram}</span>
+                              <span className="truncate max-w-[150px] sm:max-w-none">{athlete.currentProgram}</span>
                             )}
                             {athlete.bodyweight && (
                               <span>{athlete.bodyweight} kg</span>
@@ -328,10 +330,21 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
                             {athlete.experienceLevel && (
                               <span className="capitalize">{athlete.experienceLevel}</span>
                             )}
+                            {/* Stats inline on mobile */}
+                            <span className="sm:hidden">{athlete._count.workoutSessions} sessions</span>
+                            {athlete.lastWorkoutDate && (
+                              <span className={cn('sm:hidden', needsAttention && 'text-destructive')}>
+                                {daysSince === 0
+                                  ? 'Today'
+                                  : daysSince === 1
+                                    ? 'Yesterday'
+                                    : `${daysSince}d ago`}
+                              </span>
+                            )}
                           </div>
                         </div>
 
-                        {/* Right: Quick stats or reactivate */}
+                        {/* Right: Quick stats (desktop) or reactivate */}
                         {isArchivedView ? (
                           <div className="shrink-0">
                             <Button
@@ -345,11 +358,11 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
                               }}
                             >
                               <RotateCcw className={cn('h-4 w-4 mr-1', reactivating === athlete.id && 'animate-spin')} />
-                              {reactivating === athlete.id ? 'Reactivating...' : 'Reactivate'}
+                              <span className="hidden sm:inline">{reactivating === athlete.id ? 'Reactivating...' : 'Reactivate'}</span>
                             </Button>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-4 text-sm text-right shrink-0">
+                          <div className="hidden sm:flex items-center gap-4 text-sm text-right shrink-0">
                             <div>
                               <p className="text-xs text-muted-foreground">Sessions</p>
                               <p className="font-semibold">{athlete._count.workoutSessions}</p>
@@ -358,7 +371,7 @@ export function AthleteList({ athletes, archivedAthletes = [] }: AthleteListProp
                               <p className="text-xs text-muted-foreground">Sets</p>
                               <p className="font-semibold">{athlete._count.setLogs}</p>
                             </div>
-                            <div className="hidden sm:block">
+                            <div>
                               <p className="text-xs text-muted-foreground">Last Workout</p>
                               <p className={cn('font-semibold', needsAttention && 'text-destructive')}>
                                 {athlete.lastWorkoutDate

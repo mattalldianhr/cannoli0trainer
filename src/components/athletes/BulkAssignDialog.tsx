@@ -54,7 +54,7 @@ function getNextMonday(): string {
   const daysUntilMonday = day === 0 ? 1 : day === 1 ? 7 : 8 - day;
   const nextMon = new Date(today);
   nextMon.setDate(today.getDate() + daysUntilMonday);
-  return nextMon.toISOString().split('T')[0];
+  return `${nextMon.getFullYear()}-${String(nextMon.getMonth() + 1).padStart(2, '0')}-${String(nextMon.getDate()).padStart(2, '0')}`;
 }
 
 function arraysEqual(a: number[], b: number[]): boolean {
@@ -216,7 +216,7 @@ export function BulkAssignDialog({
             {/* Training days */}
             <div>
               <Label className="text-xs text-muted-foreground uppercase tracking-wider">Training Days</Label>
-              <div className="flex gap-1.5 mt-1.5">
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {PRESETS.map((preset) => (
                   <button
                     key={preset.label}
@@ -243,7 +243,7 @@ export function BulkAssignDialog({
                   Custom
                 </button>
               </div>
-              <div className="flex gap-1 mt-2">
+              <div className="flex flex-wrap gap-1 mt-2">
                 {WEEKDAYS.map((day) => {
                   const isSelected = trainingDays.includes(day.value);
                   return (

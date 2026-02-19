@@ -599,6 +599,40 @@ async function seedTestAthleteAuth() {
   }
 }
 
+async function seedCoachAuth() {
+  const coachEmail = process.env.SEED_COACH_EMAIL || 'joe@cannolistrength.com';
+  console.log(`\nSetting up coach auth for: ${coachEmail}`);
+
+  const coach = await prisma.coach.findFirst({ where: { email: coachEmail } });
+  if (!coach) {
+    console.log('  Coach not found. Skipping.');
+    return;
+  }
+
+  // Upsert a User record for NextAuth and link to coach
+  const user = await prisma.user.upsert({
+    where: { email: coachEmail },
+    update: { name: coach.name },
+    create: {
+      email: coachEmail,
+      name: coach.name,
+      emailVerified: new Date(),
+    },
+  });
+  console.log(`  User record: ${user.id} (${user.email})`);
+
+  // Link coach to user if not already linked
+  if (coach.userId !== user.id) {
+    await prisma.coach.update({
+      where: { id: coach.id },
+      data: { userId: user.id },
+    });
+    console.log(`  Linked coach ${coach.name} -> User ${user.id}`);
+  } else {
+    console.log(`  Already linked.`);
+  }
+}
+
 async function main() {
   console.log('Starting seed...\n');
 
@@ -607,6 +641,7 @@ async function main() {
   await seedCoachAndAthletes();
   await seedWorkoutHistory();
   await seedTestAthleteAuth();
+  await seedCoachAuth();
 
   // Print tag summary
   const taggedCount = await prisma.exercise.count({

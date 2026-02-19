@@ -50,7 +50,10 @@ function getMonday(date: Date): string {
   const day = d.getDay()
   const diff = d.getDate() - day + (day === 0 ? -6 : 1)
   d.setDate(diff)
-  return d.toISOString().split("T")[0]
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, "0")
+  const dd = String(d.getDate()).padStart(2, "0")
+  return `${y}-${m}-${dd}`
 }
 
 function getFirstOfMonth(date: Date): string {
@@ -60,7 +63,10 @@ function getFirstOfMonth(date: Date): string {
 function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr + "T00:00:00")
   d.setDate(d.getDate() + days)
-  return d.toISOString().split("T")[0]
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, "0")
+  const dd = String(d.getDate()).padStart(2, "0")
+  return `${y}-${m}-${dd}`
 }
 
 function formatWeekRange(mondayStr: string): string {
@@ -100,7 +106,10 @@ function getMonthCalendarDates(monthStart: string): string[][] {
   for (let w = 0; w < 6; w++) {
     const week: string[] = []
     for (let d = 0; d < 7; d++) {
-      week.push(current.toISOString().split("T")[0])
+      const cy = current.getFullYear()
+      const cm = String(current.getMonth() + 1).padStart(2, "0")
+      const cd = String(current.getDate()).padStart(2, "0")
+      week.push(`${cy}-${cm}-${cd}`)
       current.setDate(current.getDate() + 1)
     }
     // Only include weeks that have at least one day in the target month
@@ -166,7 +175,8 @@ function AthleteCalendarContent() {
   const monthStart = searchParams.get("month") || currentMonthStart
   const isCurrentMonth = monthStart === currentMonthStart
 
-  const today = new Date().toISOString().split("T")[0]
+  const nowDate = new Date()
+  const today = `${nowDate.getFullYear()}-${String(nowDate.getMonth() + 1).padStart(2, "0")}-${String(nowDate.getDate()).padStart(2, "0")}`
 
   // Determine the date range based on view mode
   const { rangeStart, rangeEnd } = useMemo(() => {
@@ -308,7 +318,7 @@ function AthleteCalendarContent() {
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <span className="text-sm font-semibold ml-1">
+          <span className="text-xs sm:text-sm font-semibold ml-1 truncate">
             {viewMode === "week"
               ? formatWeekRange(weekStart)
               : formatMonthYear(monthStart)}
@@ -619,7 +629,9 @@ function MonthDayCell({
   isToday: boolean
   session: CalendarSession | undefined
 }) {
-  const isPast = date < new Date().toISOString().split("T")[0]
+  const n = new Date()
+  const todayStr = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`
+  const isPast = date < todayStr
 
   const cellContent = (
     <div

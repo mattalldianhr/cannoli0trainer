@@ -24,6 +24,8 @@ interface BaseLineChartProps {
   xAxisKey: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
+  yDomain?: [number | string, number | string];
+  yTickCount?: number;
   height?: number;
   className?: string;
   formatXAxis?: (value: string) => string;
@@ -51,6 +53,8 @@ export function BaseLineChart({
   xAxisKey,
   xAxisLabel,
   yAxisLabel,
+  yDomain,
+  yTickCount,
   height = 300,
   className,
   formatXAxis,
@@ -76,6 +80,8 @@ export function BaseLineChart({
           />
           <YAxis
             tick={{ fontSize: 12 }}
+            domain={yDomain}
+            tickCount={yTickCount}
             label={yAxisLabel ? { value: yAxisLabel, angle: -90, position: 'insideLeft', fontSize: 12 } : undefined}
           />
           <Tooltip contentStyle={TOOLTIP_STYLE} />
