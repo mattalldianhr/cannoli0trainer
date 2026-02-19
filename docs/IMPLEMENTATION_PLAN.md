@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 162
+- Completed: 163
 - In progress: 0
-- Remaining: 23
+- Remaining: 22
 
 ## Tasks
 
@@ -848,9 +848,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `coachNotes String? @db.Text` on WorkoutSession. Text area in session detail. PATCH API. Visible to both coach and athlete.
   - Note: Added `coachNotes` field to WorkoutSession model (migration `20260219025403`). PATCH API at `/api/sessions/[sessionId]/notes` with coach auth. Coach sees editable textarea with 1.5s debounce auto-save in `WorkoutSessionDetail`. Athletes see read-only coach notes (amber card) in history detail. Both coach and athlete history APIs return `coachNotes`.
 
-- [ ] **Task 31.4**: Enable program builder edit mode for existing programs
+- [x] **Task 31.4**: Enable program builder edit mode for existing programs
   - Spec: specs/04-program-builder.md
   - Acceptance: `/programs/[id]/edit` loads existing data into builder. PUT to update. "Edit: {name}" title. Edit button on program cards.
+  - Note: Edit page and ProgramBuilder edit mode already existed. Updated title from "Edit Program" to "Edit: {name}". Added Pencil edit button on program list cards linking directly to `/programs/[id]/edit`. Detail page already had Edit button.
 
 - [ ] **Task 31.5**: Add edit-in-progress warning for programs with active assignments
   - Spec: specs/04-program-builder.md

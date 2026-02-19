@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Calendar, Users, Dumbbell, BookTemplate, ClipboardList } from 'lucide-react';
+import { Search, Plus, Calendar, Users, Dumbbell, BookTemplate, ClipboardList, Pencil } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -175,7 +175,7 @@ export function ProgramList({ programs }: ProgramListProps) {
                         </div>
                       </div>
 
-                      {/* Right: Quick stats */}
+                      {/* Right: Quick stats + Edit */}
                       <div className="flex items-center gap-4 text-sm text-right shrink-0">
                         <div>
                           <p className="text-xs text-muted-foreground">Workouts</p>
@@ -188,6 +188,14 @@ export function ProgramList({ programs }: ProgramListProps) {
                             {program._count.assignments}
                           </p>
                         </div>
+                        <Link
+                          href={`/programs/${program.id}/edit`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground text-muted-foreground transition-colors"
+                          title="Edit program"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Link>
                       </div>
                     </div>
                   </CardContent>

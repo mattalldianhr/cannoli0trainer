@@ -530,7 +530,7 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {isEditMode ? 'Edit Program' : 'New Program'}
+            {isEditMode ? `Edit: ${program.name || 'Untitled'}` : 'New Program'}
           </h1>
           {templateProgram && (
             <p className="text-sm text-muted-foreground">
