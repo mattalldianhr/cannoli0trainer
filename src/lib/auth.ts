@@ -88,8 +88,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       })
       return !!athlete
     },
-    async jwt({ token }) {
-      if (token.email) {
+    async jwt({ token, trigger }) {
+      // Only look up athleteId on sign-in (not every request) to avoid
+      // Prisma calls in Edge Runtime where middleware validates the JWT.
+      if (trigger === "signIn" && token.email) {
         const athlete = await prisma.athlete.findFirst({
           where: { email: token.email },
         })
