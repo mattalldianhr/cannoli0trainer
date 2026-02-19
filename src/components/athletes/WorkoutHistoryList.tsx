@@ -10,14 +10,11 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Dumbbell,
   Loader2,
   History,
   Timer,
-  Target,
-  TrendingUp,
-  Minus,
 } from 'lucide-react';
+import { WorkoutSessionDetail, type SessionDetailData } from './WorkoutSessionDetail';
 
 interface HistorySession {
   id: string;
@@ -36,58 +33,11 @@ interface HistorySession {
   totalSets: number;
 }
 
-interface PrescribedData {
-  sets: string | null;
-  reps: string | null;
-  load: string | null;
-  rpe: number | null;
-  rir: number | null;
-  velocityTarget: number | null;
-  percentageOf1RM: number | null;
-  prescriptionType: string;
-}
-
-interface SessionDetail {
-  id: string;
-  date: string;
-  title: string | null;
-  status: string;
-  completionPercentage: number;
-  completedItems: number;
-  totalItems: number;
-  programName: string | null;
-  weekNumber: number | null;
-  dayNumber: number | null;
-  durationSeconds: number | null;
-  totalPrescribedVolume: number;
-  totalActualVolume: number;
-  exercises: Array<{
-    id: string;
-    name: string;
-    category: string | null;
-    prescribed: PrescribedData;
-    sets: Array<{
-      id: string;
-      setNumber: number;
-      reps: number;
-      weight: number;
-      unit: string;
-      rpe: number | null;
-      velocity: number | null;
-    }>;
-    totalVolume: number;
-  }>;
-}
-
 function formatVolume(volume: number): string {
   if (volume >= 1000) {
     return `${(volume / 1000).toFixed(1)}k kg`;
   }
   return `${Math.round(volume)} kg`;
-}
-
-function formatWeight(weight: number): string {
-  return weight % 1 === 0 ? weight.toString() : weight.toFixed(1);
 }
 
 function formatDuration(seconds: number): string {
@@ -107,50 +57,6 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function formatPrescription(p: PrescribedData): string {
-  const parts: string[] = [];
-  if (p.sets) parts.push(`${p.sets}×${p.reps || '?'}`);
-  else if (p.reps) parts.push(`${p.reps} reps`);
-
-  if (p.load && parseFloat(p.load) > 0) parts.push(`@ ${p.load}`);
-  if (p.percentageOf1RM) parts.push(`${p.percentageOf1RM}%`);
-  if (p.rpe) parts.push(`RPE ${p.rpe}`);
-  if (p.rir !== null && p.rir !== undefined) parts.push(`RIR ${p.rir}`);
-  if (p.velocityTarget) parts.push(`${p.velocityTarget} m/s`);
-
-  return parts.length > 0 ? parts.join(' ') : 'No prescription';
-}
-
-type CompletionStatus = 'met' | 'partial' | 'missed';
-
-function getExerciseStatus(
-  prescribed: PrescribedData,
-  actualSets: SessionDetail['exercises'][number]['sets']
-): CompletionStatus {
-  if (actualSets.length === 0) return 'missed';
-
-  const prescribedSetsNum = parseInt(prescribed.sets || '0', 10) || 0;
-  const prescribedRepsNum = parseInt(prescribed.reps || '0', 10) || 0;
-
-  // If no prescription data, consider it met if any sets were logged
-  if (prescribedSetsNum === 0 && prescribedRepsNum === 0) {
-    return actualSets.length > 0 ? 'met' : 'missed';
-  }
-
-  const completedSets = actualSets.length;
-  const allRepsMet = actualSets.every((s) => s.reps >= prescribedRepsNum);
-
-  if (completedSets >= prescribedSetsNum && allRepsMet) return 'met';
-  if (completedSets > 0) return 'partial';
-  return 'missed';
-}
-
-const STATUS_STYLES: Record<CompletionStatus, { border: string; bg: string; icon: typeof CheckCircle2 }> = {
-  met: { border: 'border-l-green-500', bg: 'bg-green-500/5', icon: CheckCircle2 },
-  partial: { border: 'border-l-amber-500', bg: 'bg-amber-500/5', icon: TrendingUp },
-  missed: { border: 'border-l-red-500', bg: 'bg-red-500/5', icon: Minus },
-};
-
 export function WorkoutHistoryList({ athleteId }: { athleteId: string }) {
   const [sessions, setSessions] = useState<HistorySession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -159,7 +65,7 @@ export function WorkoutHistoryList({ athleteId }: { athleteId: string }) {
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [detailCache, setDetailCache] = useState<Record<string, SessionDetail>>({});
+  const [detailCache, setDetailCache] = useState<Record<string, SessionDetailData>>({});
   const [loadingDetail, setLoadingDetail] = useState<string | null>(null);
 
   const fetchSessions = useCallback(
@@ -353,147 +259,16 @@ export function WorkoutHistoryList({ athleteId }: { athleteId: string }) {
                   </div>
                 </div>
 
-                {/* Expanded detail with prescribed vs actual */}
+                {/* Expanded session detail with prescribed vs actual comparison */}
                 {isExpanded && (
-                  <div className="ml-4 mt-1 mb-2 space-y-1.5">
+                  <div className="mt-2 mb-3 ml-2">
                     {isLoadingThis && !detail && (
-                      <div className="flex items-center justify-center py-4">
-                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                      <div className="flex items-center justify-center py-6">
+                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                       </div>
                     )}
 
-                    {detail && detail.exercises.length > 0 && (
-                      <div className="space-y-1.5">
-                        {detail.exercises.map((ex) => {
-                          const status = getExerciseStatus(ex.prescribed, ex.sets);
-                          const styles = STATUS_STYLES[status];
-                          const StatusIcon = styles.icon;
-
-                          return (
-                            <div
-                              key={ex.id}
-                              className={cn(
-                                'rounded-lg border border-l-4 p-3',
-                                styles.border,
-                                styles.bg
-                              )}
-                            >
-                              {/* Exercise header */}
-                              <div className="flex items-center gap-2 mb-2">
-                                <StatusIcon className={cn(
-                                  'h-3.5 w-3.5 shrink-0',
-                                  status === 'met' && 'text-green-600',
-                                  status === 'partial' && 'text-amber-600',
-                                  status === 'missed' && 'text-red-500'
-                                )} />
-                                <span className="text-sm font-medium truncate">
-                                  {ex.name}
-                                </span>
-                                {ex.totalVolume > 0 && (
-                                  <span className="text-xs text-muted-foreground ml-auto shrink-0">
-                                    {formatVolume(ex.totalVolume)}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Prescribed row */}
-                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1.5">
-                                <Target className="h-3 w-3 shrink-0" />
-                                <span className="font-medium">Rx:</span>
-                                <span>{formatPrescription(ex.prescribed)}</span>
-                              </div>
-
-                              {/* Actual sets */}
-                              {ex.sets.length > 0 ? (
-                                <div className="space-y-0.5 ml-4">
-                                  {ex.sets.map((set) => (
-                                    <div
-                                      key={set.id}
-                                      className="flex items-center gap-2 text-xs"
-                                    >
-                                      <span className="text-muted-foreground w-5 text-right shrink-0">
-                                        {set.setNumber}
-                                      </span>
-                                      <span className="font-medium">
-                                        {set.weight > 0
-                                          ? `${formatWeight(set.weight)} ${set.unit}`
-                                          : 'BW'}
-                                        {' x '}
-                                        {set.reps}
-                                      </span>
-                                      {set.rpe != null && (
-                                        <span className="text-muted-foreground">
-                                          @{set.rpe}
-                                        </span>
-                                      )}
-                                      {set.velocity != null && (
-                                        <span className="text-muted-foreground">
-                                          {set.velocity.toFixed(2)} m/s
-                                        </span>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <p className="text-xs text-red-500/80 ml-4">
-                                  No sets logged
-                                </p>
-                              )}
-                            </div>
-                          );
-                        })}
-
-                        {/* Volume comparison summary */}
-                        {(detail.totalPrescribedVolume > 0 || detail.totalActualVolume > 0) && (
-                          <div className="rounded-lg border bg-muted/20 p-3">
-                            <div className="flex items-center justify-between text-xs">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-muted-foreground w-20">Prescribed:</span>
-                                  <span className="font-medium tabular-nums">
-                                    {detail.totalPrescribedVolume > 0
-                                      ? formatVolume(detail.totalPrescribedVolume)
-                                      : '—'}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-muted-foreground w-20">Actual:</span>
-                                  <span className="font-medium tabular-nums">
-                                    {detail.totalActualVolume > 0
-                                      ? formatVolume(detail.totalActualVolume)
-                                      : '—'}
-                                  </span>
-                                </div>
-                              </div>
-                              {detail.totalPrescribedVolume > 0 && detail.totalActualVolume > 0 && (
-                                <div className="text-right">
-                                  {(() => {
-                                    const pct = Math.round(
-                                      (detail.totalActualVolume / detail.totalPrescribedVolume) * 100
-                                    );
-                                    return (
-                                      <span className={cn(
-                                        'text-sm font-bold tabular-nums',
-                                        pct >= 90 ? 'text-green-600' : pct >= 70 ? 'text-amber-600' : 'text-red-500'
-                                      )}>
-                                        {pct}%
-                                      </span>
-                                    );
-                                  })()}
-                                  <p className="text-muted-foreground mt-0.5">volume</p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {detail && detail.exercises.length === 0 && (
-                      <p className="text-xs text-muted-foreground py-2 text-center">
-                        No exercise data available
-                      </p>
-                    )}
+                    {detail && <WorkoutSessionDetail session={detail} />}
                   </div>
                 )}
               </div>

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 160
+- Completed: 161
 - In progress: 0
-- Remaining: 25
+- Remaining: 24
 
 ## Tasks
 
@@ -838,9 +838,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: "Training History" section on `/athletes/[id]` with paginated WorkoutSession list. Date, name, completion %, volume, duration. 20 per page.
   - Note: Created `/api/athletes/[id]/history` API route with paginated list + session detail endpoints. `WorkoutHistoryList` component fetches paginated sessions (20/page), shows date, title, completion %, volume, sets, duration, exercise count. Click-to-expand shows per-exercise set details with weight/reps/RPE/velocity. Replaced simple "Recent Sessions" list in Training tab.
 
-- [ ] **Task 31.2**: Build workout session detail view with prescribed vs actual comparison
+- [x] **Task 31.2**: Build workout session detail view with prescribed vs actual comparison
   - Spec: specs/03-athlete-management.md
   - Acceptance: Session detail shows Prescribed vs Actual columns per exercise. Green/yellow/red indicators. Total volume comparison.
+  - Note: Created `WorkoutSessionDetail` component with two-column Prescribed vs Actual layout per exercise, green/amber/red status badges and indicators, set-by-set breakdown table with color-coded reps/RPE adherence, per-exercise volume diff with trend arrows, and total session volume comparison with progress bar. Enhanced history API to include `rir`, `notes`, `supersetGroup`, `supersetColor`, `athleteNotes` fields. Refactored `WorkoutHistoryList` to use the new component in its expanded view.
 
 - [ ] **Task 31.3**: Add coach notes to completed workout sessions
   - Spec: specs/03-athlete-management.md
