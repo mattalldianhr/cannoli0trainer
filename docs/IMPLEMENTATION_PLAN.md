@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 173
+- Completed: 174
 - In progress: 0
-- Remaining: 12
+- Remaining: 11
 
 ## Tasks
 
@@ -905,9 +905,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: LineChart of BodyweightLog entries. Current weight badge. Only renders with 2+ entries. Target weight class line if applicable.
   - Note: Created `BodyweightTrendChart` component at `src/components/athlete/progress/BodyweightTrendChart.tsx`. Uses `BaseLineChart` wrapper with bodyweight line (blue) and optional target weight class reference line (amber). Shows current weight as hero number with trend badge (up/down/flat + kg diff from first to last entry). Trend colors inverted from volume (down=green for weight loss, up=amber for weight gain). Parses standard IPF weight classes from athlete's `weightClass` field. Updated `/api/athlete/progress` to include `weightClass` from Athlete model. Component only renders when parent passes non-null bodyweight data (API returns null for <2 entries).
 
-- [ ] **Task 32.7**: Assemble athlete progress page and update bottom navigation
+- [x] **Task 32.7**: Assemble athlete progress page and update bottom navigation
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: `/athlete/progress` page with all charts. Bottom nav updated to 5 tabs (add "Progress" with TrendingUp icon). Server component data fetch. Mobile-optimized. Full-page empty state.
+  - Note: Created `/athlete/progress` page assembling all 5 chart components (E1RMTrendChart, WeeklyVolumeChart, ComplianceRing, PersonalRecordsList, BodyweightTrendChart) with date range selector (4w/8w/12w/all), full-page empty state for athletes with no data, bodyweight logging prompt when no bodyweight data exists, and skeleton loading state. Updated AthleteBottomNav from 4 to 5 tabs (added Progress with TrendingUp icon). Client-side data fetching from `/api/athlete/progress?range=` endpoint. Mobile-optimized with 375px-friendly layout and 36px min-height tap targets on range chips.
 
 ### Priority 33: Coach-Athlete Messaging
 

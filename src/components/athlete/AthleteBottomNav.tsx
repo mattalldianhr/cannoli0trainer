@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Dumbbell, Calendar, Clock } from "lucide-react"
+import { LayoutDashboard, Dumbbell, Calendar, Clock, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/athlete/train", label: "Train", icon: Dumbbell },
   { href: "/athlete/calendar", label: "Calendar", icon: Calendar },
   { href: "/athlete/history", label: "History", icon: Clock },
+  { href: "/athlete/progress", label: "Progress", icon: TrendingUp },
 ]
 
 export function AthleteBottomNav() {
