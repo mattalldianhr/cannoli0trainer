@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 163
+- Completed: 164
 - In progress: 0
-- Remaining: 22
+- Remaining: 21
 
 ## Tasks
 
@@ -853,9 +853,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `/programs/[id]/edit` loads existing data into builder. PUT to update. "Edit: {name}" title. Edit button on program cards.
   - Note: Edit page and ProgramBuilder edit mode already existed. Updated title from "Edit Program" to "Edit: {name}". Added Pencil edit button on program list cards linking directly to `/programs/[id]/edit`. Detail page already had Edit button.
 
-- [ ] **Task 31.5**: Add edit-in-progress warning for programs with active assignments
+- [x] **Task 31.5**: Add edit-in-progress warning for programs with active assignments
   - Spec: specs/04-program-builder.md
   - Acceptance: Warning banner when editing assigned programs. Shows count and names of assigned athletes. Editing still allowed.
+  - Note: Added amber warning banner at top of ProgramBuilder when `initialProgram.assignments.length > 0`. Shows count and comma-separated athlete names. Banner only appears in edit mode (not new programs). Editing remains fully functional.
 
 - [ ] **Task 31.6**: Add bodyweight logging entry point
   - Spec: specs/07-progress-analytics.md

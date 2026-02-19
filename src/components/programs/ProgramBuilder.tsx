@@ -18,6 +18,7 @@ import {
   StickyNote,
   Check,
   CloudOff,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -550,6 +551,22 @@ export function ProgramBuilder({ coachId, initialProgram, templateProgram }: Pro
           </Button>
         </div>
       </div>
+
+      {/* Active Assignments Warning */}
+      {isEditMode && initialProgram && initialProgram.assignments.length > 0 && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm">
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-amber-800">
+              This program is assigned to {initialProgram.assignments.length} athlete{initialProgram.assignments.length !== 1 ? 's' : ''}
+            </p>
+            <p className="text-amber-700 mt-0.5">
+              {initialProgram.assignments.map((a) => a.athlete.name).join(', ')}.
+              Changes will affect future scheduled workouts.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Program Info */}
       <Card>
