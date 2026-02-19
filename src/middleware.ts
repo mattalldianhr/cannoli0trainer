@@ -60,8 +60,23 @@ function isAthleteApiRoute(pathname: string): boolean {
   return pathname === "/api/athlete" || pathname.startsWith("/api/athlete/")
 }
 
+// Public routes that skip auth entirely
+const PUBLIC_ROUTES = ["/docs/api"]
+
+function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(route + "/")
+  )
+}
+
 export default auth((req) => {
   const { pathname } = req.nextUrl
+
+  // --- Public routes: allow without auth ---
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next()
+  }
+
   const session = req.auth
   const isApi = pathname.startsWith("/api/")
 
