@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 157
+- Completed: 158
 - In progress: 0
-- Remaining: 28
+- Remaining: 27
 
 ## Tasks
 
@@ -610,10 +610,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Magic link emails use the branded template from `src/lib/email.ts` (Cannoli orange header, footer, CTA button) instead of NextAuth's default plain email. Configure Resend provider's `sendVerificationRequest` option to use `brandedEmailHtml()`. Verify email renders correctly in Gmail and Apple Mail.
   - Note: Custom `sendVerificationRequest` in `src/lib/auth.ts` uses `brandedEmailHtml()` wrapper (orange header + footer) and `emailCtaButton("Sign In", url)` for the CTA. Includes plain text fallback. Uses `&#39;` for email client compatibility.
 
-- [ ] **Task 18.18**: Add service worker for PWA offline support
+- [x] **Task 18.18**: Add service worker for PWA offline support
   - Spec: specs/10-remote-program-delivery.md
   - Acceptance: `public/sw.js` service worker caches app shell (HTML, JS, CSS bundles). Client-side registration in app layout. Athlete can "Add to Home Screen" on iOS/Android and app launches in standalone mode. Offline fallback page shown when network unavailable. Chrome DevTools > Application > Service Workers shows registered worker. Lighthouse PWA audit passes.
-  - Note: Manifest, icons, and meta tags are complete (Task 18.13). Missing service worker is the last gap — without it, PWA won't pass installability checks and won't work offline. The offline queue for set logs (`src/lib/offline-queue.ts`) already handles data persistence; this task adds the caching layer for pages and assets.
+  - Note: Service worker at `public/sw.js` implements: cache-first for static assets (`/_next/static/`, icons, JS/CSS), network-first for navigation with offline fallback, skip for API and auth routes. Offline fallback page at `/offline` with WifiOff icon and retry button. Registration component `ServiceWorkerRegistration.tsx` added to root layout. Pre-caches `/offline` page and icon assets on install. Auto-cleans old caches on activate.
 
 - [ ] **Task 18.19**: Cache athlete workout data for offline training sessions
   - Spec: specs/10-remote-program-delivery.md
