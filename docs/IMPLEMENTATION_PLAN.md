@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 177
+- Completed: 178
 - In progress: 0
-- Remaining: 8
+- Remaining: 7
 
 ## Tasks
 
@@ -927,9 +927,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `/messages` page with athlete name, last message preview, timestamp, unread badge. Sorted by most recent. Polling every 30s. Empty state.
   - Note: Created `ConversationList` client component at `src/components/messaging/ConversationList.tsx` with 30s polling, visibility-based refresh, avatar initials, relative timestamps, unread count badges with primary color highlight, empty state with CTA to athletes page, loading skeletons, and error state. Page at `src/app/messages/page.tsx` with Container layout. Added `loading.tsx` and `error.tsx` for the route.
 
-- [ ] **Task 33.4**: Build message thread component (shared coach + athlete)
+- [x] **Task 33.4**: Build message thread component (shared coach + athlete)
   - Spec: specs/16-coach-athlete-messaging.md
   - Acceptance: Chronological messages with date headers. Coach right-aligned, athlete left-aligned. MessageInput with Enter-to-send. Optimistic updates. Auto-scroll. "Load older" pagination. Marks as read on mount.
+  - Note: Created `MessageThread` component at `src/components/messaging/MessageThread.tsx`. Accepts `mode` ('coach' | 'athlete') and optional `athleteId` props to work with both API paths. Features: date group headers (Today/Yesterday/date), right-aligned own messages (primary color) and left-aligned received (muted bg), Enter-to-send with Shift+Enter for newlines, auto-resizing textarea, optimistic message insertion with rollback on failure, 10s polling for new messages with visibility-based pause, "Load older messages" cursor pagination preserving scroll position, marks conversation as read on mount and focus return, loading skeletons, error banner, and empty state.
 
 - [ ] **Task 33.5**: Build coach message thread page and athlete profile integration
   - Spec: specs/16-coach-athlete-messaging.md
