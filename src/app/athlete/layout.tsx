@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "next-auth/react"
 import { AthleteBottomNav } from "@/components/athlete/AthleteBottomNav"
+import { MessageFAB } from "@/components/athlete/MessageFAB"
 import { OfflineIndicator } from "@/components/shared/OfflineIndicator"
 import { usePathname } from "next/navigation"
 
@@ -34,6 +35,9 @@ export default function AthleteLayout({
         <main className="flex-1 pb-20">
           {children}
         </main>
+
+        {/* Message FAB (hidden on dashboard and messages pages) */}
+        <MessageFAB />
 
         {/* Bottom navigation */}
         <AthleteBottomNav />

@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 179
+- Completed: 180
 - In progress: 0
-- Remaining: 6
+- Remaining: 5
 
 ## Tasks
 
@@ -937,9 +937,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `/messages/[athleteId]` page with MessageThread. "Message" button on athlete profile. Conversation auto-created on first message.
   - Note: Created `/messages/[athleteId]` page with breadcrumb nav (Messages / Athlete Name), full-height MessageThread in coach mode, server-side athlete verification (coachId scoped), loading skeleton, and dynamic metadata. Added "Message" button with MessageSquare icon to athlete profile header actions (before Edit/Archive). Conversation auto-created on first message send via existing POST `/api/messages` logic.
 
-- [ ] **Task 33.6**: Build athlete messaging view
+- [x] **Task 33.6**: Build athlete messaging view
   - Spec: specs/16-coach-athlete-messaging.md
   - Acceptance: `/athlete/messages` with single conversation thread. Message icon on dashboard. FAB on other athlete pages. Empty state.
+  - Note: Created `/athlete/messages` page with `MessageThread` in athlete mode, coach name header via `/api/athlete/coach` endpoint, back arrow to dashboard. Added MessageSquare icon button on athlete dashboard header (top-right). Created `MessageFAB` component (fixed bottom-right, above bottom nav) visible on train/calendar/history/progress pages (hidden on dashboard and messages). Updated `MessageThread` empty state to show "Your coach will reach out here." in athlete mode.
 
 - [ ] **Task 33.7**: Add unread badge to coach navigation and implement polling
   - Spec: specs/16-coach-athlete-messaging.md

@@ -20,6 +20,7 @@ import {
   Clock,
   CheckCircle2,
   Moon,
+  MessageSquare,
 } from "lucide-react"
 
 interface DashboardData {
@@ -117,16 +118,24 @@ export default function AthleteDashboardPage() {
 
   return (
     <div className="px-4 py-6 space-y-6">
-      {/* Greeting */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Hey, {firstName}
-        </h1>
-        {currentProgram && (
-          <p className="text-sm text-muted-foreground mt-0.5">
-            {currentProgram.name}
-          </p>
-        )}
+      {/* Greeting + Message button */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Hey, {firstName}
+          </h1>
+          {currentProgram && (
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {currentProgram.name}
+            </p>
+          )}
+        </div>
+        <Link href="/athlete/messages">
+          <Button variant="outline" size="icon" className="h-10 w-10 shrink-0">
+            <MessageSquare className="h-5 w-5" />
+            <span className="sr-only">Messages</span>
+          </Button>
+        </Link>
       </div>
 
       {/* Hero Card: Today's Workout or Rest Day */}

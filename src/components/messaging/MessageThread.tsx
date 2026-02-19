@@ -379,7 +379,11 @@ export function MessageThread({ mode, athleteId }: MessageThreadProps) {
           <EmptyState
             icon={MessageSquare}
             title="No messages yet"
-            description="Send a message to start the conversation."
+            description={
+              mode === 'athlete'
+                ? 'Your coach will reach out here.'
+                : 'Send a message to start the conversation.'
+            }
             className="py-16"
           />
         )}
