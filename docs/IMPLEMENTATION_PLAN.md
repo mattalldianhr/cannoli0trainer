@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 174
+- Completed: 175
 - In progress: 0
-- Remaining: 11
+- Remaining: 10
 
 ## Tasks
 
@@ -912,9 +912,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
 
 ### Priority 33: Coach-Athlete Messaging
 
-- [ ] **Task 33.1**: Add Conversation and Message models to Prisma schema
+- [x] **Task 33.1**: Add Conversation and Message models to Prisma schema
   - Spec: specs/16-coach-athlete-messaging.md
   - Acceptance: `Conversation` (coachId, athleteId, lastMessageAt, unreadCounts, unique constraint) and `Message` (conversationId, senderId, senderType, content, readAt) models. `SenderType` enum. Indexes. Migration runs.
+  - Note: Added `SenderType` enum (COACH, ATHLETE), `Conversation` model with `@@unique([coachId, athleteId])` and indexes on `[coachId, lastMessageAt]` and `[athleteId]`, `Message` model with `@@index([conversationId, createdAt])` and cascade delete. Added `conversations` relation to both Coach and Athlete models. Migration `20260219050619_add_messaging_models`.
 
 - [ ] **Task 33.2**: Create messaging API routes (send, list, read, mark-read)
   - Spec: specs/16-coach-athlete-messaging.md
