@@ -124,6 +124,7 @@ export async function GET(
           weekNumber: workoutSession.weekNumber,
           dayNumber: workoutSession.dayNumber,
           durationSeconds: workoutSession.durationSeconds,
+          coachNotes: workoutSession.coachNotes,
           exercises,
           totalPrescribedVolume: Math.round(totalPrescribedVolume),
           totalActualVolume: Math.round(totalActualVolume),

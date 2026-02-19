@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -13,6 +14,9 @@ import {
   TrendingUp,
   TrendingDown,
   MessageSquare,
+  StickyNote,
+  Loader2,
+  Check,
 } from 'lucide-react';
 
 interface PrescribedData {
@@ -63,6 +67,7 @@ export interface SessionDetailData {
   weekNumber: number | null;
   dayNumber: number | null;
   durationSeconds: number | null;
+  coachNotes?: string | null;
   totalPrescribedVolume: number;
   totalActualVolume: number;
   exercises: ExerciseData[];
@@ -179,7 +184,47 @@ const STATUS_CONFIG: Record<CompletionStatus, {
   },
 };
 
-export function WorkoutSessionDetail({ session }: { session: SessionDetailData }) {
+interface WorkoutSessionDetailProps {
+  session: SessionDetailData;
+  mode?: 'coach' | 'athlete';
+  onNotesUpdated?: (sessionId: string, notes: string | null) => void;
+}
+
+export function WorkoutSessionDetail({ session, mode = 'coach', onNotesUpdated }: WorkoutSessionDetailProps) {
+  const [notes, setNotes] = useState(session.coachNotes ?? '');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const saveNotes = useCallback(async (value: string) => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      const res = await fetch(`/api/sessions/${session.id}/notes`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coachNotes: value }),
+      });
+      if (res.ok) {
+        setSaved(true);
+        onNotesUpdated?.(session.id, value || null);
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = setTimeout(() => setSaved(false), 2000);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setSaving(false);
+    }
+  }, [session.id, onNotesUpdated]);
+
+  function handleNotesChange(value: string) {
+    setNotes(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => saveNotes(value), 1500);
+  }
+
   const volumePct = session.totalPrescribedVolume > 0
     ? Math.round((session.totalActualVolume / session.totalPrescribedVolume) * 100)
     : null;
@@ -473,6 +518,44 @@ export function WorkoutSessionDetail({ session }: { session: SessionDetailData }
           )}
         </div>
       )}
+
+      {/* Coach Notes Section */}
+      {mode === 'coach' ? (
+        <div className="rounded-lg border bg-muted/20 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <StickyNote className="h-3.5 w-3.5" />
+              Coach Notes
+            </h4>
+            {saving && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Saving...
+              </span>
+            )}
+            {saved && !saving && (
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <Check className="h-3 w-3" />
+                Saved
+              </span>
+            )}
+          </div>
+          <textarea
+            value={notes}
+            onChange={(e) => handleNotesChange(e.target.value)}
+            placeholder="Add notes about this session..."
+            className="w-full min-h-[80px] rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-y"
+          />
+        </div>
+      ) : session.coachNotes ? (
+        <div className="rounded-lg border bg-muted/20 p-4">
+          <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5 mb-2">
+            <StickyNote className="h-3.5 w-3.5" />
+            Coach Notes
+          </h4>
+          <p className="text-sm whitespace-pre-wrap">{session.coachNotes}</p>
+        </div>
+      ) : null}
 
       {session.exercises.length === 0 && (
         <p className="text-sm text-muted-foreground py-4 text-center">

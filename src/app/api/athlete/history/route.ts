@@ -87,6 +87,7 @@ export async function GET(request: NextRequest) {
           programName: workoutSession.program?.name ?? null,
           weekNumber: workoutSession.weekNumber,
           dayNumber: workoutSession.dayNumber,
+          coachNotes: workoutSession.coachNotes,
           exercises,
         },
       });

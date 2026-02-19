@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 161
+- Completed: 162
 - In progress: 0
-- Remaining: 24
+- Remaining: 23
 
 ## Tasks
 
@@ -843,9 +843,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Session detail shows Prescribed vs Actual columns per exercise. Green/yellow/red indicators. Total volume comparison.
   - Note: Created `WorkoutSessionDetail` component with two-column Prescribed vs Actual layout per exercise, green/amber/red status badges and indicators, set-by-set breakdown table with color-coded reps/RPE adherence, per-exercise volume diff with trend arrows, and total session volume comparison with progress bar. Enhanced history API to include `rir`, `notes`, `supersetGroup`, `supersetColor`, `athleteNotes` fields. Refactored `WorkoutHistoryList` to use the new component in its expanded view.
 
-- [ ] **Task 31.3**: Add coach notes to completed workout sessions
+- [x] **Task 31.3**: Add coach notes to completed workout sessions
   - Spec: specs/03-athlete-management.md
   - Acceptance: `coachNotes String? @db.Text` on WorkoutSession. Text area in session detail. PATCH API. Visible to both coach and athlete.
+  - Note: Added `coachNotes` field to WorkoutSession model (migration `20260219025403`). PATCH API at `/api/sessions/[sessionId]/notes` with coach auth. Coach sees editable textarea with 1.5s debounce auto-save in `WorkoutSessionDetail`. Athletes see read-only coach notes (amber card) in history detail. Both coach and athlete history APIs return `coachNotes`.
 
 - [ ] **Task 31.4**: Enable program builder edit mode for existing programs
   - Spec: specs/04-program-builder.md

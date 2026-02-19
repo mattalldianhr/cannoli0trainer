@@ -268,7 +268,21 @@ export function WorkoutHistoryList({ athleteId }: { athleteId: string }) {
                       </div>
                     )}
 
-                    {detail && <WorkoutSessionDetail session={detail} />}
+                    {detail && (
+                      <WorkoutSessionDetail
+                        session={detail}
+                        mode="coach"
+                        onNotesUpdated={(sessionId, updatedNotes) => {
+                          setDetailCache((prev) => ({
+                            ...prev,
+                            [sessionId]: {
+                              ...prev[sessionId],
+                              coachNotes: updatedNotes,
+                            },
+                          }));
+                        }}
+                      />
+                    )}
                   </div>
                 )}
               </div>

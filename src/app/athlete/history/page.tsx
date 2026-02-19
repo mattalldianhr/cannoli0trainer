@@ -17,6 +17,7 @@ import {
   Dumbbell,
   Loader2,
   History,
+  StickyNote,
 } from "lucide-react"
 
 interface HistorySession {
@@ -47,6 +48,7 @@ interface SessionDetail {
   programName: string | null
   weekNumber: number | null
   dayNumber: number | null
+  coachNotes?: string | null
   exercises: Array<{
     id: string
     name: string
@@ -332,7 +334,23 @@ export default function AthleteHistoryPage() {
                     </div>
                   )}
 
-                  {detail && detail.exercises.length === 0 && (
+                  {detail?.coachNotes && (
+                    <Card className="bg-amber-50/50 border-amber-200/50">
+                      <CardContent className="p-3">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <StickyNote className="h-3.5 w-3.5 text-amber-600" />
+                          <span className="text-xs font-medium text-amber-700">
+                            Coach Notes
+                          </span>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">
+                          {detail.coachNotes}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {detail && detail.exercises.length === 0 && !detail.coachNotes && (
                     <p className="text-xs text-muted-foreground py-2 text-center">
                       No exercise data available
                     </p>
