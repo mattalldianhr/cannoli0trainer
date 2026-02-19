@@ -6,6 +6,7 @@ import { persistSchedule } from '@/lib/scheduling/persist-schedule';
 import { detectConflicts, type ConflictingSession } from '@/lib/scheduling/detect-conflicts';
 import { deactivateAssignment, deleteAssignment } from '@/lib/scheduling/cleanup-assignment';
 import { notifyProgramAssignment } from '@/lib/notifications';
+import { formatPrismaDate } from '@/lib/date-utils';
 
 export async function POST(
   request: Request,
@@ -168,7 +169,7 @@ export async function POST(
               athleteName: c.athleteName,
               conflictCount: c.conflicts.length,
               dates: c.conflicts.map((cf) => ({
-                date: cf.date.toISOString().split('T')[0],
+                date: formatPrismaDate(cf.date),
                 existingTitle: cf.existingTitle,
                 existingStatus: cf.existingStatus,
                 newTitle: cf.newTitle,

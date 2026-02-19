@@ -9,6 +9,7 @@
  */
 
 import { getPercentOneRM, type RPEValue } from '@/lib/rpe-table';
+import { formatPrismaDate } from '@/lib/date-utils';
 
 /** Valid RPE values for reverse lookup (6–10 in 0.5 increments, descending) */
 const RPE_SEARCH_VALUES: RPEValue[] = [10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6];
@@ -137,5 +138,5 @@ function getISOWeekStart(date: Date): string {
   const day = d.getUTCDay();
   const diff = day === 0 ? 6 : day - 1;
   d.setUTCDate(d.getUTCDate() - diff);
-  return d.toISOString().split('T')[0];
+  return formatPrismaDate(d);
 }

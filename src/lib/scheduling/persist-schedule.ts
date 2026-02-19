@@ -7,6 +7,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import { formatPrismaDate } from '@/lib/date-utils'
 import type { ScheduledSession } from './generate-schedule'
 
 export interface PersistScheduleInput {
@@ -56,12 +57,12 @@ export async function persistSchedule(
 
   // Build a set of existing date strings for fast lookup
   const existingDateSet = new Set(
-    existingSessions.map((s) => s.date.toISOString().split('T')[0])
+    existingSessions.map((s) => formatPrismaDate(s.date))
   )
 
   // Filter to only sessions that don't already exist
   const toCreate = schedule.filter((s) => {
-    const dateStr = s.date.toISOString().split('T')[0]
+    const dateStr = formatPrismaDate(s.date)
     return !existingDateSet.has(dateStr)
   })
 

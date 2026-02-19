@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
 import { estimateOneRMFromRPE } from '@/lib/rpe-table';
+import { formatPrismaDate } from '@/lib/date-utils';
 
 /**
  * GET /api/analytics/compare
@@ -164,7 +165,7 @@ async function getE1RMComparison(
       };
     }
     byExercise[eid].dataPoints.push({
-      date: snap.date.toISOString().split('T')[0],
+      date: formatPrismaDate(snap.date),
       e1rm: snap.generatedMax ?? snap.workingMax,
     });
   }
@@ -216,7 +217,7 @@ async function getE1RMComparison(
         };
       }
       byExercise[eid].dataPoints.push({
-        date: set.completedAt.toISOString().split('T')[0],
+        date: formatPrismaDate(set.completedAt),
         e1rm: Math.round(estimated * 10) / 10,
       });
     }
@@ -290,5 +291,5 @@ function getISOWeekStart(date: Date): string {
   const day = d.getUTCDay();
   const diff = day === 0 ? 6 : day - 1;
   d.setUTCDate(d.getUTCDate() - diff);
-  return d.toISOString().split('T')[0];
+  return formatPrismaDate(d);
 }

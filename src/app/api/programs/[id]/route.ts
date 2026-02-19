@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
+import { parseDateForPrisma } from '@/lib/date-utils';
 
 export async function GET(
   _request: Request,
@@ -97,8 +98,8 @@ export async function PUT(
             ...(body.description !== undefined && { description: body.description }),
             ...(body.type !== undefined && { type: body.type }),
             ...(body.periodizationType !== undefined && { periodizationType: body.periodizationType }),
-            ...(body.startDate !== undefined && { startDate: body.startDate ? new Date(body.startDate) : null }),
-            ...(body.endDate !== undefined && { endDate: body.endDate ? new Date(body.endDate) : null }),
+            ...(body.startDate !== undefined && { startDate: body.startDate ? parseDateForPrisma(body.startDate) : null }),
+            ...(body.endDate !== undefined && { endDate: body.endDate ? parseDateForPrisma(body.endDate) : null }),
             ...(body.isTemplate !== undefined && { isTemplate: body.isTemplate }),
             workouts: {
               create: body.workouts.map(
@@ -182,8 +183,8 @@ export async function PUT(
         ...(body.description !== undefined && { description: body.description }),
         ...(body.type !== undefined && { type: body.type }),
         ...(body.periodizationType !== undefined && { periodizationType: body.periodizationType }),
-        ...(body.startDate !== undefined && { startDate: body.startDate ? new Date(body.startDate) : null }),
-        ...(body.endDate !== undefined && { endDate: body.endDate ? new Date(body.endDate) : null }),
+        ...(body.startDate !== undefined && { startDate: body.startDate ? parseDateForPrisma(body.startDate) : null }),
+        ...(body.endDate !== undefined && { endDate: body.endDate ? parseDateForPrisma(body.endDate) : null }),
         ...(body.isTemplate !== undefined && { isTemplate: body.isTemplate }),
       },
       include: {

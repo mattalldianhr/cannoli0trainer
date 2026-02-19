@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
 import { estimateOneRMFromRPE } from '@/lib/rpe-table';
 import { calculateRpeAccuracy, type RPEAccuracyInput } from '@/lib/analytics/rpe-accuracy';
+import { formatPrismaDate } from '@/lib/date-utils';
 
 /**
  * GET /api/analytics/[athleteId]
@@ -149,7 +150,7 @@ async function getE1RMTrends(
     }
     const e1rm = snap.generatedMax ?? snap.workingMax;
     byExercise[eid].dataPoints.push({
-      date: snap.date.toISOString().split('T')[0],
+      date: formatPrismaDate(snap.date),
       e1rm,
     });
   }
@@ -202,7 +203,7 @@ async function getE1RMTrends(
         };
       }
       byExercise[eid].dataPoints.push({
-        date: set.completedAt.toISOString().split('T')[0],
+        date: formatPrismaDate(set.completedAt),
         e1rm: Math.round(estimated * 10) / 10,
       });
     }
@@ -467,7 +468,7 @@ async function getRPEAccuracy(
       weight: set.weight,
       reps: set.reps,
       e1RM: e1rm,
-      date: set.completedAt.toISOString().split('T')[0],
+      date: formatPrismaDate(set.completedAt),
       exerciseId: eid,
       exerciseName: set.workoutExercise.exercise.name,
     });
@@ -499,7 +500,7 @@ async function getBodyweightTrend(
   });
 
   return logs.map(log => ({
-    date: log.loggedAt.toISOString().split('T')[0],
+    date: formatPrismaDate(log.loggedAt),
     weight: log.weight,
     unit: log.unit,
   }));
@@ -564,7 +565,7 @@ async function getVBTData(
       };
     }
 
-    const date = set.completedAt.toISOString().split('T')[0];
+    const date = formatPrismaDate(set.completedAt);
 
     byExercise[eid].dataPoints.push({
       weight: set.weight,
@@ -688,7 +689,7 @@ async function getRPEHistory(
 
   // Build individual data points
   const dataPoints = sets.map((set) => ({
-    date: set.completedAt.toISOString().split('T')[0],
+    date: formatPrismaDate(set.completedAt),
     rpe: set.rpe!,
     weight: set.weight,
     reps: set.reps,
@@ -718,8 +719,7 @@ async function getRPEHistory(
 function getISOWeekStart(date: Date): string {
   const d = new Date(date);
   const day = d.getUTCDay();
-  // ISO week starts on Monday (day 1). Sunday is 0, so shift it to 7.
   const diff = day === 0 ? 6 : day - 1;
   d.setUTCDate(d.getUTCDate() - diff);
-  return d.toISOString().split('T')[0];
+  return formatPrismaDate(d);
 }

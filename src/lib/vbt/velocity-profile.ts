@@ -6,6 +6,7 @@ import type {
   VelocityTrendResult,
 } from './types';
 import { linearRegression } from './regression';
+import { formatPrismaDate } from '@/lib/date-utils';
 
 /** Standard %1RM buckets for velocity profile table */
 const PROFILE_PERCENTAGES = [60, 70, 80, 90] as const;
@@ -162,7 +163,7 @@ function getWeekStart(dateStr: string): string {
   const day = d.getUTCDay();
   const diff = day === 0 ? 6 : day - 1; // Monday = 0 offset
   d.setUTCDate(d.getUTCDate() - diff);
-  return d.toISOString().split('T')[0];
+  return formatPrismaDate(d);
 }
 
 /**

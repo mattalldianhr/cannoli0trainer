@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentCoachId } from '@/lib/coach';
+import { getCurrentCoachId, getCoachTimezone } from '@/lib/coach';
+import { parseDateForPrisma, todayDateInTimezone } from '@/lib/date-utils';
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
       data: {
         coachId,
         name: body.name,
-        date: new Date(body.date),
+        date: parseDateForPrisma(body.date),
         federation: body.federation ?? null,
         location: body.location ?? null,
         entries: body.entries
@@ -97,7 +98,8 @@ export async function GET(request: NextRequest) {
     }
 
     if (upcoming === 'true') {
-      where.date = { gte: new Date() };
+      const tz = await getCoachTimezone(coachId);
+      where.date = { gte: todayDateInTimezone(tz) };
     }
 
     const meets = await prisma.competitionMeet.findMany({

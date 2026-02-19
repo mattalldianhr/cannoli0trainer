@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentCoachId } from '@/lib/coach';
+import { getCurrentCoachId, getCoachTimezone } from '@/lib/coach';
+import { todayDateInTimezone, parseDateForPrisma, formatPrismaDate } from '@/lib/date-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,24 +16,24 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch the coach's default weight unit
+    // Fetch the coach's default weight unit and timezone
     const coachId = await getCurrentCoachId();
-    const coach = await prisma.coach.findUnique({
-      where: { id: coachId },
-      select: { defaultWeightUnit: true, defaultRestTimerSeconds: true },
-    });
+    const [coach, tz] = await Promise.all([
+      prisma.coach.findUnique({
+        where: { id: coachId },
+        select: { defaultWeightUnit: true, defaultRestTimerSeconds: true },
+      }),
+      getCoachTimezone(coachId),
+    ]);
     const defaultWeightUnit = coach?.defaultWeightUnit ?? 'lbs';
     const defaultRestTimerSeconds = coach?.defaultRestTimerSeconds ?? 120;
 
-    // Parse date param as local date (YYYY-MM-DD), default to today
+    // Parse date param as UTC midnight for Prisma, default to today in coach timezone
     let dateOnly: Date;
     if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
-      // Parse as local midnight to avoid UTC offset shifting the day
-      const [y, m, d] = dateParam.split('-').map(Number);
-      dateOnly = new Date(y, m - 1, d);
+      dateOnly = parseDateForPrisma(dateParam);
     } else {
-      const now = new Date();
-      dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      dateOnly = todayDateInTimezone(tz);
     }
 
     // Find the workout session for this athlete + date
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
 
         if (prevSets.length > 0) {
           // Use the first set's completedAt as the session date
-          const sessionDate = prevSets[0].completedAt.toISOString().split('T')[0];
+          const sessionDate = formatPrismaDate(prevSets[0].completedAt);
           prevByExercise.set(
             exerciseId,
             prevSets.map((sl) => ({

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { getAthleteCoachTimezone } from '@/lib/coach';
+import { todayDateInTimezone, parseDateForPrisma, getMondayInTimezone, formatPrismaDate } from '@/lib/date-utils';
 
 export async function GET() {
   try {
@@ -14,14 +16,9 @@ export async function GET() {
       );
     }
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    // Start of current week (Monday)
-    const startOfWeek = new Date(today);
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    startOfWeek.setDate(today.getDate() + mondayOffset);
+    const tz = await getAthleteCoachTimezone(athleteId);
+    const today = todayDateInTimezone(tz);
+    const startOfWeek = parseDateForPrisma(getMondayInTimezone(tz));
 
     const [
       todaySession,
@@ -106,13 +103,13 @@ export async function GET() {
     let streak = 0;
     if (streakSessions.length > 0) {
       const sessionDates = new Set(
-        streakSessions.map((s) => s.date.toISOString().split('T')[0])
+        streakSessions.map((s) => formatPrismaDate(s.date))
       );
 
       // Walk backwards day by day from today
       const checkDate = new Date(today);
       while (true) {
-        const dateStr = checkDate.toISOString().split('T')[0];
+        const dateStr = formatPrismaDate(checkDate);
         if (sessionDates.has(dateStr)) {
           streak++;
           checkDate.setDate(checkDate.getDate() - 1);

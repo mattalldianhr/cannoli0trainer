@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
+import { formatPrismaDate } from '@/lib/date-utils';
 
 /**
  * GET /api/analytics/[athleteId]/export
@@ -63,7 +64,7 @@ export async function GET(
 
     const header = 'Date,Exercise,Set,Reps,Weight,Unit,RPE,RIR,Velocity,Notes';
     const rows = setLogs.map((s) => {
-      const date = s.completedAt.toISOString().split('T')[0];
+      const date = formatPrismaDate(s.completedAt);
       const exercise = csvEscape(s.workoutExercise.exercise.name);
       const rpe = s.rpe !== null ? String(s.rpe) : '';
       const rir = s.rir !== null ? String(s.rir) : '';

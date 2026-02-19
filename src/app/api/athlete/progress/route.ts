@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { estimateOneRMFromRPE } from '@/lib/rpe-table';
+import { getAthleteCoachTimezone } from '@/lib/coach';
+import { todayDateInTimezone, formatPrismaDate } from '@/lib/date-utils';
 
 /**
  * GET /api/athlete/progress?range=8w
@@ -32,9 +34,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const range = searchParams.get('range') || '8w';
 
-    // Parse range into a date filter
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // Parse range into a date filter using coach's timezone
+    const tz = await getAthleteCoachTimezone(athleteId);
+    const today = todayDateInTimezone(tz);
     const dateRange = getRangeFilter(range, today);
 
     // Run all queries in parallel
@@ -145,7 +147,7 @@ async function getE1RMTrends(
     }
     const e1rm = snap.generatedMax ?? snap.workingMax;
     byExercise[eid].push({
-      date: snap.date.toISOString().split('T')[0],
+      date: formatPrismaDate(snap.date),
       value: Math.round(e1rm * 10) / 10,
     });
   }
@@ -187,7 +189,7 @@ async function getE1RMTrends(
         byExercise[eid] = [];
       }
       byExercise[eid].push({
-        date: set.completedAt.toISOString().split('T')[0],
+        date: formatPrismaDate(set.completedAt),
         value: Math.round(estimated * 10) / 10,
       });
     }
@@ -275,11 +277,11 @@ async function getCompliance(
   let streak = 0;
   if (streakSessions.length > 0) {
     const sessionDates = new Set(
-      streakSessions.map((s) => s.date.toISOString().split('T')[0])
+      streakSessions.map((s) => formatPrismaDate(s.date))
     );
     const checkDate = new Date(today);
     while (true) {
-      const dateStr = checkDate.toISOString().split('T')[0];
+      const dateStr = formatPrismaDate(checkDate);
       if (sessionDates.has(dateStr)) {
         streak++;
         checkDate.setDate(checkDate.getDate() - 1);
@@ -360,7 +362,7 @@ async function getPersonalRecords(
       exerciseName: pr.exerciseName,
       weight: pr.weight,
       reps: 1, // MaxSnapshot represents a 1RM
-      date: pr.date.toISOString().split('T')[0],
+      date: formatPrismaDate(pr.date),
       isRecent: pr.date >= sevenDaysAgo,
       category: pr.category,
       tags: pr.tags,
@@ -392,7 +394,7 @@ async function getBodyweight(
   if (logs.length < 2) return null;
 
   return logs.map((log) => ({
-    date: log.loggedAt.toISOString().split('T')[0],
+    date: formatPrismaDate(log.loggedAt),
     weight: log.weight,
   }));
 }
@@ -453,5 +455,5 @@ function getISOWeekStart(date: Date): string {
   const day = d.getUTCDay();
   const diff = day === 0 ? 6 : day - 1;
   d.setUTCDate(d.getUTCDate() - diff);
-  return d.toISOString().split('T')[0];
+  return formatPrismaDate(d);
 }

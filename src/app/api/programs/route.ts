@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
+import { parseDateForPrisma } from '@/lib/date-utils';
 
 export async function POST(request: Request) {
   try {
@@ -21,8 +22,8 @@ export async function POST(request: Request) {
         description: body.description ?? null,
         type: body.type ?? 'individual',
         periodizationType: body.periodizationType ?? null,
-        startDate: body.startDate ? new Date(body.startDate) : null,
-        endDate: body.endDate ? new Date(body.endDate) : null,
+        startDate: body.startDate ? parseDateForPrisma(body.startDate) : null,
+        endDate: body.endDate ? parseDateForPrisma(body.endDate) : null,
         isTemplate: body.isTemplate ?? false,
         workouts: body.workouts
           ? {

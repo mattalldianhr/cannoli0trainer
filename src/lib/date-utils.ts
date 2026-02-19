@@ -98,3 +98,75 @@ export function weekdayShortDate(dateStr: string): string {
     day: "numeric",
   });
 }
+
+// ────────────────────────────────────────────────────────────────
+// Server-side timezone-aware utilities
+//
+// On the server (Railway, UTC), `new Date()` returns UTC time.
+// These functions use Intl.DateTimeFormat to convert to the
+// coach's IANA timezone before extracting the date.
+// ────────────────────────────────────────────────────────────────
+
+/**
+ * Format a Date as YYYY-MM-DD in a specific IANA timezone.
+ * Works on server (UTC) by using Intl.DateTimeFormat.
+ */
+export function formatDateInTimezone(date: Date, timezone: string): string {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(date); // en-CA gives YYYY-MM-DD
+}
+
+/**
+ * Get "today" as YYYY-MM-DD in a specific timezone.
+ */
+export function todayInTimezone(timezone: string): string {
+  return formatDateInTimezone(new Date(), timezone);
+}
+
+/**
+ * Get "today" as a Date object (midnight UTC for Prisma @db.Date queries)
+ * in a specific timezone.
+ */
+export function todayDateInTimezone(timezone: string): Date {
+  const dateStr = todayInTimezone(timezone);
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+/**
+ * Convert a Prisma DateTime/@db.Date value to YYYY-MM-DD string.
+ * Prisma @db.Date stores as UTC midnight — extract with UTC getters.
+ */
+export function formatPrismaDate(date: Date): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Parse YYYY-MM-DD to a Date suitable for Prisma @db.Date queries.
+ * Creates UTC midnight (matching how Prisma stores @db.Date).
+ */
+export function parseDateForPrisma(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+/**
+ * Get start of week (Monday) in a timezone, as YYYY-MM-DD.
+ */
+export function getMondayInTimezone(timezone: string): string {
+  const todayStr = todayInTimezone(timezone);
+  const [y, m, d] = todayStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  return formatLocalDate(date);
+}

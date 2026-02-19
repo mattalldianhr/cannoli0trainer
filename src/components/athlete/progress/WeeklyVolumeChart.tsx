@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BaseBarChart } from '@/components/charts/BaseBarChart';
 import { Badge } from '@/components/ui/badge';
 import { BarChart3, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { formatLocalDate } from '@/lib/date-utils';
 
 interface WeeklyVolumeChartProps {
   weeklyVolume: { weekStart: string; tonnage: number }[];
@@ -27,7 +28,7 @@ function getISOWeekStart(date: Date): string {
   const day = d.getDay();
   const diff = day === 0 ? 6 : day - 1;
   d.setDate(d.getDate() - diff);
-  return d.toISOString().split('T')[0];
+  return formatLocalDate(d);
 }
 
 export function WeeklyVolumeChart({ weeklyVolume }: WeeklyVolumeChartProps) {

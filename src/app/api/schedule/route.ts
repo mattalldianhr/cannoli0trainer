@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentCoachId } from '@/lib/coach';
+import { formatPrismaDate, parseDateForPrisma } from '@/lib/date-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,8 +17,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const start = new Date(startDate + 'T00:00:00');
-    const end = new Date(endDate + 'T23:59:59');
+    const start = parseDateForPrisma(startDate);
+    const end = parseDateForPrisma(endDate);
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       return NextResponse.json(
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
       name: athlete.name,
       sessions: athlete.workoutSessions.map((s) => ({
         id: s.id,
-        date: s.date.toISOString().split('T')[0],
+        date: formatPrismaDate(s.date),
         title: s.title,
         status: s.status,
         isSkipped: s.isSkipped,

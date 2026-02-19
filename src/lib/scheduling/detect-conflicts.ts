@@ -7,6 +7,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import { formatPrismaDate } from '@/lib/date-utils'
 import type { ScheduledSession } from './generate-schedule'
 
 export interface ConflictingSession {
@@ -76,7 +77,7 @@ export async function detectConflicts(
   // Build a lookup from date string to existing session
   const existingByDate = new Map(
     existingSessions.map((s) => [
-      s.date.toISOString().split('T')[0],
+      formatPrismaDate(s.date),
       s,
     ])
   )
@@ -84,7 +85,7 @@ export async function detectConflicts(
   // Match conflicts with the proposed schedule entries
   const conflicts: ConflictingSession[] = []
   for (const proposed of schedule) {
-    const dateStr = proposed.date.toISOString().split('T')[0]
+    const dateStr = formatPrismaDate(proposed.date)
     const existing = existingByDate.get(dateStr)
     if (existing) {
       conflicts.push({

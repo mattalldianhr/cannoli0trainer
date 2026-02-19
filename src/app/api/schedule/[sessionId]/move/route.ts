@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { parseDateForPrisma, formatPrismaDate } from '@/lib/date-utils';
 
 /**
  * PATCH /api/schedule/[sessionId]/move
@@ -25,7 +26,7 @@ export async function PATCH(
       );
     }
 
-    const parsedDate = new Date(newDate + 'T00:00:00Z');
+    const parsedDate = parseDateForPrisma(newDate);
     if (isNaN(parsedDate.getTime())) {
       return NextResponse.json(
         { error: 'Invalid date format. Use YYYY-MM-DD.' },
@@ -53,7 +54,7 @@ export async function PATCH(
       );
     }
 
-    const currentDateStr = session.date.toISOString().split('T')[0];
+    const currentDateStr = formatPrismaDate(session.date);
     if (currentDateStr === newDate) {
       return NextResponse.json(
         { error: 'New date is the same as current date' },

@@ -32,3 +32,24 @@ export async function getCurrentCoachId(): Promise<string> {
 
   return coach.id;
 }
+
+const DEFAULT_TIMEZONE = "America/New_York";
+
+/** Get the coach's IANA timezone (defaults to America/New_York). */
+export async function getCoachTimezone(coachId?: string): Promise<string> {
+  const id = coachId || await getCurrentCoachId();
+  const coach = await prisma.coach.findUnique({
+    where: { id },
+    select: { timezone: true },
+  });
+  return coach?.timezone || DEFAULT_TIMEZONE;
+}
+
+/** For athlete routes: get the coach's timezone via athlete's coachId. */
+export async function getAthleteCoachTimezone(athleteId: string): Promise<string> {
+  const athlete = await prisma.athlete.findUnique({
+    where: { id: athleteId },
+    select: { coach: { select: { timezone: true } } },
+  });
+  return athlete?.coach?.timezone || DEFAULT_TIMEZONE;
+}
