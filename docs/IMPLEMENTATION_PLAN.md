@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 166
+- Completed: 167
 - In progress: 0
-- Remaining: 19
+- Remaining: 18
 
 ## Tasks
 
@@ -868,9 +868,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Exercise library: 30 per page server-side. Dashboard feed: 20 items. Exercise picker: server-side search with debounce. Paginated response shape `{ data, total, hasMore }`.
   - Note: Exercise API (`/api/exercises`) updated with `paginated=true` query param returning `{ data, total, hasMore }` shape. ExerciseList converted from server-rendered full-list to client-side component with 30-per-page server-side pagination and 300ms debounced search. ExercisePicker converted from load-all-then-filter to server-side search with 30-per-page pagination and debounced input. Dashboard activity feed limited to 20 most recent sessions. Training history was already paginated (20 per page via `/api/athletes/[id]/history`).
 
-- [ ] **Task 31.8**: Display superset grouping in the training log
+- [x] **Task 31.8**: Display superset grouping in the training log
   - Spec: specs/06-athlete-training-log.md
   - Acceptance: Exercises with same `supersetGroup` visually grouped. Colored left border, "Superset" label, reduced spacing. Non-superset exercises normal.
+  - Note: Added `groupExercises()` helper that groups consecutive exercises sharing the same `supersetGroup`. Superset groups wrapped in a container with colored left border (4px), "Superset {letter}" label with Link icon, and reduced inter-card spacing (1.5 vs 3). Individual exercise cards inside a superset no longer show their own left border or "SS:" badge (redundant with group header). Orphan exercises (single exercise with a supersetGroup) still render with individual border/badge.
 
 ### Priority 32: Athlete Progress Dashboard
 

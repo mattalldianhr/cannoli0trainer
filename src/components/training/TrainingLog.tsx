@@ -25,6 +25,7 @@ import {
   WifiOff,
   CloudOff,
   Scale,
+  Link,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -480,6 +481,7 @@ function ExerciseCard({
   defaultRestTimerSeconds,
   onSetChange,
   onEnqueue,
+  inSuperset,
 }: {
   exercise: ExerciseData;
   athleteId: string;
@@ -487,6 +489,7 @@ function ExerciseCard({
   defaultRestTimerSeconds: number;
   onSetChange: () => void;
   onEnqueue?: () => void;
+  inSuperset?: boolean;
 }) {
   const completedSets = exercise.setLogs.length;
   const totalSets = exercise.prescribedSets ? parseInt(exercise.prescribedSets, 10) : 0;
@@ -632,8 +635,8 @@ function ExerciseCard({
     <Card className={cn(
       'transition-all',
       isComplete && 'border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20',
-      exercise.supersetColor && 'border-l-4',
-    )} style={exercise.supersetColor ? { borderLeftColor: exercise.supersetColor } : undefined}>
+      exercise.supersetColor && !inSuperset && 'border-l-4',
+    )} style={exercise.supersetColor && !inSuperset ? { borderLeftColor: exercise.supersetColor } : undefined}>
       <CardContent className="p-4">
         {/* Exercise header — tap to expand/collapse */}
         <button
@@ -657,7 +660,7 @@ function ExerciseCard({
                 <Badge variant="secondary" className="text-xs">
                   {prescriptionTypeBadge(exercise.prescriptionType)}
                 </Badge>
-                {exercise.supersetGroup && (
+                {exercise.supersetGroup && !inSuperset && (
                   <Badge
                     variant="outline"
                     className="text-xs"
@@ -1009,6 +1012,39 @@ function WorkoutSummary({ exercises, weightUnit, athleteId }: { exercises: Exerc
   );
 }
 
+/** Group consecutive exercises by supersetGroup for visual grouping */
+function groupExercises(exercises: ExerciseData[]): Array<{ type: 'single'; exercise: ExerciseData } | { type: 'superset'; group: string; color: string | null; exercises: ExerciseData[] }> {
+  const result: Array<{ type: 'single'; exercise: ExerciseData } | { type: 'superset'; group: string; color: string | null; exercises: ExerciseData[] }> = [];
+
+  let i = 0;
+  while (i < exercises.length) {
+    const ex = exercises[i];
+    if (ex.supersetGroup) {
+      // Collect all consecutive exercises with the same supersetGroup
+      const group = ex.supersetGroup;
+      const color = ex.supersetColor;
+      const grouped: ExerciseData[] = [ex];
+      let j = i + 1;
+      while (j < exercises.length && exercises[j].supersetGroup === group) {
+        grouped.push(exercises[j]);
+        j++;
+      }
+      if (grouped.length > 1) {
+        result.push({ type: 'superset', group, color, exercises: grouped });
+      } else {
+        // Single exercise with a supersetGroup (orphan) — render normally
+        result.push({ type: 'single', exercise: ex });
+      }
+      i = j;
+    } else {
+      result.push({ type: 'single', exercise: ex });
+      i++;
+    }
+  }
+
+  return result;
+}
+
 export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: TrainingLogProps) {
   const [athleteId, setAthleteId] = useState(initialAthleteId ?? athletes[0]?.id ?? '');
   const [date, setDate] = useState(formatDate(new Date()));
@@ -1232,17 +1268,52 @@ export function TrainingLog({ athletes, initialAthleteId, mode = 'coach' }: Trai
 
           {/* Exercise list */}
           <div className="space-y-3">
-            {exercises.map((ex) => (
-              <ExerciseCard
-                key={ex.id}
-                exercise={ex}
-                athleteId={athleteId}
-                weightUnit={weightUnit}
-                defaultRestTimerSeconds={defaultRestTimer}
-                onSetChange={fetchWorkout}
-                onEnqueue={handleEnqueue}
-              />
-            ))}
+            {groupExercises(exercises).map((item, idx) => {
+              if (item.type === 'single') {
+                return (
+                  <ExerciseCard
+                    key={item.exercise.id}
+                    exercise={item.exercise}
+                    athleteId={athleteId}
+                    weightUnit={weightUnit}
+                    defaultRestTimerSeconds={defaultRestTimer}
+                    onSetChange={fetchWorkout}
+                    onEnqueue={handleEnqueue}
+                  />
+                );
+              }
+
+              // Superset group wrapper
+              return (
+                <div
+                  key={`superset-${item.group}-${idx}`}
+                  className="rounded-lg border-l-4 pl-3 space-y-1.5"
+                  style={{ borderLeftColor: item.color ?? '#6b7280' }}
+                >
+                  <div className="flex items-center gap-1.5 pt-1 pb-0.5">
+                    <Link className="h-3.5 w-3.5" style={{ color: item.color ?? '#6b7280' }} />
+                    <span
+                      className="text-xs font-semibold uppercase tracking-wide"
+                      style={{ color: item.color ?? '#6b7280' }}
+                    >
+                      Superset {item.group}
+                    </span>
+                  </div>
+                  {item.exercises.map((ex) => (
+                    <ExerciseCard
+                      key={ex.id}
+                      exercise={ex}
+                      athleteId={athleteId}
+                      weightUnit={weightUnit}
+                      defaultRestTimerSeconds={defaultRestTimer}
+                      onSetChange={fetchWorkout}
+                      onEnqueue={handleEnqueue}
+                      inSuperset
+                    />
+                  ))}
+                </div>
+              );
+            })}
           </div>
 
           {/* Workout completion summary */}
