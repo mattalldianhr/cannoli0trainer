@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 175
+- Completed: 176
 - In progress: 0
-- Remaining: 10
+- Remaining: 9
 
 ## Tasks
 
@@ -917,9 +917,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: `Conversation` (coachId, athleteId, lastMessageAt, unreadCounts, unique constraint) and `Message` (conversationId, senderId, senderType, content, readAt) models. `SenderType` enum. Indexes. Migration runs.
   - Note: Added `SenderType` enum (COACH, ATHLETE), `Conversation` model with `@@unique([coachId, athleteId])` and indexes on `[coachId, lastMessageAt]` and `[athleteId]`, `Message` model with `@@index([conversationId, createdAt])` and cascade delete. Added `conversations` relation to both Coach and Athlete models. Migration `20260219050619_add_messaging_models`.
 
-- [ ] **Task 33.2**: Create messaging API routes (send, list, read, mark-read)
+- [x] **Task 33.2**: Create messaging API routes (send, list, read, mark-read)
   - Spec: specs/16-coach-athlete-messaging.md
   - Acceptance: POST `/api/messages` (send), GET `/api/messages` (coach inbox), GET `/api/messages/[athleteId]` (thread, paginated), PATCH `/api/messages/[athleteId]/read` (mark read). Auto-creates conversation on first message. Auth-validated. Unit tested.
+  - Note: Created 6 API routes: Coach side — `POST /api/messages` (send with conversation auto-create), `GET /api/messages` (inbox sorted by lastMessageAt), `GET /api/messages/[athleteId]` (thread with cursor/after pagination), `PATCH /api/messages/[athleteId]/read` (mark read), `GET /api/messages/unread` (badge count). Athlete side — `GET/POST /api/athlete/messages` (read/send), `PATCH /api/athlete/messages/read` (mark read). Added `src/lib/messaging.ts` with `scheduleMessageNotification()` — 5-minute delayed check via setTimeout, sends branded email via Resend if unread, respects `emailOnMessage` preference.
 
 - [ ] **Task 33.3**: Build conversation list (coach inbox) page
   - Spec: specs/16-coach-athlete-messaging.md
