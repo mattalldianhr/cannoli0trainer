@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 169
+- Completed: 170
 - In progress: 0
-- Remaining: 16
+- Remaining: 15
 
 ## Tasks
 
@@ -885,9 +885,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Recharts LineChart of estimated 1RM over time. Exercise dropdown defaults to competition lifts. Date range selector. Reuses chart wrappers from Spec 07.
   - Note: Created `E1RMTrendChart` component at `src/components/athlete/progress/E1RMTrendChart.tsx`. Uses `BaseLineChart` wrapper from Spec 07. Exercise dropdown defaults to competition lifts (squat/bench/deadlift pattern match). Shows data point count badge. Empty state when no trend data exists. Date range selector deferred to page-level component (Task 32.7) since the API `range` param controls the data window.
 
-- [ ] **Task 32.3**: Build weekly volume bar chart for athlete progress page
+- [x] **Task 32.3**: Build weekly volume bar chart for athlete progress page
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: Recharts BarChart of weekly tonnage. Current week highlighted. Trend indicator (up/down arrow + %).
+  - Note: Created `WeeklyVolumeChart` component at `src/components/athlete/progress/WeeklyVolumeChart.tsx`. Uses `BaseBarChart` wrapper from Spec 07 with two data keys (pastTonnage/currentTonnage) for current week orange highlight vs blue past weeks. Shows latest week tonnage as hero number with trend badge (up/down/flat arrow + %). Trend compares last two weeks with 2% deadzone. Empty state when no volume data.
 
 - [ ] **Task 32.4**: Build compliance ring and training streak display
   - Spec: specs/15-athlete-progress-dashboard.md
