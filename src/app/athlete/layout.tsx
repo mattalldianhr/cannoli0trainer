@@ -33,6 +33,7 @@ export default function AthleteLayout({
             width={140}
             height={35}
             className="h-7 w-auto brightness-0 dark:brightness-100"
+            style={{ filter: "brightness(0)" }}
             priority
           />
           <div className="flex items-center gap-2">

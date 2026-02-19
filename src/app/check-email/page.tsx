@@ -15,6 +15,7 @@ export default function CheckEmailPage() {
             width={220}
             height={55}
             className="h-12 w-auto brightness-0 dark:brightness-100"
+            style={{ filter: "brightness(0)" }}
             priority
           />
           <p className="text-sm text-muted-foreground">Sign in to Cannoli Trainer</p>

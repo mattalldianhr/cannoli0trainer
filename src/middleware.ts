@@ -53,11 +53,11 @@ function isCoachApiRoute(pathname: string): boolean {
 }
 
 function isAthleteRoute(pathname: string): boolean {
-  return pathname.startsWith("/athlete")
+  return pathname === "/athlete" || pathname.startsWith("/athlete/")
 }
 
 function isAthleteApiRoute(pathname: string): boolean {
-  return pathname.startsWith("/api/athlete")
+  return pathname === "/api/athlete" || pathname.startsWith("/api/athlete/")
 }
 
 export default auth((req) => {

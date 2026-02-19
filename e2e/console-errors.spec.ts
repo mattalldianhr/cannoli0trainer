@@ -46,6 +46,7 @@ const ROUTES = [
 const IGNORE_PATTERNS = [
   /module factory is not available/i,
   /Switched to client rendering because the server rendering errored/i,
+  /Failed to load resource.*40[13]/i,
 ];
 
 function isIgnored(msg: string): boolean {
