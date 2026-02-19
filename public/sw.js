@@ -1,8 +1,8 @@
 // Cannoli Trainer Service Worker
 // Caches app shell and athlete workout data for PWA offline support
 
-const CACHE_NAME = 'cannoli-v2';
-const API_CACHE_NAME = 'cannoli-api-v1';
+const CACHE_NAME = 'cannoli-v3';
+const API_CACHE_NAME = 'cannoli-api-v2';
 
 // App shell resources to pre-cache on install
 const APP_SHELL = [
@@ -15,6 +15,7 @@ const APP_SHELL = [
 // API paths to cache with network-first + stale fallback
 const CACHEABLE_API_PATHS = [
   '/api/train',
+  '/api/athlete/train',
   '/api/athlete/dashboard',
   '/api/athlete/calendar',
   '/api/athlete/history',
