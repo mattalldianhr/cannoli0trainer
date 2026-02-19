@@ -13,6 +13,7 @@ import {
   Weight,
   MapPin,
   Mail,
+  MessageSquare,
   Pencil,
   Archive,
   ExternalLink,
@@ -183,6 +184,12 @@ export function AthleteProfile({ athlete }: { athlete: AthleteProfileData }) {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/messages/${athlete.id}`}>
+              <MessageSquare className="h-4 w-4 mr-1" />
+              Message
+            </Link>
+          </Button>
           <BodyweightLogDialog
             athleteId={athlete.id}
             athleteName={athlete.name}

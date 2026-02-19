@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 178
+- Completed: 179
 - In progress: 0
-- Remaining: 7
+- Remaining: 6
 
 ## Tasks
 
@@ -932,9 +932,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: Chronological messages with date headers. Coach right-aligned, athlete left-aligned. MessageInput with Enter-to-send. Optimistic updates. Auto-scroll. "Load older" pagination. Marks as read on mount.
   - Note: Created `MessageThread` component at `src/components/messaging/MessageThread.tsx`. Accepts `mode` ('coach' | 'athlete') and optional `athleteId` props to work with both API paths. Features: date group headers (Today/Yesterday/date), right-aligned own messages (primary color) and left-aligned received (muted bg), Enter-to-send with Shift+Enter for newlines, auto-resizing textarea, optimistic message insertion with rollback on failure, 10s polling for new messages with visibility-based pause, "Load older messages" cursor pagination preserving scroll position, marks conversation as read on mount and focus return, loading skeletons, error banner, and empty state.
 
-- [ ] **Task 33.5**: Build coach message thread page and athlete profile integration
+- [x] **Task 33.5**: Build coach message thread page and athlete profile integration
   - Spec: specs/16-coach-athlete-messaging.md
   - Acceptance: `/messages/[athleteId]` page with MessageThread. "Message" button on athlete profile. Conversation auto-created on first message.
+  - Note: Created `/messages/[athleteId]` page with breadcrumb nav (Messages / Athlete Name), full-height MessageThread in coach mode, server-side athlete verification (coachId scoped), loading skeleton, and dynamic metadata. Added "Message" button with MessageSquare icon to athlete profile header actions (before Edit/Archive). Conversation auto-created on first message send via existing POST `/api/messages` logic.
 
 - [ ] **Task 33.6**: Build athlete messaging view
   - Spec: specs/16-coach-athlete-messaging.md
