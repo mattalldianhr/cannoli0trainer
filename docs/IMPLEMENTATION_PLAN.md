@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 176
+- Completed: 177
 - In progress: 0
-- Remaining: 9
+- Remaining: 8
 
 ## Tasks
 
@@ -922,9 +922,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: POST `/api/messages` (send), GET `/api/messages` (coach inbox), GET `/api/messages/[athleteId]` (thread, paginated), PATCH `/api/messages/[athleteId]/read` (mark read). Auto-creates conversation on first message. Auth-validated. Unit tested.
   - Note: Created 6 API routes: Coach side — `POST /api/messages` (send with conversation auto-create), `GET /api/messages` (inbox sorted by lastMessageAt), `GET /api/messages/[athleteId]` (thread with cursor/after pagination), `PATCH /api/messages/[athleteId]/read` (mark read), `GET /api/messages/unread` (badge count). Athlete side — `GET/POST /api/athlete/messages` (read/send), `PATCH /api/athlete/messages/read` (mark read). Added `src/lib/messaging.ts` with `scheduleMessageNotification()` — 5-minute delayed check via setTimeout, sends branded email via Resend if unread, respects `emailOnMessage` preference.
 
-- [ ] **Task 33.3**: Build conversation list (coach inbox) page
+- [x] **Task 33.3**: Build conversation list (coach inbox) page
   - Spec: specs/16-coach-athlete-messaging.md
   - Acceptance: `/messages` page with athlete name, last message preview, timestamp, unread badge. Sorted by most recent. Polling every 30s. Empty state.
+  - Note: Created `ConversationList` client component at `src/components/messaging/ConversationList.tsx` with 30s polling, visibility-based refresh, avatar initials, relative timestamps, unread count badges with primary color highlight, empty state with CTA to athletes page, loading skeletons, and error state. Page at `src/app/messages/page.tsx` with Container layout. Added `loading.tsx` and `error.tsx` for the route.
 
 - [ ] **Task 33.4**: Build message thread component (shared coach + athlete)
   - Spec: specs/16-coach-athlete-messaging.md
