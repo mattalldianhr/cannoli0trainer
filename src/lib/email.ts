@@ -1,17 +1,19 @@
-import { Resend } from 'resend';
+import sgMail from '@sendgrid/mail';
 
 // ---------------------------------------------------------------------------
-// Resend singleton — lazily initialized, returns null when no API key is set
+// SendGrid singleton — lazily initialized, returns false when no API key
 // ---------------------------------------------------------------------------
 
-let _resend: Resend | null = null;
+let _initialized = false;
 
-function getResend(): Resend | null {
-  if (!process.env.AUTH_RESEND_KEY) return null;
-  if (!_resend) {
-    _resend = new Resend(process.env.AUTH_RESEND_KEY);
+function initSendGrid(): boolean {
+  const key = process.env.SENDGRID_API_KEY || process.env.AUTH_RESEND_KEY;
+  if (!key) return false;
+  if (!_initialized) {
+    sgMail.setApiKey(key);
+    _initialized = true;
   }
-  return _resend;
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -25,7 +27,7 @@ const APP_URL = process.env.AUTH_URL || 'http://localhost:3000';
 export { APP_URL };
 
 // ---------------------------------------------------------------------------
-// Low-level send — wraps Resend SDK. Logs errors, never throws.
+// Low-level send — wraps SendGrid SDK. Logs errors, never throws.
 // ---------------------------------------------------------------------------
 
 export async function sendEmail({
@@ -37,14 +39,13 @@ export async function sendEmail({
   subject: string;
   html: string;
 }): Promise<boolean> {
-  const resend = getResend();
-  if (!resend) {
-    console.warn('[email] AUTH_RESEND_KEY not set, skipping email');
+  if (!initSendGrid()) {
+    console.warn('[email] SENDGRID_API_KEY not set, skipping email');
     return false;
   }
 
   try {
-    await resend.emails.send({ from: EMAIL_FROM, to, subject, html });
+    await sgMail.send({ from: EMAIL_FROM, to, subject, html });
     console.log(`[email] Sent "${subject}" to ${to}`);
     return true;
   } catch (error) {

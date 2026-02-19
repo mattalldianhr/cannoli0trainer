@@ -3,7 +3,7 @@ import Resend from "next-auth/providers/resend"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
-import { brandedEmailHtml, emailCtaButton } from "@/lib/email"
+import { brandedEmailHtml, emailCtaButton, sendEmail } from "@/lib/email"
 
 declare module "next-auth" {
   interface Session {
@@ -27,9 +27,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Resend({
-      apiKey: process.env.AUTH_RESEND_KEY,
+      apiKey: process.env.SENDGRID_API_KEY || process.env.AUTH_RESEND_KEY || "unused",
       from: process.env.EMAIL_FROM || "Cannoli Trainer <noreply@cannoli.mattalldian.com>",
-      async sendVerificationRequest({ identifier: to, url, provider }) {
+      async sendVerificationRequest({ identifier: to, url }) {
         const { host } = new URL(url)
         const body = `
           <h2 style="margin: 0 0 16px;">Sign in to Cannoli Trainer</h2>
@@ -42,22 +42,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             If you didn&#39;t request this email, you can safely ignore it.
           </p>
         `
-        const res = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${provider.apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: provider.from,
-            to,
-            subject: `Sign in to ${host}`,
-            html: brandedEmailHtml({ body }),
-            text: `Sign in to ${host}\n\n${url}\n\nIf you didn't request this email, you can safely ignore it.`,
-          }),
+        const sent = await sendEmail({
+          to,
+          subject: `Sign in to ${host}`,
+          html: brandedEmailHtml({ body }),
         })
-        if (!res.ok) {
-          throw new Error("Resend error: " + JSON.stringify(await res.json()))
+        if (!sent) {
+          throw new Error("Failed to send verification email")
         }
       },
     }),
