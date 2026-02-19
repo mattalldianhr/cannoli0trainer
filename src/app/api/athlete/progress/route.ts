@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
       personalRecords,
       bodyweight,
       availableExercises,
+      athlete,
     ] = await Promise.all([
       getE1RMTrends(athleteId, dateRange),
       getWeeklyVolume(athleteId, dateRange),
@@ -52,6 +53,10 @@ export async function GET(request: NextRequest) {
       getPersonalRecords(athleteId),
       getBodyweight(athleteId, dateRange),
       getAvailableExercises(athleteId),
+      prisma.athlete.findUnique({
+        where: { id: athleteId },
+        select: { weightClass: true },
+      }),
     ]);
 
     return NextResponse.json({
@@ -61,6 +66,7 @@ export async function GET(request: NextRequest) {
       personalRecords,
       bodyweight,
       availableExercises,
+      weightClass: athlete?.weightClass ?? null,
     });
   } catch (error) {
     console.error('Failed to fetch athlete progress:', error);

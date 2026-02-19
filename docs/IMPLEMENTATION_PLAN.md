@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 172
+- Completed: 173
 - In progress: 0
-- Remaining: 13
+- Remaining: 12
 
 ## Tasks
 
@@ -900,9 +900,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Acceptance: All-time best per exercise from MaxSnapshot. "New PR" badge for last 7 days. Filterable by category. Sorted most recent first.
   - Note: Created `PersonalRecordsList` component at `src/components/athlete/progress/PersonalRecordsList.tsx`. Card with Trophy icon, category filter chips (All, Competition Lifts, Variations, Accessories) with counts, divider-separated PR rows with Star icons (amber-filled for recent), "New PR" badge on records from last 7 days, weight in kg with tabular-nums. Filters by powerlifting tags from exercise data. Updated `/api/athlete/progress` `getPersonalRecords()` to include `category` and `tags` fields from Exercise model. Empty state when no PRs exist.
 
-- [ ] **Task 32.6**: Build bodyweight trend chart (conditional render)
+- [x] **Task 32.6**: Build bodyweight trend chart (conditional render)
   - Spec: specs/15-athlete-progress-dashboard.md
   - Acceptance: LineChart of BodyweightLog entries. Current weight badge. Only renders with 2+ entries. Target weight class line if applicable.
+  - Note: Created `BodyweightTrendChart` component at `src/components/athlete/progress/BodyweightTrendChart.tsx`. Uses `BaseLineChart` wrapper with bodyweight line (blue) and optional target weight class reference line (amber). Shows current weight as hero number with trend badge (up/down/flat + kg diff from first to last entry). Trend colors inverted from volume (down=green for weight loss, up=amber for weight gain). Parses standard IPF weight classes from athlete's `weightClass` field. Updated `/api/athlete/progress` to include `weightClass` from Athlete model. Component only renders when parent passes non-null bodyweight data (API returns null for <2 entries).
 
 - [ ] **Task 32.7**: Assemble athlete progress page and update bottom navigation
   - Spec: specs/15-athlete-progress-dashboard.md
