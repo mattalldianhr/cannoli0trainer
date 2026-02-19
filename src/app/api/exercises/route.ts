@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
     const tag = searchParams.get('tag');
     const limit = searchParams.get('limit');
     const offset = searchParams.get('offset');
+    const paginated = searchParams.get('paginated') === 'true';
 
     // Include global exercises (coachId=null) and coach-specific exercises
     const where: Record<string, unknown> = {
@@ -70,12 +71,26 @@ export async function GET(request: NextRequest) {
       where.tags = { array_contains: [tag] };
     }
 
+    const take = limit ? Math.min(parseInt(limit, 10), 100) : undefined;
+    const skip = offset ? parseInt(offset, 10) : undefined;
+
     const exercises = await prisma.exercise.findMany({
       where,
       orderBy: { name: 'asc' },
-      ...(limit ? { take: parseInt(limit, 10) } : {}),
-      ...(offset ? { skip: parseInt(offset, 10) } : {}),
+      ...(take ? { take } : {}),
+      ...(skip ? { skip } : {}),
     });
+
+    if (paginated) {
+      const total = await prisma.exercise.count({ where });
+      const currentOffset = skip ?? 0;
+      const currentLimit = take ?? exercises.length;
+      return NextResponse.json({
+        data: exercises,
+        total,
+        hasMore: currentOffset + currentLimit < total,
+      });
+    }
 
     return NextResponse.json(exercises);
   } catch (error) {

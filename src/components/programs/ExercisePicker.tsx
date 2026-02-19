@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Search, Dumbbell } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Search, Dumbbell, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -31,6 +32,8 @@ interface ExercisePickerProps {
   onSelect: (exercise: ExerciseData) => void;
 }
 
+const PAGE_SIZE = 30;
+
 const CATEGORIES = [
   { key: 'all', label: 'All' },
   { key: 'strength', label: 'Strength' },
@@ -51,52 +54,75 @@ const TAG_FILTERS = [
 
 export function ExercisePicker({ open, onOpenChange, onSelect }: ExercisePickerProps) {
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
+  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const fetchExercises = useCallback(async () => {
-    setLoading(true);
+  const buildUrl = useCallback((offset: number, searchVal: string, category: string, tags: string[]) => {
+    const params = new URLSearchParams({
+      paginated: 'true',
+      limit: String(PAGE_SIZE),
+      offset: String(offset),
+    });
+    if (searchVal) params.set('search', searchVal);
+    if (category !== 'all') params.set('category', category);
+    if (tags.length > 0) params.set('tag', tags[0]);
+    return `/api/exercises?${params.toString()}`;
+  }, []);
+
+  const fetchExercises = useCallback(async (offset: number, append: boolean = false) => {
+    if (append) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
     try {
-      const res = await fetch('/api/exercises');
+      const res = await fetch(buildUrl(offset, search, activeCategory, activeTags));
       if (res.ok) {
-        const data = await res.json();
-        setExercises(data);
+        const json = await res.json();
+        const data = json.data.map((ex: ExerciseData) => ({
+          ...ex,
+          primaryMuscles: (ex.primaryMuscles as string[]) ?? [],
+          tags: (ex.tags as string[]) ?? [],
+        }));
+        if (append) {
+          setExercises(prev => [...prev, ...data]);
+        } else {
+          setExercises(data);
+        }
+        setTotal(json.total);
+        setHasMore(json.hasMore);
       }
     } catch {
       // silently fail — empty list shown
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  }, []);
+  }, [search, activeCategory, activeTags, buildUrl]);
 
+  // Fetch when dialog opens or filters change (debounced for search)
   useEffect(() => {
-    if (open && exercises.length === 0) {
-      fetchExercises();
+    if (!open) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchExercises(0);
+    }, search ? 300 : 0);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [open, fetchExercises, search]);
+
+  const loadMore = () => {
+    if (!loadingMore && hasMore) {
+      fetchExercises(exercises.length, true);
     }
-  }, [open, exercises.length, fetchExercises]);
-
-  const filtered = useMemo(() => {
-    return exercises.filter((exercise) => {
-      if (search) {
-        const q = search.toLowerCase();
-        if (!exercise.name.toLowerCase().includes(q)) return false;
-      }
-
-      if (activeCategory !== 'all') {
-        if (exercise.category.toLowerCase() !== activeCategory) return false;
-      }
-
-      if (activeTags.length > 0) {
-        const exerciseTags = exercise.tags as string[];
-        const hasTag = activeTags.some((tag) => exerciseTags.includes(tag));
-        if (!hasTag) return false;
-      }
-
-      return true;
-    });
-  }, [exercises, search, activeCategory, activeTags]);
+  };
 
   const toggleTag = (tag: string) => {
     setActiveTags((prev) =>
@@ -169,16 +195,17 @@ export function ExercisePicker({ open, onOpenChange, onSelect }: ExercisePickerP
 
         {/* Results Count */}
         <p className="text-xs text-muted-foreground">
-          {loading ? 'Loading...' : `${filtered.length} exercise${filtered.length !== 1 ? 's' : ''}`}
+          {loading ? 'Searching...' : `${total} exercise${total !== 1 ? 's' : ''}`}
         </p>
 
         {/* Exercise List */}
         <div className="flex-1 overflow-y-auto min-h-0 -mx-6 px-6">
           {loading ? (
-            <div className="py-8 text-center text-muted-foreground text-sm">
+            <div className="py-8 flex items-center justify-center text-muted-foreground text-sm gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
               Loading exercises...
             </div>
-          ) : filtered.length === 0 ? (
+          ) : exercises.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground text-sm">
               {search || activeCategory !== 'all' || activeTags.length > 0
                 ? 'No exercises match your filters.'
@@ -186,7 +213,7 @@ export function ExercisePicker({ open, onOpenChange, onSelect }: ExercisePickerP
             </div>
           ) : (
             <div className="space-y-1">
-              {filtered.map((exercise) => (
+              {exercises.map((exercise) => (
                 <button
                   key={exercise.id}
                   onClick={() => handleSelect(exercise)}
@@ -215,6 +242,27 @@ export function ExercisePicker({ open, onOpenChange, onSelect }: ExercisePickerP
                   </div>
                 </button>
               ))}
+
+              {/* Load More */}
+              {hasMore && (
+                <div className="flex justify-center py-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      `Load more (${exercises.length} of ${total})`
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -91,6 +91,7 @@ async function getRecentActivity(coachId: string) {
       athlete: { select: { id: true, name: true } },
     },
     orderBy: { date: 'desc' },
+    take: 20,
   });
 
   // Group sessions by date
