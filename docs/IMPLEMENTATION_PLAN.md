@@ -2,9 +2,9 @@
 
 ## Status
 - Total tasks: 185
-- Completed: 155
+- Completed: 156
 - In progress: 0
-- Remaining: 30
+- Remaining: 29
 
 ## Tasks
 
@@ -826,9 +826,10 @@ Net change: 82 → 179 tasks (+97 new tasks in priorities 17-33)
   - Spec: specs/tasks/00-implied-features-audit.md
   - Acceptance: `error.tsx` files for dashboard, athletes, programs, analytics, meets, athlete. "Something went wrong" + "Try again" button. Dev-only console error logging.
 
-- [ ] **Task 30.8**: Add skeleton loading states to all pages
+- [x] **Task 30.8**: Add skeleton loading states to all pages
   - Spec: specs/02-coach-dashboard.md
   - Acceptance: `loading.tsx` files for each route with `animate-pulse` skeleton shapes matching actual content layout.
+  - Note: Created 11 loading.tsx files for: athletes, athletes/[id], programs, programs/[id], exercises, analytics, meets, meets/[id], schedule, train, settings. Dashboard already had one. Athlete portal pages handle loading inline as client components.
 
 ### Priority 31: Missing UI Features
 
