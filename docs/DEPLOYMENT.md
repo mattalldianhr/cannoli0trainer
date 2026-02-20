@@ -40,7 +40,7 @@ Cannoli Trainer deploys to Railway (Node.js + PostgreSQL). This guide covers the
 | `ENABLE_DEV_LOGIN` | `true` / `false` | Dev bypass login buttons. Set `false` in prod when ready |
 | `NEXT_PUBLIC_ENABLE_DEV_LOGIN` | `true` / `false` | Client-side toggle for dev buttons |
 | `SEED_ATHLETE_EMAIL` | `matt@mattalldian.com` | Links first athlete to User for auth |
-| `SEED_COACH_EMAIL` | `joe@cannolistrength.com` | Links coach to User for auth (default) |
+| `SEED_COACH_EMAIL` | `cannoli.strength@gmail.com` | Links coach to User for auth (default) |
 
 ## How Deployment Works
 
@@ -123,13 +123,13 @@ The seed script (`npx prisma db seed`) **cannot be run via `railway run`** becau
 # Example: Link coach to User record
 railway connect postgres <<'SQL'
 INSERT INTO "User" (id, email, name, "emailVerified")
-VALUES (gen_random_uuid(), 'joe@cannolistrength.com', 'Joe Cristando', NOW())
+VALUES (gen_random_uuid(), 'cannoli.strength@gmail.com', 'Joe Cristando', NOW())
 ON CONFLICT (email) DO UPDATE SET name = 'Joe Cristando'
 RETURNING id;
 
 UPDATE "Coach"
-SET "userId" = (SELECT id FROM "User" WHERE email = 'joe@cannolistrength.com')
-WHERE email = 'joe@cannolistrength.com' AND "userId" IS NULL;
+SET "userId" = (SELECT id FROM "User" WHERE email = 'cannoli.strength@gmail.com')
+WHERE email = 'cannoli.strength@gmail.com' AND "userId" IS NULL;
 SQL
 ```
 
@@ -171,12 +171,12 @@ SQL
 # Link if needed
 railway connect postgres <<'SQL'
 INSERT INTO "User" (id, email, name, "emailVerified")
-VALUES (gen_random_uuid(), 'joe@cannolistrength.com', 'Joe Cristando', NOW())
+VALUES (gen_random_uuid(), 'cannoli.strength@gmail.com', 'Joe Cristando', NOW())
 ON CONFLICT (email) DO NOTHING;
 
 UPDATE "Coach"
-SET "userId" = (SELECT id FROM "User" WHERE email = 'joe@cannolistrength.com')
-WHERE email = 'joe@cannolistrength.com' AND "userId" IS NULL;
+SET "userId" = (SELECT id FROM "User" WHERE email = 'cannoli.strength@gmail.com')
+WHERE email = 'cannoli.strength@gmail.com' AND "userId" IS NULL;
 SQL
 ```
 

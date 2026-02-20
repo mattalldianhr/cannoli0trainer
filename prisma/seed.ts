@@ -173,11 +173,11 @@ async function seedCoachAndAthletes() {
 
   // Upsert coach: Joe Cristando (Cannoli Strength)
   const coach = await prisma.coach.upsert({
-    where: { email: 'joe@cannolistrength.com' },
+    where: { email: 'cannoli.strength@gmail.com' },
     update: { name: 'Joe Cristando', brandName: 'Cannoli Strength' },
     create: {
       name: 'Joe Cristando',
-      email: 'joe@cannolistrength.com',
+      email: 'cannoli.strength@gmail.com',
       brandName: 'Cannoli Strength',
     },
   });
@@ -273,7 +273,7 @@ async function seedWorkoutHistory() {
   console.log(`    Skipped no data: ${stats.skippedNoData}`);
 
   // Build lookup: athlete TB ID -> DB athlete record
-  const coach = await prisma.coach.findFirst({ where: { email: 'joe@cannolistrength.com' } });
+  const coach = await prisma.coach.findFirst({ where: { email: 'cannoli.strength@gmail.com' } });
   if (!coach) {
     console.log('  ERROR: Coach not found. Run seedCoachAndAthletes first.');
     return;
@@ -553,7 +553,7 @@ async function seedTestAthleteAuth() {
   console.log(`\nSetting up test athlete auth for: ${testEmail}`);
 
   // Find the first athlete (Matt Alldian) to use as test athlete
-  const coach = await prisma.coach.findFirst({ where: { email: 'joe@cannolistrength.com' } });
+  const coach = await prisma.coach.findFirst({ where: { email: 'cannoli.strength@gmail.com' } });
   if (!coach) {
     console.log('  Coach not found. Skipping.');
     return;
@@ -600,7 +600,7 @@ async function seedTestAthleteAuth() {
 }
 
 async function seedCoachAuth() {
-  const coachEmail = process.env.SEED_COACH_EMAIL || 'joe@cannolistrength.com';
+  const coachEmail = process.env.SEED_COACH_EMAIL || 'cannoli.strength@gmail.com';
   console.log(`\nSetting up coach auth for: ${coachEmail}`);
 
   const coach = await prisma.coach.findFirst({ where: { email: coachEmail } });

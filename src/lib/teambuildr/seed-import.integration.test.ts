@@ -101,7 +101,7 @@ beforeAll(async () => {
 
   // Resolve coach and athlete DB IDs
   const coach = await prisma.coach.findFirst({
-    where: { email: 'joe@cannolistrength.com' },
+    where: { email: 'cannoli.strength@gmail.com' },
   });
   if (!coach) {
     throw new Error('Coach not found in database. Run `npx prisma db seed` first.');
@@ -164,7 +164,7 @@ describe('Aggregate import counts', () => {
 
   it('should have coach Joe Cristando', async () => {
     const coach = await prisma.coach.findFirst({
-      where: { email: 'joe@cannolistrength.com' },
+      where: { email: 'cannoli.strength@gmail.com' },
     });
     expect(coach).not.toBeNull();
     expect(coach!.name).toBe('Joe Cristando');

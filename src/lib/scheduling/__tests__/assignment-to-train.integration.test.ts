@@ -37,7 +37,7 @@ const TRAINING_DAYS = [1, 2, 4, 5]; // Mon/Tue/Thu/Fri
 beforeAll(async () => {
   // Get the seeded coach
   const coach = await prisma.coach.findFirst({
-    where: { email: 'joe@cannolistrength.com' },
+    where: { email: 'cannoli.strength@gmail.com' },
   });
   if (!coach) {
     throw new Error('Coach not found in database. Run `npx prisma db seed` first.');

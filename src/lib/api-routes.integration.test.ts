@@ -23,7 +23,7 @@ let coachId: string;
 
 beforeAll(async () => {
   const coach = await prisma.coach.findFirst({
-    where: { email: 'joe@cannolistrength.com' },
+    where: { email: 'cannoli.strength@gmail.com' },
   });
   if (!coach) {
     throw new Error('Coach not found in database. Run `npx prisma db seed` first.');

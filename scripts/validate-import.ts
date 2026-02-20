@@ -108,7 +108,7 @@ async function main() {
   }
 
   // Get DB athletes
-  const coach = await prisma.coach.findFirst({ where: { email: 'joe@cannolistrength.com' } });
+  const coach = await prisma.coach.findFirst({ where: { email: 'cannoli.strength@gmail.com' } });
   if (!coach) {
     console.log('ERROR: Coach not found. Run seed first.');
     process.exit(1);

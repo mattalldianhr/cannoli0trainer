@@ -303,8 +303,8 @@ async function main() {
   console.log('=== Seeding Programs ===\n');
 
   // 1. Look up coach
-  const coach = await prisma.coach.findFirst({ where: { email: 'joe@cannolistrength.com' } });
-  if (!coach) throw new Error('Coach not found (joe@cannolistrength.com)');
+  const coach = await prisma.coach.findFirst({ where: { email: 'cannoli.strength@gmail.com' } });
+  if (!coach) throw new Error('Coach not found (cannoli.strength@gmail.com)');
   console.log(`Coach: ${coach.name} (${coach.id})`);
 
   // 2. Look up athletes
