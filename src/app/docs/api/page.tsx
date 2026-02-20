@@ -58,7 +58,7 @@ export default function ApiReferencePage() {
                 <div>
                   <h3 className="font-medium text-sm mb-1">Base URL</h3>
                   <code className="bg-muted rounded-md px-3 py-1.5 text-sm font-mono block">
-                    https://your-domain.com/api
+                    https://cannoli.mattalldian.com/api
                   </code>
                 </div>
 
