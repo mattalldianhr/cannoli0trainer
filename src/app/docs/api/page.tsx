@@ -63,20 +63,27 @@ export default function ApiReferencePage() {
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-sm mb-1">
-                    Authorization header
-                  </h3>
+                  <h3 className="font-medium text-sm mb-1">Authentication</h3>
                   <code className="bg-muted rounded-md px-3 py-1.5 text-sm font-mono block">
-                    Authorization: Bearer &lt;your-session-token&gt;
+                    Cookie: authjs.session-token=&lt;session-token&gt;
                   </code>
                 </div>
 
                 <div>
                   <h3 className="font-medium text-sm mb-1">How it works</h3>
                   <p className="text-sm text-muted-foreground">
-                    All requests require a valid session. Sign in through the app
-                    to get your session cookie, which is sent automatically by
-                    the browser. The API returns{" "}
+                    All requests require a valid session cookie. Sign in through
+                    the app to get your session cookie, which is sent
+                    automatically by the browser. Coach routes return{" "}
+                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
+                      403 Forbidden
+                    </code>{" "}
+                    for athlete sessions. Athlete routes (
+                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
+                      /api/athlete/*
+                    </code>
+                    ) use the session to identify the athlete automatically. The
+                    API returns{" "}
                     <code className="bg-muted px-1.5 py-0.5 rounded text-xs">
                       401 Unauthorized
                     </code>{" "}
