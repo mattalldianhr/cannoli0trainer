@@ -86,6 +86,35 @@ export async function PUT(
 
     // If workouts are provided, do a full replace inside a transaction
     if (body.workouts) {
+      // Validate all exerciseIds exist before attempting the transaction
+      const allExerciseIds = new Set<string>();
+      for (const w of body.workouts) {
+        if (w.exercises) {
+          for (const e of w.exercises) {
+            if (e.exerciseId) allExerciseIds.add(e.exerciseId);
+          }
+        }
+      }
+
+      if (allExerciseIds.size > 0) {
+        const existingExercises = await prisma.exercise.findMany({
+          where: { id: { in: [...allExerciseIds] } },
+          select: { id: true, name: true },
+        });
+        const existingIds = new Set(existingExercises.map((e) => e.id));
+        const missingIds = [...allExerciseIds].filter((id) => !existingIds.has(id));
+
+        if (missingIds.length > 0) {
+          return NextResponse.json(
+            {
+              error: `${missingIds.length} exercise(s) not found. They may have been deleted or not yet imported.`,
+              missingExerciseIds: missingIds,
+            },
+            { status: 400 }
+          );
+        }
+      }
+
       const program = await prisma.$transaction(async (tx) => {
         // Delete all existing workouts (cascades to WorkoutExercise)
         await tx.workout.deleteMany({ where: { programId: id } });

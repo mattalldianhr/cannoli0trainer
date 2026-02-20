@@ -42,9 +42,6 @@ export async function GET(request: NextRequest) {
       dateOnly = todayDateInTimezone(tz);
     }
 
-    // Debug: log what we're querying
-    console.log('[athlete/train] athleteId:', athleteId, 'dateParam:', dateParam, 'tz:', tz, 'dateOnly:', dateOnly.toISOString());
-
     // Find the workout session for this athlete + date
     const workoutSession = await prisma.workoutSession.findUnique({
       where: {
@@ -57,24 +54,6 @@ export async function GET(request: NextRequest) {
         program: { select: { id: true, name: true } },
       },
     });
-
-    // Debug: log nearby sessions to understand what's in the DB
-    if (!workoutSession) {
-      const nearby = await prisma.workoutSession.findMany({
-        where: {
-          athleteId,
-          date: {
-            gte: new Date(dateOnly.getTime() - 2 * 24 * 60 * 60 * 1000),
-            lte: new Date(dateOnly.getTime() + 2 * 24 * 60 * 60 * 1000),
-          },
-        },
-        select: { date: true, title: true },
-        orderBy: { date: 'asc' },
-      });
-      console.log('[athlete/train] NO session found. Nearby sessions:', nearby.map(s => ({ date: s.date.toISOString(), title: s.title })));
-    } else {
-      console.log('[athlete/train] Found session:', workoutSession.title, workoutSession.date.toISOString());
-    }
 
     if (!workoutSession) {
       const nextSession = await prisma.workoutSession.findFirst({
