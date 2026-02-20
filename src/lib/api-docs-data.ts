@@ -502,13 +502,12 @@ export const apiGroups: EndpointGroup[] = [
       {
         id: "get-workout",
         method: "GET",
-        path: "/api/train",
-        summary: "Get today's workout for an athlete",
+        path: "/api/athlete/train",
+        summary: "Get today's workout for the logged-in athlete",
         coachTip:
-          "Fetches the prescribed workout for today (or a given date). Shows what the athlete should do.",
+          "Fetches the prescribed workout for today (or a given date). Uses the athlete's session for auth — no athleteId param needed.",
         params: [
-          { name: "athleteId", location: "query", type: "number", required: true, description: "Athlete ID" },
-          { name: "date", location: "query", type: "string", required: false, description: "Date (YYYY-MM-DD), defaults to today" },
+          { name: "date", location: "query", type: "string", required: false, description: "Date (YYYY-MM-DD), defaults to today in coach timezone" },
         ],
         responseExample: {
           sessionId: 100,
